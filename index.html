@@ -61,9 +61,24 @@
         .waterdrop-btn {
             animation: dropBounce 3s ease-in-out infinite;
         }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body class="text-white min-h-screen flex flex-col items-center antialiased">
+
+    <!-- Global Loading Overlay -->
+    <div id="globalLoader" class="fixed inset-0 bg-black/85 z-50 hidden flex flex-col items-center justify-center space-y-3">
+        <div class="w-12 h-12 border-4 border-amber-500 border-t-transparent rounded-full spinner"></div>
+        <p id="loaderText" class="text-amber-300 font-bold text-xs tracking-wider">Loading, please wait...</p>
+    </div>
 
     <!-- Header Section (Fixed in English) -->
     <header class="w-full max-w-md bg-stone-950 py-2.5 px-2.5 sticky top-0 z-45 shadow-xl moving-border">
@@ -91,7 +106,7 @@
                 </div>
 
                 <div id="authHeaderButtons">
-                    <button onclick="openModal('loginModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg shadow cursor-pointer">Login</button>
+                    <button onclick="handleLoginButtonClick()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg shadow cursor-pointer">Login</button>
                 </div>
                 
                 <div id="userProfileHeader" class="hidden flex items-center gap-1">
@@ -202,7 +217,7 @@
             <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
                 <div><label id="lblOccNameInput" class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 <div><label id="lblOccDateInput" class="font-bold block mb-1">Start Date & Time <span class="text-stone-400 font-normal">(Optional)</span>:</label><input type="datetime-local" id="occDate" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label id="lblOccUpiInput" class="font-bold block mb-1 text-amber-900">💳  UPI ID (For receiving Donations):</label><input type="text" id="occUpiId" placeholder="Ex: yourname@oksbi" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblOccUpiInput" class="font-bold block mb-1 text-amber-900">💳 UPI ID (For receiving Donations):</label><input type="text" id="occUpiId" placeholder="Ex: yourname@oksbi" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 
                 <div>
                     <label id="lblAssignMembers" class="font-bold block mb-1 text-amber-900">👥 Assign Members for this Occasion:</label>
@@ -300,7 +315,7 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbw5_udPWN4-kKc5yVUOtWzQML0vabbFtxDkyXScr85ExDw4kbx-5fryAPOdmT_oap2R/exec"; 
+        const _URL = "https://script.google.com/macros/s/AKfycbyG06Uwk9iq2KWjxBDvhx2vxuDa17caG1iIMogbHtCLkDAIbsge8SrBskl9I7EQhEC7/exec"; 
         const PORTAL_UPI_ID = "nageshyadav4u@oksbi"; 
         const DB_CURRENT = 'youth_current_user';
 
@@ -316,40 +331,7 @@
                 expense: "ఖర్చు",
                 balance: "నిల్వ (Balance)",
                 addEntry: "➕ కొత్త ఎంట్రీని జోడించండి",
-                transList: "📋 లావాదేవీల జాబితా",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳UPI ID (For receiving Donations):",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 లావాదేవీల జాబితా"
             },
             en: {
                 title: "Easily Manage Donations, Expenses, and Financial Records.",
@@ -359,40 +341,7 @@
                 expense: "Expense",
                 balance: "Balance",
                 addEntry: "➕ Add New Entry",
-                transList: "📋 Transactions List",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳UPI ID (For receiving Donations):",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 Transactions List"
             },
             hi: {
                 title: "दान, खर्च और वित्तीय विवरणों को आसानी से प्रबंधित करें।",
@@ -402,40 +351,7 @@
                 expense: "खर्च",
                 balance: "शेष (Balance)",
                 addEntry: "➕ नया प्रविष्टि जोड़ें",
-                transList: "📋 लेनदेन की सूची",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳 UPI ID (For recieving Donations)",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 लेनदेन की सूची"
             },
             ta: {
                 title: "நன்கொடைகள், செலவுகள் மற்றும் நிதி பதிவுகளை எளிenberg நிர்வகிக்கவும்.",
@@ -445,40 +361,7 @@
                 expense: "செலவு",
                 balance: "இருப்பு (Balance)",
                 addEntry: "➕ புதிய பதிவைச் சேர்க்கவும்",
-                transList: "📋 பரிவர்த்தனை பட்டியல்",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳 UPI ID (For receiving Donations):",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 பரிவர்த்தனை பட்டியல்"
             },
             kn: {
                 title: "ದೇಣಿಗೆಗಳು, ವೆಚ್ಚಗಳು ಮತ್ತು ಹಣಕಾಸಿನ ದಾಖಲೆಗಳನ್ನು ಸುಲಭವಾಗಿ ನಿರ್ವಹಿಸಿ.",
@@ -488,40 +371,7 @@
                 expense: "ವೆಚ್ಚ",
                 balance: "ಬಾಕಿ (Balance)",
                 addEntry: "➕ ಹೊಸ ನಮೂದನ್ನು ಸೇರಿಸಿ",
-                transList: "📋 ವಹಿವಾಟುಗಳ ಪಟ್ಟಿ",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳 UPI ID (For receiving Donations):",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 ವಹಿವಾಟುಗಳ ಪಟ್ಟಿ"
             },
             ml: {
                 title: "സംഭാവനകളും ചെലവുകളും സാമ്പത്തിക രേഖകളും എളുപ്പത്തിൽ കൈകാര്യം ചെയ്യുക.",
@@ -531,40 +381,7 @@
                 expense: "ചെലവ്",
                 balance: "ബാക്കി (Balance)",
                 addEntry: "➕ പുതിയ എൻട്രി ചേർക്കുക",
-                transList: "📋 ഇടപാടുകളുടെ ലിസ്റ്റ്",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳 UPI ID (For recieving Donations)",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 ഇടപാടുകളുടെ ലിസ്റ്റ്"
             },
             gu: {
                 title: "દાન, ખર્ચ અને નાણાકીય રેકોર્ડ્સ સરળતાથી મેનેજ કરો.",
@@ -574,40 +391,7 @@
                 expense: "ખર્ચ",
                 balance: "બેલેન્સ",
                 addEntry: "➕ નવી એન્ટ્રી ઉમેરો",
-                transList: "📋 વ્યવહારોની યાદી",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳 UPI ID (For recieving Donations)",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 વ્યવહારોની યાદી"
             },
             bn: {
                 title: "দান, খরচ এবং আর্থিক বিবরণী সহজেই পরিচালনা করুন।",
@@ -617,40 +401,7 @@
                 expense: "খরচ",
                 balance: "ব্যালেন্স",
                 addEntry: "➕ নতুন এন্ট্রি যোগ করুন",
-                transList: "📋 লেনদেনের তালিকা",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳 UPI ID (For recieving Donations)",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 লেনদেনের তালিকা"
             },
             mr: {
                 title: "देणगी, खर्च आणि आर्थिक नोंदी सहज व्यवस्थापित करा.",
@@ -660,40 +411,7 @@
                 expense: "खर्च",
                 balance: "शिल्लक (Balance)",
                 addEntry: "➕ नवीन नोंद జోడా",
-                transList: "📋 व्यवहारांची यादी",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳 UPI ID (For recieving Donations)",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 व्यवहारांची यादी"
             },
             pa: {
                 title: "ਦਾਨ, ਖਰਚੇ ਅਤੇ ਵਿੱਤੀ ਰਿਕਾਰਡ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
@@ -703,102 +421,42 @@
                 expense: "ਖਰਚਾ",
                 balance: "ਬਾਕੀ (Balance)",
                 addEntry: "➕ ਨਵੀਂ ਐਂਟਰੀ ਸ਼ਾਮਲ ਕਰੋ",
-                transList: "📋 ਲੈਣ-ਦੇਣ ਦੀ ਸੂਚੀ",
-                liveClock: "🕒 Live Clock:",
-                orgNameHeading: "Organization Name",
-                shareOrgLink: "🔗 Share Org Link",
-                membersDesig: "👥 Members & Designation",
-                occasionsHeader: "📅 Occasions",
-                addOccasionBtn: "+ Add Occasion",
-                regModalTitle: "📝 Organization Registration",
-                regOrgName: "Organization Name:",
-                regAdminName: "Your Name (Admin Name):",
-                regMobile: "Mobile Number (User ID):",
-                regPassword: "Password:",
-                regSubmit: "Register",
-                loginModalTitle: "🔐 User / Member Login",
-                loginMobile: "Mobile Number (User ID):",
-                loginPassword: "Password:",
-                loginSubmit: "Login",
-                addOccModalTitle: "➕ Add New Occasion",
-                occNameInput: "Occasion Name:",
-                occDateInput: "Start Date & Time (Optional):",
-                occUpiInput: "💳 UPI ID (For recieving Donations)",
-                assignMembers: "👥 Assign Members for this Occasion:",
-                saveOccasion: "Create Occasion",
-                donateForText: "Donate for",
-                donateSubText: "Enter donation amount to pay securely via UPI app:",
-                proceedDonate: "Proceed to Pay via UPI",
-                cancelDonate: "Cancel",
-                controlPanelTitle: "Control Panel",
-                downloadReport: "📥 Download Accounts Report (TXT)",
-                saveEntry: "Save Entry",
-                orgMembersTitle: "👥 Organization Members",
-                addNewMember: "➕ Add New Member",
-                grantAccess: "Grant Access",
-                membersListTitle: "📋 Members List"
+                transList: "📋 ਲੈਣ-ਦੇਣ ਦੀ ਸੂਚੀ"
             }
         };
+
+        function showLoader(text = "Loading, please wait...") {
+            document.getElementById('loaderText').innerText = text;
+            document.getElementById('globalLoader').classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            document.getElementById('globalLoader').classList.add('hidden');
+        }
+
+        function handleLoginButtonClick() {
+            showLoader("Opening login window...");
+            setTimeout(() => {
+                hideLoader();
+                openModal('loginModal');
+            }, 300);
+        }
 
         function changeLanguage(lang) {
             localStorage.setItem('portal_lang', lang);
             let t = translations[lang] || translations['en'];
 
-            // Home
             document.getElementById('homeTitleText').innerText = t.title;
             document.getElementById('homeSubText').innerText = t.subtitle;
             document.getElementById('homeRegBtn').innerText = t.registerBtn;
 
-            // Dashboard
-            document.getElementById('lblLiveClock').innerText = t.liveClock;
-            document.getElementById('lblOrgNameHeading').innerText = t.orgNameHeading;
-            document.getElementById('btnShareOrg').innerText = t.shareOrgLink;
-            document.getElementById('lblMembersDesig').innerText = t.membersDesig;
-            document.getElementById('lblOccasionsHeader').innerText = t.occasionsHeader;
-            document.getElementById('btnAddOccasion').innerText = t.addOccasionBtn;
-
-            // Modals
-            document.getElementById('lblRegModalTitle').innerText = t.regModalTitle;
-            document.getElementById('lblRegOrgName').innerText = t.regOrgName;
-            document.getElementById('lblRegAdminName').innerText = t.regAdminName;
-            document.getElementById('lblRegMobile').innerText = t.regMobile;
-            document.getElementById('lblRegPassword').innerText = t.regPassword;
-            document.getElementById('btnRegisterSubmit').innerText = t.regSubmit;
-
-            document.getElementById('lblLoginModalTitle').innerText = t.loginModalTitle;
-            document.getElementById('lblLoginMobile').innerText = t.loginMobile;
-            document.getElementById('lblLoginPassword').innerText = t.loginPassword;
-            document.getElementById('btnLoginSubmit').innerText = t.loginSubmit;
-
-            document.getElementById('lblAddOccModalTitle').innerText = t.addOccModalTitle;
-            document.getElementById('lblOccNameInput').innerText = t.occNameInput;
-            document.getElementById('lblOccDateInput').innerText = t.occDateInput;
-            document.getElementById('lblOccUpiInput').innerText = t.occUpiInput;
-            document.getElementById('lblAssignMembers').innerText = t.assignMembers;
-            document.getElementById('btnSaveOccasion').innerText = t.saveOccasion;
-
-            document.getElementById('lblDonateForText').innerText = t.donateForText;
-            document.getElementById('lblDonateSubText').innerText = t.donateSubText;
-            document.getElementById('btnProceedDonate').innerText = t.proceedDonate;
-            document.getElementById('btnCancelDonate').innerText = t.cancelDonate;
-
-            // Control Panel
-            document.getElementById('lblControlPanelTitle').innerText = t.controlPanelTitle;
             document.getElementById('lblCollections').innerText = t.donation;
             document.getElementById('lblExpenses').innerText = t.expense;
             document.getElementById('lblBalance').innerText = t.balance;
-            document.getElementById('btnDownloadReport').innerText = t.downloadReport;
             document.getElementById('lblAddEntry').innerText = t.addEntry;
             document.getElementById('optDonation').innerText = t.donation;
             document.getElementById('optExpense').innerText = t.expense;
-            document.getElementById('btnSaveEntry').innerText = t.saveEntry;
             document.getElementById('lblTransList').innerText = t.transList;
-
-            // Members Modal
-            document.getElementById('lblOrgMembersTitle').innerText = t.orgMembersTitle;
-            document.getElementById('lblAddNewMember').innerText = t.addNewMember;
-            document.getElementById('btnGrantAccess').innerText = t.grantAccess;
-            document.getElementById('lblMembersListTitle').innerText = t.membersListTitle;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -831,6 +489,8 @@
             if(!orgName || !mobile || !pass) { alert("Please fill all required fields!"); return; }
             if(mobile.length !== 10 || isNaN(mobile)) { alert("Please enter a valid 10-digit mobile number!"); return; }
 
+            showLoader("Registering organization...");
+
             let payload = {
                 action: "register",
                 orgName, adminName, mobile, pass,
@@ -844,8 +504,14 @@
             };
 
             try {
-                let res = await fetch(_URL, { method: "POST", body: JSON.stringify(payload) });
+                let res = await fetch(_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
                 let result = await res.json();
+                hideLoader();
                 if(result.status === "success") {
                     alert("Registration successful! Please login now.");
                     closeModal('registerModal');
@@ -853,7 +519,10 @@
                 } else if(result.status === "exists") {
                     alert("This mobile number is already registered!");
                 }
-            } catch(e) { alert("Server connection error!"); }
+            } catch(e) {
+                hideLoader();
+                alert("Server connection error!");
+            }
         }
 
         async function loginUser() {
@@ -862,9 +531,16 @@
 
             if(!mobile || !pass) { alert("Please enter mobile number and password!"); return; }
 
+            showLoader("Logging in & syncing data...");
+
             try {
-                let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`);
+                let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" },
+                    mode: "cors"
+                });
                 let result = await res.json();
+                hideLoader();
                 if(result.status === "success") {
                     currentUser = result.user;
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
@@ -873,7 +549,10 @@
                 } else {
                     alert("Incorrect mobile number or password!");
                 }
-            } catch(e) { alert("Login error!"); }
+            } catch(e) {
+                hideLoader();
+                alert("Login error! Please check connection.");
+            }
         }
 
         async function syncUserDataWithSheet() {
@@ -881,7 +560,12 @@
             let targetMobile = currentUser.parentMobile || currentUser.mobile;
             let payload = { action: "update", mobile: targetMobile, userData: currentUser };
             try {
-                await fetch(_URL, { method: "POST", body: JSON.stringify(payload) });
+                await fetch(_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
                 localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
             } catch(e) { console.error("Sync error", e); }
         }
@@ -905,9 +589,15 @@
                 document.getElementById('publicHomeView').classList.add('hidden');
                 document.getElementById('publicViewContainer').classList.remove('hidden');
 
+                showLoader("Loading public view...");
                 try {
-                    let res = await fetch(`${_URL}?action=getOrg&mobile=${viewMobile}`);
+                    let res = await fetch(`${_URL}?action=getOrg&mobile=${viewMobile}`, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" },
+                        mode: "cors"
+                    });
                     let result = await res.json();
+                    hideLoader();
                     if(result.status === "success") {
                         publicOrgData = result.user;
                         document.getElementById('pubOrgName').innerText = publicOrgData.orgName;
@@ -975,6 +665,7 @@
                         document.getElementById('pubOrgName').innerText = "Organization not found";
                     }
                 } catch(e) {
+                    hideLoader();
                     document.getElementById('pubOrgName').innerText = "Connection Error";
                 }
                 return true;

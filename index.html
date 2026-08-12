@@ -261,7 +261,7 @@
                 </div>
 
                 <!-- Download Account Report Button -->
-                <div id="downloadReportSection">
+                <div id="downloadReportSection" class="hidden">
                     <button onclick="downloadOccasionReport()" id="btnDownloadReport" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer flex items-center justify-center gap-2 moving-border">
                         <span>📥 Download Accounts Report (TXT)</span>
                     </button>
@@ -313,30 +313,14 @@
         </div>
     </div>
 
-    <!-- JavaScript Application Logic with Firebase Cloud Database -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCH1VF62e3j7fza5wStjZBGNld5xFjRIbI",
-            authDomain: "donation-book-e0cb5.firebaseapp.com",
-            projectId: "donation-book-e0cb5",
-            storageBucket: "donation-book-e0cb5.firebasestorage.app",
-            messagingSenderId: "674133692595",
-            appId: "1:674133692595:web:51d5d8907b37d6889720c6",
-            measurementId: "G-W1P54R2ZF1"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
+    <!-- JavaScript Application Logic -->
+    <script>
+        const _URL = "https://script.google.com/macros/s/AKfycbwphg-nIajEIByk4VjevkGBWnSJJEaGYKtWvBarGCLnLFQWAXxso0FbdDtRUsGCig/exec"; 
         const PORTAL_UPI_ID = "nageshyadav4u@oksbi"; 
         const DB_CURRENT = 'youth_current_user';
 
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
         let selectedOccasionId = null;
-        let publicOrgData = null;
 
         const translations = {
             te: {
@@ -387,7 +371,7 @@
                 expense: "ವೆಚ್ಚ",
                 balance: "ಬಾಕಿ (Balance)",
                 addEntry: "➕ ಹೊಸ ನಮೂದನ್ನು ಸೇರಿಸಿ",
-                transList: "📋 ವಹಿವಾಟುಗಳ ಪಟ್ಟಿ"
+                transList: "📋 ವಹಿವಾಟുಗಳ ಪಟ್ಟಿ"
             },
             ml: {
                 title: "സംഭാവനകളും ചെലവുകളും സാമ്പത്തിക രേഖകളും എളുപ്പത്തിൽ കൈകാര്യം ചെയ്യുക.",
@@ -450,15 +434,15 @@
             document.getElementById('globalLoader').classList.add('hidden');
         }
 
-        window.handleLoginButtonClick = function() {
+        function handleLoginButtonClick() {
             showLoader("Opening login window...");
             setTimeout(() => {
                 hideLoader();
                 openModal('loginModal');
             }, 300);
-        };
+        }
 
-        window.changeLanguage = function(lang) {
+        function changeLanguage(lang) {
             localStorage.setItem('portal_lang', lang);
             let t = translations[lang] || translations['en'];
 
@@ -473,12 +457,30 @@
             document.getElementById('optDonation').innerText = t.donation;
             document.getElementById('optExpense').innerText = t.expense;
             document.getElementById('lblTransList').innerText = t.transList;
-        };
+        }
 
-        window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); };
-        window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
+        window.addEventListener('DOMContentLoaded', () => {
+            let savedLang = localStorage.getItem('portal_lang') || 'te';
+            let selectElem = document.getElementById('languageSelect');
+            if(selectElem) selectElem.value = savedLang;
+            changeLanguage(savedLang);
+            startRealtimeClock();
+        });
 
-        window.registerOrganization = async function() {
+        function startRealtimeClock() {
+            setInterval(() => {
+                let clockElem = document.getElementById('realtimeClock');
+                if(clockElem) {
+                    let now = new Date();
+                    clockElem.innerText = now.toLocaleString();
+                }
+            }, 1000);
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        async function registerOrganization() {
             let orgName = document.getElementById('regOrgName').value.trim();
             let adminName = document.getElementById('regAdminName').value.trim();
             let mobile = document.getElementById('regMobile').value.trim();
@@ -487,75 +489,60 @@
             if(!orgName || !mobile || !pass) { alert("Please fill all required fields!"); return; }
             if(mobile.length !== 10 || isNaN(mobile)) { alert("Please enter a valid 10-digit mobile number!"); return; }
 
-            showLoader("Registering organization online...");
-            try {
-                const docRef = doc(db, "organizations", mobile);
-                const docSnap = await getDoc(docRef);
+            showLoader("Registering organization...");
 
-                if (docSnap.exists()) {
-                    hideLoader();
-                    alert("This mobile number is already registered!");
-                    return;
-                }
-
-                let newOrgData = {
-                    orgName,
-                    adminName,
-                    mobile,
-                    pass,
+            let payload = {
+                action: "register",
+                orgName, adminName, mobile, pass,
+                userData: { 
+                    orgName, adminName, mobile, pass, 
                     isMainAdmin: true,
                     parentMobile: mobile,
-                    occasions: [],
-                    members: []
-                };
+                    occasions: [], 
+                    members: [] 
+                }
+            };
 
-                await setDoc(docRef, newOrgData);
+            try {
+                let res = await fetch(_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
+                let result = await res.json();
                 hideLoader();
-                alert("Registration successful! Please login now.");
-                closeModal('registerModal');
-                openModal('loginModal');
+                if(result.status === "success") {
+                    alert("Registration successful! Please login now.");
+                    closeModal('registerModal');
+                    openModal('loginModal');
+                } else if(result.status === "exists") {
+                    alert("This mobile number is already registered!");
+                }
             } catch(e) {
                 hideLoader();
-                alert("Database connection error: " + e.message);
+                alert("Server connection error!");
             }
-        };
+        }
 
-        window.loginUser = async function() {
+        async function loginUser() {
             let mobile = document.getElementById('loginMobile').value.trim();
             let pass = document.getElementById('loginPassword').value.trim();
 
             if(!mobile || !pass) { alert("Please enter mobile number and password!"); return; }
 
-            showLoader("Logging in from cloud database...");
+            showLoader("Logging in & syncing data...");
+
             try {
-                const docRef = doc(db, "organizations", mobile);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists() && docSnap.data().pass === pass) {
-                    currentUser = docSnap.data();
-                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-                    hideLoader();
-                    closeModal('loginModal');
-                    initDashboard();
-                    return;
-                }
-
-                const querySnapshot = await getDocs(collection(db, "organizations"));
-                let foundOrg = null;
-
-                querySnapshot.forEach((document) => {
-                    let orgData = document.data();
-                    if(orgData.members && orgData.members.length > 0) {
-                        let sub = orgData.members.find(m => m.mobile === mobile && m.pass === pass);
-                        if(sub) {
-                            foundOrg = orgData;
-                        }
-                    }
+                let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" },
+                    mode: "cors"
                 });
-
+                let result = await res.json();
                 hideLoader();
-                if(foundOrg) {
-                    currentUser = foundOrg;
+                if(result.status === "success") {
+                    currentUser = result.user;
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
                     closeModal('loginModal');
                     initDashboard();
@@ -564,30 +551,32 @@
                 }
             } catch(e) {
                 hideLoader();
-                alert("Login error: " + e.message);
+                alert("Login error! Please check connection.");
             }
-        };
+        }
 
-        window.saveOrgData = async function() {
+        async function syncUserDataWithSheet() {
             if(!currentUser) return;
             let targetMobile = currentUser.parentMobile || currentUser.mobile;
+            let payload = { action: "update", mobile: targetMobile, userData: currentUser };
             try {
-                const docRef = doc(db, "organizations", targetMobile);
-                await updateDoc(docRef, {
-                    occasions: currentUser.occasions,
-                    members: currentUser.members
+                await fetch(_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
                 });
                 localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-            } catch(e) {
-                console.error("Cloud sync error:", e);
-            }
-        };
+            } catch(e) { console.error("Sync error", e); }
+        }
 
-        window.logoutUser = function() {
+        function logoutUser() {
             currentUser = null;
             localStorage.removeItem(DB_CURRENT);
             window.location.href = window.location.pathname;
-        };
+        }
+
+        let publicOrgData = null;
 
         async function checkPublicViewMode() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -600,14 +589,17 @@
                 document.getElementById('publicHomeView').classList.add('hidden');
                 document.getElementById('publicViewContainer').classList.remove('hidden');
 
-                showLoader("Loading live public view...");
+                showLoader("Loading public view...");
                 try {
-                    const docRef = doc(db, "organizations", viewMobile);
-                    const docSnap = await getDoc(docRef);
+                    let res = await fetch(`${_URL}?action=getOrg&mobile=${viewMobile}`, {
+                        method: "GET",
+                        headers: { "Accept": "application/json" },
+                        mode: "cors"
+                    });
+                    let result = await res.json();
                     hideLoader();
-
-                    if(docSnap.exists()) {
-                        publicOrgData = docSnap.data();
+                    if(result.status === "success") {
+                        publicOrgData = result.user;
                         document.getElementById('pubOrgName').innerText = publicOrgData.orgName;
 
                         let container = document.getElementById('pubContentArea');
@@ -618,7 +610,7 @@
                         if(viewOccId) {
                             let occ = publicOrgData.occasions.find(o => o.id === viewOccId);
                             if(occ) {
-                                document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (Live View)`;
+                                document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (View Mode)`;
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let bal = inc - exp;
@@ -650,7 +642,7 @@
                                 container.innerHTML = `<p class="text-center text-xs text-stone-400">Occasion not found.</p>`;
                             }
                         } else {
-                            document.getElementById('pubSubTitle').innerText = `All Organization Occasions (Live View)`;
+                            document.getElementById('pubSubTitle').innerText = `All Organization Occasions (View Mode)`;
                             container.innerHTML = publicOrgData.occasions.map(occ => {
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
@@ -683,7 +675,7 @@
 
         let activeDonateOccId = null;
 
-        window.openDonateModal = function(occId) {
+        function openDonateModal(occId) {
             activeDonateOccId = occId;
             let occ = publicOrgData ? publicOrgData.occasions.find(o => o.id === occId) : currentUser.occasions.find(o => o.id === occId);
             if(occ) {
@@ -691,9 +683,9 @@
                 document.getElementById('donationAmount').value = '';
                 openModal('donateModal');
             }
-        };
+        }
 
-        window.proceedToDonateUPI = function() {
+        function proceedToDonateUPI() {
             let amount = document.getElementById('donationAmount').value.trim();
             if(!amount || amount <= 0) { alert("Please enter a valid donation amount!"); return; }
 
@@ -706,9 +698,11 @@
             } else {
                 alert("UPI ID not configured for this occasion!");
             }
-        };
+        }
 
-        function initDashboard() {
+        async function initDashboard() {
+            if(await checkPublicViewMode()) return;
+
             let authHeaderButtons = document.getElementById('authHeaderButtons');
             let userProfileHeader = document.getElementById('userProfileHeader');
             let publicHomeView = document.getElementById('publicHomeView');
@@ -743,7 +737,7 @@
             }
         }
 
-        window.addNewControlMember = function() {
+        function addNewControlMember() {
             let name = document.getElementById('memberName').value.trim();
             let designation = document.getElementById('memberDesignation').value.trim() || "Member";
             let mobile = document.getElementById('memberMobile').value.trim();
@@ -754,14 +748,14 @@
             if(!currentUser.members) currentUser.members = [];
             currentUser.members.push({ name, designation, mobile, pass, parentMobile: currentUser.mobile });
             
-            saveOrgData();
+            syncUserDataWithSheet();
             renderControlMembers();
             document.getElementById('memberName').value = '';
             document.getElementById('memberDesignation').value = '';
             document.getElementById('memberMobile').value = '';
             document.getElementById('memberPassword').value = '';
             alert("Member added successfully!");
-        };
+        }
 
         function renderControlMembers() {
             let list = document.getElementById('controlMembersList');
@@ -786,15 +780,15 @@
             `).join('');
         }
 
-        window.removeControlMember = function(idx) {
+        function removeControlMember(idx) {
             if(confirm("Are you sure you want to remove this member?")) {
                 currentUser.members.splice(idx, 1);
-                saveOrgData();
+                syncUserDataWithSheet();
                 renderControlMembers();
             }
-        };
+        }
 
-        window.openAddOccasionModal = function() {
+        function openAddOccasionModal() {
             let container = document.getElementById('occMembersCheckboxes');
             if(!currentUser.members || currentUser.members.length === 0) {
                 container.innerHTML = `<p class="text-[11px] text-stone-500">Please add members first using 'Members & Designation'.</p>`;
@@ -810,9 +804,9 @@
             document.getElementById('occDate').value = '';
             document.getElementById('occUpiId').value = '';
             openModal('addOccasionModal');
-        };
+        }
 
-        window.createOccasionFree = function() {
+        function createOccasionFree() {
             let name = document.getElementById('occName').value.trim();
             let date = document.getElementById('occDate').value;
             let upiId = document.getElementById('occUpiId').value.trim();
@@ -836,11 +830,11 @@
             };
 
             currentUser.occasions.push(newOccasion);
-            saveOrgData();
+            syncUserDataWithSheet();
             closeModal('addOccasionModal');
             alert("Occasion created successfully!");
             renderOccasions();
-        };
+        }
 
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');
@@ -890,22 +884,26 @@
             }).join('');
         }
 
-        window.deleteOccasion = function(id) {
+        function deleteOccasion(id) {
             if(confirm("Are you sure you want to delete this occasion?")) {
                 currentUser.occasions = currentUser.occasions.filter(o => o.id !== id);
-                saveOrgData();
+                syncUserDataWithSheet();
                 renderOccasions();
             }
-        };
+        }
 
-        window.openAccountsControl = function(occId) {
+        function openAccountsControl(occId) {
             selectedOccasionId = occId;
             let occ = currentUser.occasions.find(o => o.id === occId);
             if(!occ) return;
 
             document.getElementById('modalOccasionTitle').innerText = occ.name;
 
+            let downloadSection = document.getElementById('downloadReportSection');
+            downloadSection.classList.remove('hidden');
+
             let isAllowed = currentUser.isMainAdmin || (occ.assignedMembers && occ.assignedMembers.includes(currentUser.mobile));
+            
             let entryForm = document.getElementById('entryFormSection');
             let unauthMsg = document.getElementById('unauthorizedMsg');
 
@@ -919,9 +917,9 @@
 
             renderFinancialEntries();
             openModal('accountsModal');
-        };
+        }
 
-        window.downloadOccasionReport = function() {
+        function downloadOccasionReport() {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(!occ) return;
 
@@ -959,9 +957,9 @@
             link.href = URL.createObjectURL(blob);
             link.download = `${occ.name}_Accounts_Report.txt`;
             link.click();
-        };
+        }
 
-        window.addFinancialEntry = function() {
+        function addFinancialEntry() {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(!occ) return;
 
@@ -975,12 +973,12 @@
             if(!amount || !desc) { alert("Please enter amount and description!"); return; }
 
             occ.entries.push({ id: 'ent_' + Date.now(), type, amount: Number(amount), desc, date: new Date().toLocaleDateString() });
-            saveOrgData();
+            syncUserDataWithSheet();
             document.getElementById('entryAmount').value = '';
             document.getElementById('entryDesc').value = '';
             renderFinancialEntries();
             renderOccasions();
-        };
+        }
 
         function renderFinancialEntries() {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
@@ -1016,17 +1014,17 @@
             `).join('');
         }
 
-        window.deleteFinancialEntry = function(entId) {
+        function deleteFinancialEntry(entId) {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(occ) {
                 occ.entries = occ.entries.filter(e => e.id !== entId);
-                saveOrgData();
+                syncUserDataWithSheet();
                 renderFinancialEntries();
                 renderOccasions();
             }
-        };
+        }
 
-        window.shareOrgLinkDirectly = function() {
+        function shareOrgLinkDirectly() {
             let mainMobile = currentUser.parentMobile || currentUser.mobile;
             let shareLink = `${window.location.origin}${window.location.pathname}?org=${mainMobile}`;
             
@@ -1039,9 +1037,9 @@
             } else {
                 alert("Sharing is not supported on this browser.");
             }
-        };
+        }
 
-        window.shareOccasionLinkDirectly = function(occId, occName) {
+        function shareOccasionLinkDirectly(occId, occName) {
             let mainMobile = currentUser.parentMobile || currentUser.mobile;
             let shareLink = `${window.location.origin}${window.location.pathname}?org=${mainMobile}&occ=${occId}`;
             
@@ -1054,14 +1052,9 @@
             } else {
                 alert("Sharing is not supported on this browser.");
             }
-        };
-
-        async function bootApp() {
-            if(await checkPublicViewMode()) return;
-            initDashboard();
         }
 
-        bootApp();
+        initDashboard();
     </script>
 </body>
 </html>

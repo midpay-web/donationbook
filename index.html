@@ -300,7 +300,7 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxK5o7jRmtwu-SrLLiHz68Hx1jNh1JVjBWpTQE7Iko2KJSudkqesQS2VWBwR7ttvkw/exec"; 
+        const _URL = "https://script.google.com/macros/s/AKfycbwtBKUnX9TZMieYU3mfyWHJwi2xZ1W1itn1wp0DorJvH31-KrTa1eM4qISFUh8jsyfl/exec"; 
         const PORTAL_UPI_ID = "nageshyadav4u@oksbi"; 
         const DB_CURRENT = 'youth_current_user';
 
@@ -844,7 +844,7 @@
             };
 
             try {
-                let res = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+                let res = await fetch(_URL, { method: "POST", body: JSON.stringify(payload) });
                 let result = await res.json();
                 if(result.status === "success") {
                     alert("Registration successful! Please login now.");
@@ -863,7 +863,7 @@
             if(!mobile || !pass) { alert("Please enter mobile number and password!"); return; }
 
             try {
-                let res = await fetch(`${GOOGLE_SCRIPT_URL}?action=login&mobile=${mobile}&pass=${pass}`);
+                let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`);
                 let result = await res.json();
                 if(result.status === "success") {
                     currentUser = result.user;
@@ -881,7 +881,7 @@
             let targetMobile = currentUser.parentMobile || currentUser.mobile;
             let payload = { action: "update", mobile: targetMobile, userData: currentUser };
             try {
-                await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+                await fetch(_URL, { method: "POST", body: JSON.stringify(payload) });
                 localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
             } catch(e) { console.error("Sync error", e); }
         }
@@ -906,7 +906,7 @@
                 document.getElementById('publicViewContainer').classList.remove('hidden');
 
                 try {
-                    let res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrg&mobile=${viewMobile}`);
+                    let res = await fetch(`${_URL}?action=getOrg&mobile=${viewMobile}`);
                     let result = await res.json();
                     if(result.status === "success") {
                         publicOrgData = result.user;

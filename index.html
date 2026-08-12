@@ -217,28 +217,24 @@
             <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
                 <div><label id="lblOccNameInput" class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 <div><label id="lblOccDateInput" class="font-bold block mb-1">Start Date & Time <span class="text-stone-400 font-normal">(Optional)</span>:</label><input type="datetime-local" id="occDate" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label id="lblOccUpiInput" class="font-bold block mb-1 text-amber-900">💳 UPI ID (For receiving Donations):</label><input type="text" id="occUpiId" placeholder="Ex: yourname@oksbi" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 
                 <div>
                     <label id="lblAssignMembers" class="font-bold block mb-1 text-amber-900">👥 Assign Members for this Occasion:</label>
                     <div id="occMembersCheckboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg moving-border bg-stone-50"></div>
                 </div>
 
-                <button onclick="createOccasionFree()" id="btnSaveOccasion" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Create Occasion</button>
+                <button onclick="createOccasionAndPay()" id="btnSaveOccasion" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Proceed to Pay & Create</button>
             </div>
         </div>
     </div>
 
-    <!-- Donate Amount Modal for Public / View Mode -->
-    <div id="donateModal" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-4">
+    <!-- Pay ₹49 Fee Modal -->
+    <div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
-            <h3 class="font-black text-lg text-yellow-400">💖 <span id="lblDonateForText">Donate for</span> <span id="donateOccName" class="text-amber-300">--</span></h3>
-            <p id="lblDonateSubText" class="text-xs text-stone-300">Enter donation amount to pay securely via UPI app:</p>
-            <div>
-                <input type="number" id="donationAmount" placeholder="Enter Amount (₹)" class="w-full p-3 rounded-xl bg-stone-950 moving-border text-white text-center font-black text-lg">
-            </div>
-            <button onclick="proceedToDonateUPI()" id="btnProceedDonate" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl shadow cursor-pointer waterdrop-btn moving-border">Proceed to Pay via UPI</button>
-            <button onclick="closeModal('donateModal')" id="btnCancelDonate" class="text-stone-400 text-xs underline cursor-pointer">Cancel</button>
+            <h3 class="font-black text-lg text-yellow-400">💳 Occasion Activation Fee</h3>
+            <p class="text-xs text-stone-300">Pay <strong class="text-amber-400 font-bold">₹49</strong> via UPI to activate <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
+            <button onclick="pay49UPI()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl shadow cursor-pointer waterdrop-btn moving-border">Pay ₹49 via UPI</button>
+            <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer">Cancel</button>
         </div>
     </div>
 
@@ -261,7 +257,7 @@
                 </div>
 
                 <!-- Download Account Report Button -->
-                <div id="downloadReportSection" class="hidden">
+                <div id="downloadReportSection">
                     <button onclick="downloadOccasionReport()" id="btnDownloadReport" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer flex items-center justify-center gap-2 moving-border">
                         <span>📥 Download Accounts Report (TXT)</span>
                     </button>
@@ -321,6 +317,7 @@
 
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
         let selectedOccasionId = null;
+        let pendingOccasionData = null;
 
         const translations = {
             te: {
@@ -371,7 +368,7 @@
                 expense: "ವೆಚ್ಚ",
                 balance: "ಬಾಕಿ (Balance)",
                 addEntry: "➕ ಹೊಸ ನಮೂದನ್ನು ಸೇರಿಸಿ",
-                transList: "📋 ವಹಿವಾಟുಗಳ ಪಟ್ಟಿ"
+                transList: "📋 ವಹಿವಾಟುಗಳ ಪಟ್ಟಿ"
             },
             ml: {
                 title: "സംഭാവനകളും ചെലവുകളും സാമ്പത്തിക രേഖകളും എളുപ്പത്തിൽ കൈകാര്യം ചെയ്യുക.",
@@ -623,7 +620,6 @@
                                             <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
                                             <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
                                         </div>
-                                        ${occ.upiId ? `<button onclick="openDonateModal('${occ.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl text-xs shadow cursor-pointer waterdrop-btn moving-border">💖 Donate / విరాళం ఇవ్వండి</button>` : ''}
                                         <div class="space-y-1.5 pt-2">
                                             <h5 class="font-bold text-xs text-amber-300">📋 Transactions List</h5>
                                             ${occ.entries.map(ent => `
@@ -655,7 +651,6 @@
                                             <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
                                             <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
                                         </div>
-                                        ${occ.upiId ? `<button onclick="openDonateModal('${occ.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl text-xs shadow cursor-pointer waterdrop-btn moving-border">💖 Donate / విరాళం ఇవ్వండి</button>` : ''}
                                         <button onclick="window.location.href='?org=${viewMobile}&occ=${occ.id}'" class="w-full bg-amber-600 text-stone-950 font-bold py-1.5 rounded-lg text-xs cursor-pointer moving-border">View Details ➔</button>
                                     </div>
                                 `;
@@ -671,33 +666,6 @@
                 return true;
             }
             return false;
-        }
-
-        let activeDonateOccId = null;
-
-        function openDonateModal(occId) {
-            activeDonateOccId = occId;
-            let occ = publicOrgData ? publicOrgData.occasions.find(o => o.id === occId) : currentUser.occasions.find(o => o.id === occId);
-            if(occ) {
-                document.getElementById('donateOccName').innerText = occ.name;
-                document.getElementById('donationAmount').value = '';
-                openModal('donateModal');
-            }
-        }
-
-        function proceedToDonateUPI() {
-            let amount = document.getElementById('donationAmount').value.trim();
-            if(!amount || amount <= 0) { alert("Please enter a valid donation amount!"); return; }
-
-            let occ = publicOrgData ? publicOrgData.occasions.find(o => o.id === activeDonateOccId) : currentUser.occasions.find(o => o.id === activeDonateOccId);
-            if(occ && occ.upiId) {
-                let tn = encodeURIComponent(`Donation for ${occ.name}`);
-                let upiLink = `upi://pay?pa=${occ.upiId}&pn=${encodeURIComponent(publicOrgData ? publicOrgData.orgName : currentUser.orgName)}&am=${amount}&cu=INR&tn=${tn}`;
-                window.location.href = upiLink;
-                closeModal('donateModal');
-            } else {
-                alert("UPI ID not configured for this occasion!");
-            }
         }
 
         async function initDashboard() {
@@ -802,14 +770,12 @@
             }
             document.getElementById('occName').value = '';
             document.getElementById('occDate').value = '';
-            document.getElementById('occUpiId').value = '';
             openModal('addOccasionModal');
         }
 
-        function createOccasionFree() {
+        function createOccasionAndPay() {
             let name = document.getElementById('occName').value.trim();
             let date = document.getElementById('occDate').value;
-            let upiId = document.getElementById('occUpiId').value.trim();
 
             if(!name) { alert("Please enter occasion name!"); return; }
 
@@ -819,21 +785,40 @@
             });
 
             let now = Date.now();
-            let newOccasion = { 
+            pendingOccasionData = { 
                 id: 'occ_' + now, 
                 name, 
                 date: date || "", 
-                upiId: upiId || "",
                 createdAt: now,
                 assignedMembers: selectedMembers,
                 entries: [] 
             };
 
-            currentUser.occasions.push(newOccasion);
-            syncUserDataWithSheet();
             closeModal('addOccasionModal');
-            alert("Occasion created successfully!");
-            renderOccasions();
+            document.getElementById('pay49OccName').innerText = name;
+            openModal('pay49Modal');
+        }
+
+        function pay49UPI() {
+            let amount = "49.00";
+            let tn = encodeURIComponent("Occasion Creation Fee");
+            let upiLink = `upi://pay?pa=${PORTAL_UPI_ID}&pn=DonationBook&am=${amount}&cu=INR&tn=${tn}`;
+
+            window.location.href = upiLink;
+
+            setTimeout(() => {
+                let confirmed = confirm("Did you complete the ₹49 UPI payment? Click OK to save and activate your occasion.");
+                if(!confirmed) return;
+
+                if(pendingOccasionData) {
+                    currentUser.occasions.push(pendingOccasionData);
+                    syncUserDataWithSheet();
+                    pendingOccasionData = null;
+                    closeModal('pay49Modal');
+                    alert("Payment Successful! Occasion created.");
+                    renderOccasions();
+                }
+            }, 2000);
         }
 
         function renderOccasions() {
@@ -849,12 +834,9 @@
                 let bal = inc - exp;
 
                 let actionButtonHtml = `
-                    <div class="space-y-1.5">
-                        ${occ.upiId ? `<button onclick="openDonateModal('${occ.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2 rounded-xl text-xs shadow cursor-pointer waterdrop-btn moving-border">💖 Donate / విరాళం ఇవ్వండి</button>` : ''}
-                        <div class="flex gap-2">
-                            <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
-                            <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Occasion Link">🔗</button>
-                        </div>
+                    <div class="flex gap-2">
+                        <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
+                        <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Occasion Link">🔗</button>
                     </div>
                 `;
 

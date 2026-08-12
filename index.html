@@ -315,7 +315,7 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbyPdN-tXkzLeZpI1iZ9B6L_RFL62Jd6MFVlsTjTxAisX38ebfBD-MAn2Mlyc8Dv4A/exec"; 
+        const _URL = "https://script.google.com/macros/s/AKfycbxvAqHXhssKjAgaEU-rhV1hdYOyDGfG0poyz9dPF6LU-p8bV0LYFUqsu-EeWT-Mrg/exec"; 
         const PORTAL_UPI_ID = "nageshyadav4u@oksbi"; 
         const DB_CURRENT = 'youth_current_user';
 
@@ -819,18 +819,12 @@
             });
 
             let now = Date.now();
-            let gracePeriodExpiry = now + (24 * 60 * 60 * 1000); // 24 Hours
-
             let newOccasion = { 
                 id: 'occ_' + now, 
                 name, 
                 date: date || "", 
                 upiId: upiId || "",
                 createdAt: now,
-                graceExpiry: gracePeriodExpiry,
-                trialExpiry: 0,
-                onetimeExpiry: 0,
-                subscriptionType: 'free_grace',
                 assignedMembers: selectedMembers,
                 entries: [] 
             };
@@ -842,74 +836,6 @@
             renderOccasions();
         }
 
-        let currentPayOccId = null;
-
-        function openPay49Modal(occId) {
-            currentPayOccId = occId;
-            let occ = currentUser.occasions.find(o => o.id === occId);
-            if(occ) {
-                document.getElementById('pay49OccName').innerText = occ.name;
-                openModal('pay49Modal');
-            }
-        }
-
-        function pay49UPI() {
-            let amount = "49.00";
-            let tn = encodeURIComponent("Occasion Registration Fee (15 Days Trial)");
-            let upiLink = `upi://pay?pa=${PORTAL_UPI_ID}&pn=DonationBook&am=${amount}&cu=INR&tn=${tn}`;
-
-            window.location.href = upiLink;
-
-            setTimeout(() => {
-                let confirmed = confirm("Did you complete the ₹49 UPI payment? Click OK to activate 15 days trial validity.");
-                if(!confirmed) return;
-
-                let occ = currentUser.occasions.find(o => o.id === currentPayOccId);
-                if(occ) {
-                    let now = Date.now();
-                    occ.trialExpiry = now + (15 * 24 * 60 * 60 * 1000); // 15 Days Trial
-                    occ.subscriptionType = 'trial_15days';
-                    syncUserDataWithSheet();
-                    closeModal('pay49Modal');
-                    alert("Payment Successful! 15 days trial activated.");
-                    renderOccasions();
-                }
-            }, 2000);
-        }
-
-        function openOnetimeModal(occId) {
-            currentPayOccId = occId;
-            let occ = currentUser.occasions.find(o => o.id === occId);
-            if(occ) {
-                document.getElementById('subOccName').innerText = occ.name;
-                openModal('subModal');
-            }
-        }
-
-        function payOnetime499() {
-            let amount = "499.00";
-            let tn = encodeURIComponent("Onetime Payment for Occasion Lifecycle");
-            let upiLink = `upi://pay?pa=${PORTAL_UPI_ID}&pn=DonationBook&am=${amount}&cu=INR&tn=${tn}`;
-
-            window.location.href = upiLink;
-
-            setTimeout(() => {
-                let confirmed = confirm("Did you complete the ₹499 onetime payment?");
-                if(!confirmed) return;
-
-                let occ = currentUser.occasions.find(o => o.id === currentPayOccId);
-                if(occ) {
-                    occ.onetimeExpiry = Date.now() + (100 * 365 * 24 * 60 * 60 * 1000);
-                    occ.subscriptionType = 'onetime_paid';
-                    syncUserDataWithSheet();
-                    closeModal('subModal');
-                    alert("Onetime Payment Successful! Full access & report downloading unlocked.");
-                    renderOccasions();
-                    openAccountsControl(occ.id);
-                }
-            }, 2000);
-        }
-
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');
             if(!currentUser.occasions || currentUser.occasions.length === 0) {
@@ -917,18 +843,10 @@
                 return;
             }
 
-            let now = Date.now();
-
             container.innerHTML = currentUser.occasions.map(occ => {
                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
                 let bal = inc - exp;
-
-                let ageInHours = (now - occ.createdAt) / (1000 * 60 * 60);
-                let ageInDays = (now - occ.createdAt) / (1000 * 60 * 60 * 24);
-
-                let needs49Payment = ageInHours > 24 && (!occ.trialExpiry || occ.trialExpiry === 0);
-                let needs499Onetime = ageInDays > 15 && (!occ.onetimeExpiry || now > occ.onetimeExpiry);
 
                 let countdownHtml = occ.date ? `
                     <div class="bg-stone-950 p-2.5 rounded-xl moving-border text-center">
@@ -942,38 +860,25 @@
                     </div>
                 ` : '';
 
-                let actionButtonHtml = "";
-                if(needs49Payment) {
-                    actionButtonHtml = `<button onclick="openPay49Modal('${occ.id}')" class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer animate-pulse moving-border">💳 Pay ₹49 Fee (24 hrs passed)</button>`;
-                } else if(needs499Onetime) {
-                    actionButtonHtml = `<button onclick="openOnetimeModal('${occ.id}')" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-2 rounded-xl text-xs shadow cursor-pointer animate-pulse moving-border">⚠️ 15 Days Passed! Pay ₹499 Onetime</button>`;
-                } else {
-                    actionButtonHtml = `
-                        <div class="space-y-1.5">
-                            ${occ.upiId ? `<button onclick="openDonateModal('${occ.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2 rounded-xl text-xs shadow cursor-pointer waterdrop-btn moving-border">💖 Donate / విరాళం ఇవ్వండి</button>` : ''}
-                            <div class="flex gap-2">
-                                <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
-                                <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Occasion Link">🔗</button>
-                            </div>
+                let actionButtonHtml = `
+                    <div class="space-y-1.5">
+                        ${occ.upiId ? `<button onclick="openDonateModal('${occ.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2 rounded-xl text-xs shadow cursor-pointer waterdrop-btn moving-border">💖 Donate / విరాళం ఇవ్వండి</button>` : ''}
+                        <div class="flex gap-2">
+                            <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
+                            <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Occasion Link">🔗</button>
                         </div>
-                    `;
-                }
+                    </div>
+                `;
 
                 let currentLang = localStorage.getItem('portal_lang') || 'te';
                 let donText = translations[currentLang] ? translations[currentLang].donation : "Donation";
                 let expText = translations[currentLang] ? translations[currentLang].expense : "Expense";
 
-                let badgeText = "Occasion";
-                if(needs49Payment) badgeText = "24h Passed - ₹49 Fee Due";
-                else if(needs499Onetime) badgeText = "15 Days Passed - ₹499 Due";
-                else if(ageInHours <= 24) badgeText = "Free Grace Period (24h)";
-                else if(occ.trialExpiry && now < occ.trialExpiry) badgeText = "15 Days Trial Active";
-
                 return `
                     <div class="bg-stone-900 rounded-2xl p-4 moving-border shadow-xl space-y-3">
                         <div class="flex justify-between items-start">
                             <div>
-                                <span class="text-[10px] ${needs49Payment || needs499Onetime ? 'text-red-400' : 'text-amber-400'} font-bold uppercase tracking-wider">${badgeText}</span>
+                                <span class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Occasion</span>
                                 <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
                             </div>
                             ${currentUser.isMainAdmin ? `<button onclick="deleteOccasion('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
@@ -1025,27 +930,10 @@
             let occ = currentUser.occasions.find(o => o.id === occId);
             if(!occ) return;
 
-            let now = Date.now();
-            let ageInHours = (now - occ.createdAt) / (1000 * 60 * 60);
-            let ageInDays = (now - occ.createdAt) / (1000 * 60 * 60 * 24);
-
-            if(ageInHours > 24 && (!occ.trialExpiry || occ.trialExpiry === 0)) {
-                openPay49Modal(occId);
-                return;
-            }
-            if(ageInDays > 15 && (!occ.onetimeExpiry || now > occ.onetimeExpiry)) {
-                openOnetimeModal(occId);
-                return;
-            }
-
             document.getElementById('modalOccasionTitle').innerText = occ.name;
 
             let downloadSection = document.getElementById('downloadReportSection');
-            if(occ.onetimeExpiry && now < occ.onetimeExpiry) {
-                downloadSection.classList.remove('hidden');
-            } else {
-                downloadSection.classList.add('hidden');
-            }
+            downloadSection.classList.remove('hidden');
 
             let isAllowed = currentUser.isMainAdmin || (occ.assignedMembers && occ.assignedMembers.includes(currentUser.mobile));
             
@@ -1107,21 +995,6 @@
         function addFinancialEntry() {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(!occ) return;
-
-            let now = Date.now();
-            let ageInHours = (now - occ.createdAt) / (1000 * 60 * 60);
-            let ageInDays = (now - occ.createdAt) / (1000 * 60 * 60 * 24);
-
-            if(ageInHours > 24 && (!occ.trialExpiry || occ.trialExpiry === 0)) {
-                closeModal('accountsModal');
-                openPay49Modal(occ.id);
-                return;
-            }
-            if(ageInDays > 15 && (!occ.onetimeExpiry || now > occ.onetimeExpiry)) {
-                closeModal('accountsModal');
-                openOnetimeModal(occ.id);
-                return;
-            }
 
             let isAllowed = currentUser.isMainAdmin || (occ.assignedMembers && occ.assignedMembers.includes(currentUser.mobile));
             if(!isAllowed) { alert("You don't have permission to add entries!"); return; }

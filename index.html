@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youth Organization Accounts & Occasions Portal</title>
+    <!-- Tailwind CSS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts for Telugu Text -->
+    <link href="https://fonts.googleapis.com/css2?family=Ramabhadra&family=Suranna&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Ramabhadra', sans-serif;
+            background-color: #451a03;
+        }
+        .title-font {
+            font-family: 'Suranna', serif;
+        }
+
+        /* Moving Gradient Border Animation */
+        @keyframes glowingBorder {
+            0% {
+                border-color: #f59e0b;
+                box-shadow: 0 0 5px rgba(245, 158, 11, 0.4), inset 0 0 5px rgba(245, 158, 11, 0.2);
+            }
+            33% {
+                border-color: #10b981;
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.6), inset 0 0 8px rgba(16, 185, 129, 0.3);
+            }
+            66% {
+                border-color: #3b82f6;
+                box-shadow: 0 0 10px rgba(59, 130, 246, 0.6), inset 0 0 8px rgba(59, 130, 246, 0.3);
+            }
+            100% {
+                border-color: #f59e0b;
+                box-shadow: 0 0 5px rgba(245, 158, 11, 0.4), inset 0 0 5px rgba(245, 158, 11, 0.2);
+            }
+        }
+
+        .moving-border {
+            border-width: 2px;
+            border-style: solid;
+            animation: glowingBorder 4s infinite linear;
+        }
+
+        @keyframes waterRipple {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+
+        .waterdrop-logo {
+            animation: waterRipple 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        @keyframes dropBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .waterdrop-btn {
+            animation: dropBounce 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex flex-col items-center antialiased">
+
+    <!-- Header Section (Fixed in English) -->
+    <header class="w-full max-w-md bg-stone-950 py-2.5 px-2.5 sticky top-0 z-45 shadow-xl moving-border">
+        <div class="flex items-center justify-between gap-1">
+            <div class="flex items-center gap-1.5 shrink-0">
+                <img src="https://i.pinimg.com/1200x/71/2a/69/712a69fdba7946de6d5d43d2b1496a6a.jpg" alt="Logo" class="w-7 h-7 rounded-full object-cover border border-amber-400 waterdrop-logo">
+                <span class="font-bold text-[11px] sm:text-xs text-amber-300 tracking-tight">DONATION BOOK</span>
+            </div>
+
+            <div class="flex items-center gap-1.5 shrink-0">
+                <!-- Language Selection Dropdown (Visible only before login) -->
+                <div id="languageDropdownContainer">
+                    <select id="languageSelect" onchange="changeLanguage(this.value)" class="bg-stone-900 text-amber-300 text-[10px] sm:text-[11px] font-bold py-1 px-1 rounded moving-border outline-none cursor-pointer">
+                        <option value="te">తెలుగు</option>
+                        <option value="en" selected>English</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="ta">தமிழ்</option>
+                        <option value="kn">ಕನ್ನಡ</option>
+                        <option value="ml">മലയാളം</option>
+                        <option value="gu">ગુજરાતી</option>
+                        <option value="bn">বাংলা</option>
+                        <option value="mr">मराठी</option>
+                        <option value="pa">ਪੰਜਾਬੀ</option>
+                    </select>
+                </div>
+
+                <div id="authHeaderButtons">
+                    <button onclick="openModal('loginModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg shadow cursor-pointer">Login</button>
+                </div>
+                
+                <div id="userProfileHeader" class="hidden flex items-center gap-1">
+                    <span id="loggedUserName" class="text-[10px] font-bold text-yellow-300 truncate max-w-[60px]"></span>
+                    <button onclick="logoutUser()" class="bg-red-600 hover:bg-red-700 text-white text-[9px] font-bold px-1.5 py-1 rounded shadow cursor-pointer">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-md px-4 py-4 space-y-6 flex-grow pb-16">
+
+        <!-- Public View Mode Container -->
+        <div id="publicViewContainer" class="space-y-5 hidden">
+            <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-stone-950 p-4 rounded-2xl shadow-xl text-center moving-border space-y-1">
+                <span id="pubModeLabel" class="text-[10px] font-black uppercase tracking-wider block opacity-80">Public View Mode</span>
+                <h2 id="pubOrgName" class="title-font text-xl font-black text-red-950 truncate">--</h2>
+                <p id="pubSubTitle" class="text-xs font-bold text-stone-900"></p>
+            </div>
+            <div id="pubContentArea" class="space-y-4"></div>
+            <div class="text-center pt-2">
+                <button onclick="window.location.href = window.location.pathname" id="btnGoHome" class="bg-stone-800 text-amber-400 text-xs font-bold px-4 py-2 rounded-xl moving-border cursor-pointer">🏠 Go to Home</button>
+            </div>
+        </div>
+
+        <!-- Guest / Public Home View -->
+        <div id="publicHomeView" class="space-y-4 text-center py-6">
+            <div class="bg-amber-900/40 p-6 rounded-2xl moving-border shadow-xl space-y-3">
+                <h2 id="homeTitleText" class="title-font text-2xl font-black text-yellow-400">విరాళాలు, ఖర్చులు మరియు ఆర్థిక వివరాలను సులభంగా నిర్వహించండి.</h2>
+                <p id="homeSubText" class="text-xs text-stone-200 leading-relaxed">వినాయక చవితి, సంక్రాంతి మరియు ఇతర వేడుకలకు సంబంధించిన అన్ని విరాళాలు, ఖర్చుల వివరాలను పారదర్శకంగా నమోదు చేయండి.</p>
+                <div class="pt-2 flex gap-3 justify-center">
+                    <button onclick="openModal('registerModal')" id="homeRegBtn" class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-sm px-5 py-2.5 rounded-xl shadow cursor-pointer waterdrop-btn moving-border">REGISTER HERE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logged-in User Dashboard View -->
+        <div id="userDashboardView" class="space-y-5 hidden">
+            <!-- Real-time Date & Time Display Bar -->
+            <div class="bg-stone-900 text-amber-300 px-3 py-2 rounded-xl moving-border text-center text-xs font-bold flex justify-between items-center shadow">
+                <span id="lblLiveClock">🕒 Live Clock:</span>
+                <span id="realtimeClock" class="text-yellow-400 font-mono">--</span>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-stone-950 p-4 rounded-2xl shadow-xl text-center moving-border">
+                <span id="lblOrgNameHeading" class="text-[10px] font-black uppercase tracking-wider block opacity-80">Organization Name</span>
+                <h2 id="displayOrgName" class="title-font text-xl font-black text-red-950 truncate">--</h2>
+                <div class="flex justify-center gap-2 mt-2">
+                    <button onclick="shareOrgLinkDirectly()" id="btnShareOrg" class="bg-stone-950 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full shadow inline-flex items-center gap-1 moving-border cursor-pointer">
+                        <span>🔗 Share Org Link</span>
+                    </button>
+                    <button onclick="openModal('membersModal')" id="adminMembersBtn" class="bg-stone-950 text-amber-300 text-xs font-bold px-3 py-1 rounded-full shadow inline-flex items-center gap-1 moving-border cursor-pointer hidden">
+                        <span id="lblMembersDesig">👥 Members & Designation</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center bg-stone-900/80 p-3 rounded-xl moving-border">
+                <h3 id="lblOccasionsHeader" class="font-bold text-sm text-yellow-400 flex items-center gap-1.5"><span>📅</span> Occasions</h3>
+                <button onclick="openAddOccasionModal()" id="btnAddOccasion" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-lg shadow cursor-pointer flex items-center gap-1 waterdrop-btn moving-border">
+                    <span>+ Add Occasion</span>
+                </button>
+            </div>
+
+            <div id="occasionsContainer" class="space-y-4"></div>
+        </div>
+    </main>
+
+    <!-- MODALS SECTION -->
+    <div id="registerModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col moving-border">
+            <div class="p-4 bg-amber-700 text-white flex justify-between items-center">
+                <h3 id="lblRegModalTitle" class="font-bold text-base">📝 Organization Registration</h3>
+                <button onclick="closeModal('registerModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 space-y-3 text-xs">
+                <div><label id="lblRegOrgName" class="font-bold block mb-1">Organization Name:</label><input type="text" id="regOrgName" placeholder="Ex: Ganapati Youth Wing" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblRegAdminName" class="font-bold block mb-1">Your Name (Admin Name):</label><input type="text" id="regAdminName" placeholder="Full Name" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblRegMobile" class="font-bold block mb-1">Mobile Number (User ID):</label><input type="tel" id="regMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblRegPassword" class="font-bold block mb-1">Password:</label><input type="password" id="regPassword" placeholder="Password" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <button onclick="registerOrganization()" id="btnRegisterSubmit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col moving-border">
+            <div class="p-4 bg-emerald-800 text-white flex justify-between items-center">
+                <h3 id="lblLoginModalTitle" class="font-bold text-base">🔐 User / Member Login</h3>
+                <button onclick="closeModal('loginModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 space-y-3 text-xs">
+                <div><label id="lblLoginMobile" class="font-bold block mb-1">Mobile Number (User ID):</label><input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblLoginPassword" class="font-bold block mb-1">Password:</label><input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <button onclick="loginUser()" id="btnLoginSubmit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Occasion Modal -->
+    <div id="addOccasionModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
+                <h3 id="lblAddOccModalTitle" class="font-bold text-base">➕ Add New Occasion</h3>
+                <button onclick="closeModal('addOccasionModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
+                <div><label id="lblOccNameInput" class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblOccDateInput" class="font-bold block mb-1">Start Date & Time <span class="text-stone-400 font-normal">(Optional)</span>:</label><input type="datetime-local" id="occDate" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblOccUpiInput" class="font-bold block mb-1 text-amber-900">💳  UPI ID (For receiving Donations):</label><input type="text" id="occUpiId" placeholder="Ex: yourname@oksbi" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                
+                <div>
+                    <label id="lblAssignMembers" class="font-bold block mb-1 text-amber-900">👥 Assign Members for this Occasion:</label>
+                    <div id="occMembersCheckboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg moving-border bg-stone-50"></div>
+                </div>
+
+                <button onclick="createOccasionFree()" id="btnSaveOccasion" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Create Occasion</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donate Amount Modal for Public / View Mode -->
+    <div id="donateModal" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
+            <h3 class="font-black text-lg text-yellow-400">💖 <span id="lblDonateForText">Donate for</span> <span id="donateOccName" class="text-amber-300">--</span></h3>
+            <p id="lblDonateSubText" class="text-xs text-stone-300">Enter donation amount to pay securely via UPI app:</p>
+            <div>
+                <input type="number" id="donationAmount" placeholder="Enter Amount (₹)" class="w-full p-3 rounded-xl bg-stone-950 moving-border text-white text-center font-black text-lg">
+            </div>
+            <button onclick="proceedToDonateUPI()" id="btnProceedDonate" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl shadow cursor-pointer waterdrop-btn moving-border">Proceed to Pay via UPI</button>
+            <button onclick="closeModal('donateModal')" id="btnCancelDonate" class="text-stone-400 text-xs underline cursor-pointer">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Accounts Control Panel Modal -->
+    <div id="accountsModal" class="fixed inset-0 bg-black/85 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-stone-950 flex justify-between items-center moving-border border-b">
+                <div>
+                    <span id="modalOccasionTitle" class="text-xs text-amber-400 font-bold block">Occasion Accounts</span>
+                    <h3 id="lblControlPanelTitle" class="font-black text-base text-yellow-300">Control Panel</h3>
+                </div>
+                <button onclick="closeModal('accountsModal')" class="text-2xl font-bold cursor-pointer">&times;</button>
+            </div>
+
+            <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-emerald-900/80 p-2.5 rounded-xl moving-border"><span id="lblCollections" class="text-[10px] text-emerald-200 block">Donation</span><span id="accTotInc" class="font-black text-sm text-white">₹0</span></div>
+                    <div class="bg-red-900/80 p-2.5 rounded-xl moving-border"><span id="lblExpenses" class="text-[10px] text-red-200 block">Expenses</span><span id="accTotExp" class="font-black text-sm text-white">₹0</span></div>
+                    <div class="bg-yellow-600 p-2.5 rounded-xl moving-border text-stone-950"><span id="lblBalance" class="text-[10px] font-bold block opacity-90">Balance</span><span id="accBal" class="font-black text-sm">₹0</span></div>
+                </div>
+
+                <!-- Download Account Report Button -->
+                <div id="downloadReportSection" class="hidden">
+                    <button onclick="downloadOccasionReport()" id="btnDownloadReport" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer flex items-center justify-center gap-2 moving-border">
+                        <span>📥 Download Accounts Report (TXT)</span>
+                    </button>
+                </div>
+
+                <div id="entryFormSection" class="bg-stone-800 p-3 rounded-xl moving-border space-y-2.5">
+                    <h4 id="lblAddEntry" class="font-bold text-yellow-400">➕ Add New Entry</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="entryType" class="p-2 rounded bg-stone-900 moving-border text-white">
+                            <option id="optDonation" value="income">Donation</option>
+                            <option id="optExpense" value="expense">Expense</option>
+                        </select>
+                        <input type="number" id="entryAmount" placeholder="Amount (₹)" class="p-2 rounded bg-stone-900 moving-border text-white">
+                    </div>
+                    <input type="text" id="entryDesc" placeholder="Description (Ex: Donor Name / Expense Details)" class="w-full p-2 rounded bg-stone-900 moving-border text-white">
+                    <button onclick="addFinancialEntry()" id="btnSaveEntry" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded shadow cursor-pointer moving-border">Save Entry</button>
+                </div>
+                <div id="unauthorizedMsg" class="hidden text-center text-red-400 text-xs py-2">⚠️ You don't have permission to add entries in this occasion (View-only mode).</div>
+
+                <div class="space-y-2">
+                    <h4 id="lblTransList" class="font-bold text-amber-300">📋 Transactions List</h4>
+                    <div id="financialEntriesList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members Management Modal -->
+    <div id="membersModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-amber-700 text-white flex justify-between items-center">
+                <h3 id="lblOrgMembersTitle" class="font-bold text-base">👥 Organization Members</h3>
+                <button onclick="closeModal('membersModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
+                <div class="bg-amber-50 p-3 rounded-xl moving-border space-y-2">
+                    <h4 id="lblAddNewMember" class="font-bold text-amber-900">➕ Add New Member</h4>
+                    <input type="text" id="memberName" placeholder="Member Name" class="w-full p-2 border rounded-lg moving-border">
+                    <input type="text" id="memberDesignation" placeholder="Designation (Ex: President)" class="w-full p-2 border rounded-lg moving-border">
+                    <input type="tel" id="memberMobile" placeholder="Mobile Number (User ID)" maxlength="10" class="w-full p-2 border rounded-lg moving-border">
+                    <input type="password" id="memberPassword" placeholder="Password" class="w-full p-2 border rounded-lg moving-border">
+                    <button onclick="addNewControlMember()" id="btnGrantAccess" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg shadow cursor-pointer moving-border">Grant Access</button>
+                </div>
+                <div class="space-y-2">
+                    <h4 id="lblMembersListTitle" class="font-bold text-stone-800">📋 Members List</h4>
+                    <div id="controlMembersList" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxK5o7jRmtwu-SrLLiHz68Hx1jNh1JVjBWpTQE7Iko2KJSudkqesQS2VWBwR7ttvkw/exec"; 
+        const PORTAL_UPI_ID = "nageshyadav4u@oksbi"; 
+        const DB_CURRENT = 'youth_current_user';
+
+        let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
+        let selectedOccasionId = null;
+
+        const translations = {
+            te: {
+                title: "విరాళాలు, ఖర్చులు మరియు ఆర్థిక వివరాలను సులభంగా నిర్వహించండి.",
+                subtitle: "వినాయక చవితి, సంక్రాంతి మరియు ఇతర వేడుకలకు సంబంధించిన అన్ని విరాళాలు, ఖర్చుల వివరాలను పారదర్శకంగా నమోదు చేయండి.",
+                registerBtn: "REGISTER HERE",
+                donation: "విరాళం",
+                expense: "ఖర్చు",
+                balance: "నిల్వ (Balance)",
+                addEntry: "➕ కొత్త ఎంట్రీని జోడించండి",
+                transList: "📋 లావాదేవీల జాబితా",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳UPI ID (For receiving Donations):",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            en: {
+                title: "Easily Manage Donations, Expenses, and Financial Records.",
+                subtitle: "Record all donations and expense details for Vinayaka Chavithi, Sankranti, and other celebrations transparently.",
+                registerBtn: "REGISTER HERE",
+                donation: "Donation",
+                expense: "Expense",
+                balance: "Balance",
+                addEntry: "➕ Add New Entry",
+                transList: "📋 Transactions List",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳UPI ID (For receiving Donations):",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            hi: {
+                title: "दान, खर्च और वित्तीय विवरणों को आसानी से प्रबंधित करें।",
+                subtitle: "विनायक चतुर्थी, संक्रांति और अन्य उत्सवों के लिए सभी दान और खर्च के विवरण पारदर्शी रूप से दर्ज करें।",
+                registerBtn: "REGISTER HERE",
+                donation: "दान",
+                expense: "खर्च",
+                balance: "शेष (Balance)",
+                addEntry: "➕ नया प्रविष्टि जोड़ें",
+                transList: "📋 लेनदेन की सूची",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳 UPI ID (For recieving Donations)",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            ta: {
+                title: "நன்கொடைகள், செலவுகள் மற்றும் நிதி பதிவுகளை எளிenberg நிர்வகிக்கவும்.",
+                subtitle: "வினாயகர் சதுர்த்தி, பொங்கல் மற்றும் பிற விழாக்களுக்கான அனைத்து நன்கொடைகள் மற்றும் செலவு விவரங்களை வெளிப்படையாகப் பதிவு செய்யுங்கள்.",
+                registerBtn: "REGISTER HERE",
+                donation: "நன்கொடை",
+                expense: "செலவு",
+                balance: "இருப்பு (Balance)",
+                addEntry: "➕ புதிய பதிவைச் சேர்க்கவும்",
+                transList: "📋 பரிவர்த்தனை பட்டியல்",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳 UPI ID (For receiving Donations):",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            kn: {
+                title: "ದೇಣಿಗೆಗಳು, ವೆಚ್ಚಗಳು ಮತ್ತು ಹಣಕಾಸಿನ ದಾಖಲೆಗಳನ್ನು ಸುಲಭವಾಗಿ ನಿರ್ವಹಿಸಿ.",
+                subtitle: "ವಿನಾಯಕ ಚತುರ್ಥಿ, ಸಂಕ್ರಾಂತಿ ಮತ್ತು ಇತರ ಹಬ್ಬಗಳಿಗೆ ಸಂಬಂಧಿಸಿದ ಎಲ್ಲಾ ದೇಣಿಗೆ ಮತ್ತು ವೆಚ್ಚದ ವಿವರಗಳನ್ನು ಪಾರದರ್ಶಕವಾಗಿ ದಾಖಲಿಸಿ.",
+                registerBtn: "REGISTER HERE",
+                donation: "ದೇಣಿಗೆ",
+                expense: "ವೆಚ್ಚ",
+                balance: "ಬಾಕಿ (Balance)",
+                addEntry: "➕ ಹೊಸ ನಮೂದನ್ನು ಸೇರಿಸಿ",
+                transList: "📋 ವಹಿವಾಟುಗಳ ಪಟ್ಟಿ",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳 UPI ID (For receiving Donations):",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            ml: {
+                title: "സംഭാവനകളും ചെലവുകളും സാമ്പത്തിക രേഖകളും എളുപ്പത്തിൽ കൈകാര്യം ചെയ്യുക.",
+                subtitle: "വിനായക ചതുർത്ഥി, മകരസംക്രാന്തി, മറ്റ് ആഘോഷങ്ങൾ എന്നിവയ്ക്കുള്ള എല്ലാ സംഭാവനകളും ചെലവുകളും സുതാര്യമായി രേഖപ്പെടുത്തുക.",
+                registerBtn: "REGISTER HERE",
+                donation: "സംഭാവന",
+                expense: "ചെലവ്",
+                balance: "ബാക്കി (Balance)",
+                addEntry: "➕ പുതിയ എൻട്രി ചേർക്കുക",
+                transList: "📋 ഇടപാടുകളുടെ ലിസ്റ്റ്",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳 UPI ID (For recieving Donations)",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            gu: {
+                title: "દાન, ખર્ચ અને નાણાકીય રેકોર્ડ્સ સરળતાથી મેનેજ કરો.",
+                subtitle: "વિનાયક ચતુર્થી, મકરસંક્રાંતિ અને અન્ય ઉત્સવો માટેના તમામ દાન અને ખર્ચની વિગતો પારદર્શક રીતે નોંધો.",
+                registerBtn: "REGISTER HERE",
+                donation: "દાન",
+                expense: "ખર્ચ",
+                balance: "બેલેન્સ",
+                addEntry: "➕ નવી એન્ટ્રી ઉમેરો",
+                transList: "📋 વ્યવહારોની યાદી",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳 UPI ID (For recieving Donations)",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            bn: {
+                title: "দান, খরচ এবং আর্থিক বিবরণী সহজেই পরিচালনা করুন।",
+                subtitle: "বিনায়ক চতুর্থী, সংক্রান্তি এবং অন্যান্য উৎসবের সমস্ত দান এবং খরচের বিবরণ স্বচ্ছতার সাথে রেকর্ড করুন।",
+                registerBtn: "REGISTER HERE",
+                donation: "দান",
+                expense: "খরচ",
+                balance: "ব্যালেন্স",
+                addEntry: "➕ নতুন এন্ট্রি যোগ করুন",
+                transList: "📋 লেনদেনের তালিকা",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳 UPI ID (For recieving Donations)",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            mr: {
+                title: "देणगी, खर्च आणि आर्थिक नोंदी सहज व्यवस्थापित करा.",
+                subtitle: "विनायक चतुर्थी, संक्रांती आणि इतर सणांसाठी सर्व देणगी आणि खर्चाचे तपशील पारदर्शकपणे नोंदवा.",
+                registerBtn: "REGISTER HERE",
+                donation: "देणगी",
+                expense: "खर्च",
+                balance: "शिल्लक (Balance)",
+                addEntry: "➕ नवीन नोंद జోడా",
+                transList: "📋 व्यवहारांची यादी",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳 UPI ID (For recieving Donations)",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            },
+            pa: {
+                title: "ਦਾਨ, ਖਰਚੇ ਅਤੇ ਵਿੱਤੀ ਰਿਕਾਰਡ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
+                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ ਅਤੇ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
+                registerBtn: "REGISTER HERE",
+                donation: "ਦਾਨ",
+                expense: "ਖਰਚਾ",
+                balance: "ਬਾਕੀ (Balance)",
+                addEntry: "➕ ਨਵੀਂ ਐਂਟਰੀ ਸ਼ਾਮਲ ਕਰੋ",
+                transList: "📋 ਲੈਣ-ਦੇਣ ਦੀ ਸੂਚੀ",
+                liveClock: "🕒 Live Clock:",
+                orgNameHeading: "Organization Name",
+                shareOrgLink: "🔗 Share Org Link",
+                membersDesig: "👥 Members & Designation",
+                occasionsHeader: "📅 Occasions",
+                addOccasionBtn: "+ Add Occasion",
+                regModalTitle: "📝 Organization Registration",
+                regOrgName: "Organization Name:",
+                regAdminName: "Your Name (Admin Name):",
+                regMobile: "Mobile Number (User ID):",
+                regPassword: "Password:",
+                regSubmit: "Register",
+                loginModalTitle: "🔐 User / Member Login",
+                loginMobile: "Mobile Number (User ID):",
+                loginPassword: "Password:",
+                loginSubmit: "Login",
+                addOccModalTitle: "➕ Add New Occasion",
+                occNameInput: "Occasion Name:",
+                occDateInput: "Start Date & Time (Optional):",
+                occUpiInput: "💳 UPI ID (For recieving Donations)",
+                assignMembers: "👥 Assign Members for this Occasion:",
+                saveOccasion: "Create Occasion",
+                donateForText: "Donate for",
+                donateSubText: "Enter donation amount to pay securely via UPI app:",
+                proceedDonate: "Proceed to Pay via UPI",
+                cancelDonate: "Cancel",
+                controlPanelTitle: "Control Panel",
+                downloadReport: "📥 Download Accounts Report (TXT)",
+                saveEntry: "Save Entry",
+                orgMembersTitle: "👥 Organization Members",
+                addNewMember: "➕ Add New Member",
+                grantAccess: "Grant Access",
+                membersListTitle: "📋 Members List"
+            }
+        };
+
+        function changeLanguage(lang) {
+            localStorage.setItem('portal_lang', lang);
+            let t = translations[lang] || translations['en'];
+
+            // Home
+            document.getElementById('homeTitleText').innerText = t.title;
+            document.getElementById('homeSubText').innerText = t.subtitle;
+            document.getElementById('homeRegBtn').innerText = t.registerBtn;
+
+            // Dashboard
+            document.getElementById('lblLiveClock').innerText = t.liveClock;
+            document.getElementById('lblOrgNameHeading').innerText = t.orgNameHeading;
+            document.getElementById('btnShareOrg').innerText = t.shareOrgLink;
+            document.getElementById('lblMembersDesig').innerText = t.membersDesig;
+            document.getElementById('lblOccasionsHeader').innerText = t.occasionsHeader;
+            document.getElementById('btnAddOccasion').innerText = t.addOccasionBtn;
+
+            // Modals
+            document.getElementById('lblRegModalTitle').innerText = t.regModalTitle;
+            document.getElementById('lblRegOrgName').innerText = t.regOrgName;
+            document.getElementById('lblRegAdminName').innerText = t.regAdminName;
+            document.getElementById('lblRegMobile').innerText = t.regMobile;
+            document.getElementById('lblRegPassword').innerText = t.regPassword;
+            document.getElementById('btnRegisterSubmit').innerText = t.regSubmit;
+
+            document.getElementById('lblLoginModalTitle').innerText = t.loginModalTitle;
+            document.getElementById('lblLoginMobile').innerText = t.loginMobile;
+            document.getElementById('lblLoginPassword').innerText = t.loginPassword;
+            document.getElementById('btnLoginSubmit').innerText = t.loginSubmit;
+
+            document.getElementById('lblAddOccModalTitle').innerText = t.addOccModalTitle;
+            document.getElementById('lblOccNameInput').innerText = t.occNameInput;
+            document.getElementById('lblOccDateInput').innerText = t.occDateInput;
+            document.getElementById('lblOccUpiInput').innerText = t.occUpiInput;
+            document.getElementById('lblAssignMembers').innerText = t.assignMembers;
+            document.getElementById('btnSaveOccasion').innerText = t.saveOccasion;
+
+            document.getElementById('lblDonateForText').innerText = t.donateForText;
+            document.getElementById('lblDonateSubText').innerText = t.donateSubText;
+            document.getElementById('btnProceedDonate').innerText = t.proceedDonate;
+            document.getElementById('btnCancelDonate').innerText = t.cancelDonate;
+
+            // Control Panel
+            document.getElementById('lblControlPanelTitle').innerText = t.controlPanelTitle;
+            document.getElementById('lblCollections').innerText = t.donation;
+            document.getElementById('lblExpenses').innerText = t.expense;
+            document.getElementById('lblBalance').innerText = t.balance;
+            document.getElementById('btnDownloadReport').innerText = t.downloadReport;
+            document.getElementById('lblAddEntry').innerText = t.addEntry;
+            document.getElementById('optDonation').innerText = t.donation;
+            document.getElementById('optExpense').innerText = t.expense;
+            document.getElementById('btnSaveEntry').innerText = t.saveEntry;
+            document.getElementById('lblTransList').innerText = t.transList;
+
+            // Members Modal
+            document.getElementById('lblOrgMembersTitle').innerText = t.orgMembersTitle;
+            document.getElementById('lblAddNewMember').innerText = t.addNewMember;
+            document.getElementById('btnGrantAccess').innerText = t.grantAccess;
+            document.getElementById('lblMembersListTitle').innerText = t.membersListTitle;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            let savedLang = localStorage.getItem('portal_lang') || 'te';
+            let selectElem = document.getElementById('languageSelect');
+            if(selectElem) selectElem.value = savedLang;
+            changeLanguage(savedLang);
+            startRealtimeClock();
+        });
+
+        function startRealtimeClock() {
+            setInterval(() => {
+                let clockElem = document.getElementById('realtimeClock');
+                if(clockElem) {
+                    let now = new Date();
+                    clockElem.innerText = now.toLocaleString();
+                }
+            }, 1000);
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        async function registerOrganization() {
+            let orgName = document.getElementById('regOrgName').value.trim();
+            let adminName = document.getElementById('regAdminName').value.trim();
+            let mobile = document.getElementById('regMobile').value.trim();
+            let pass = document.getElementById('regPassword').value.trim();
+
+            if(!orgName || !mobile || !pass) { alert("Please fill all required fields!"); return; }
+            if(mobile.length !== 10 || isNaN(mobile)) { alert("Please enter a valid 10-digit mobile number!"); return; }
+
+            let payload = {
+                action: "register",
+                orgName, adminName, mobile, pass,
+                userData: { 
+                    orgName, adminName, mobile, pass, 
+                    isMainAdmin: true,
+                    parentMobile: mobile,
+                    occasions: [], 
+                    members: [] 
+                }
+            };
+
+            try {
+                let res = await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+                let result = await res.json();
+                if(result.status === "success") {
+                    alert("Registration successful! Please login now.");
+                    closeModal('registerModal');
+                    openModal('loginModal');
+                } else if(result.status === "exists") {
+                    alert("This mobile number is already registered!");
+                }
+            } catch(e) { alert("Server connection error!"); }
+        }
+
+        async function loginUser() {
+            let mobile = document.getElementById('loginMobile').value.trim();
+            let pass = document.getElementById('loginPassword').value.trim();
+
+            if(!mobile || !pass) { alert("Please enter mobile number and password!"); return; }
+
+            try {
+                let res = await fetch(`${GOOGLE_SCRIPT_URL}?action=login&mobile=${mobile}&pass=${pass}`);
+                let result = await res.json();
+                if(result.status === "success") {
+                    currentUser = result.user;
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    closeModal('loginModal');
+                    initDashboard();
+                } else {
+                    alert("Incorrect mobile number or password!");
+                }
+            } catch(e) { alert("Login error!"); }
+        }
+
+        async function syncUserDataWithSheet() {
+            if(!currentUser) return;
+            let targetMobile = currentUser.parentMobile || currentUser.mobile;
+            let payload = { action: "update", mobile: targetMobile, userData: currentUser };
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
+                localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+            } catch(e) { console.error("Sync error", e); }
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem(DB_CURRENT);
+            window.location.href = window.location.pathname;
+        }
+
+        let publicOrgData = null;
+
+        async function checkPublicViewMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewMobile = urlParams.get('org');
+            const viewOccId = urlParams.get('occ');
+
+            if(viewMobile) {
+                document.getElementById('authHeaderButtons').classList.add('hidden');
+                document.getElementById('languageDropdownContainer').classList.add('hidden');
+                document.getElementById('publicHomeView').classList.add('hidden');
+                document.getElementById('publicViewContainer').classList.remove('hidden');
+
+                try {
+                    let res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrg&mobile=${viewMobile}`);
+                    let result = await res.json();
+                    if(result.status === "success") {
+                        publicOrgData = result.user;
+                        document.getElementById('pubOrgName').innerText = publicOrgData.orgName;
+
+                        let container = document.getElementById('pubContentArea');
+                        let currentLang = localStorage.getItem('portal_lang') || 'te';
+                        let donText = translations[currentLang] ? translations[currentLang].donation : "Donation";
+                        let expText = translations[currentLang] ? translations[currentLang].expense : "Expense";
+
+                        if(viewOccId) {
+                            let occ = publicOrgData.occasions.find(o => o.id === viewOccId);
+                            if(occ) {
+                                document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (View Mode)`;
+                                let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+                                let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
+                                let bal = inc - exp;
+
+                                container.innerHTML = `
+                                    <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
+                                        <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
+                                        <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2.5 rounded-xl moving-border">
+                                            <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
+                                            <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
+                                            <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
+                                        </div>
+                                        ${occ.upiId ? `<button onclick="openDonateModal('${occ.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl text-xs shadow cursor-pointer waterdrop-btn moving-border">💖 Donate / విరాళం ఇవ్వండి</button>` : ''}
+                                        <div class="space-y-1.5 pt-2">
+                                            <h5 class="font-bold text-xs text-amber-300">📋 Transactions List</h5>
+                                            ${occ.entries.map(ent => `
+                                                <div class="flex justify-between items-center bg-stone-800 p-2 rounded-lg moving-border text-xs">
+                                                    <div>
+                                                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${ent.type === 'income' ? 'bg-emerald-800 text-emerald-200' : 'bg-red-800 text-red-200'}">${ent.type === 'income' ? donText : expText}</span>
+                                                        <strong class="ml-1">${ent.desc}</strong>
+                                                    </div>
+                                                    <span class="font-bold ${ent.type === 'income' ? 'text-emerald-400' : 'text-red-400'}">₹${ent.amount}</span>
+                                                </div>
+                                            `).join('') || '<p class="text-xs text-stone-400 text-center">No transactions found</p>'}
+                                        </div>
+                                    </div>
+                                `;
+                            } else {
+                                container.innerHTML = `<p class="text-center text-xs text-stone-400">Occasion not found.</p>`;
+                            }
+                        } else {
+                            document.getElementById('pubSubTitle').innerText = `All Organization Occasions (View Mode)`;
+                            container.innerHTML = publicOrgData.occasions.map(occ => {
+                                let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+                                let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
+                                let bal = inc - exp;
+                                return `
+                                    <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
+                                        <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
+                                        <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2 rounded-xl moving-border">
+                                            <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
+                                            <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
+                                            <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
+                                        </div>
+                                        ${occ.upiId ? `<button onclick="openDonateModal('${occ.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2 rounded-xl text-xs shadow cursor-pointer waterdrop-btn moving-border">💖 Donate / విరాళం ఇవ్వండి</button>` : ''}
+                                        <button onclick="window.location.href='?org=${viewMobile}&occ=${occ.id}'" class="w-full bg-amber-600 text-stone-950 font-bold py-1.5 rounded-lg text-xs cursor-pointer moving-border">View Details ➔</button>
+                                    </div>
+                                `;
+                            }).join('') || `<p class="text-center text-xs text-stone-400">No occasions available.</p>`;
+                        }
+                    } else {
+                        document.getElementById('pubOrgName').innerText = "Organization not found";
+                    }
+                } catch(e) {
+                    document.getElementById('pubOrgName').innerText = "Connection Error";
+                }
+                return true;
+            }
+            return false;
+        }
+
+        let activeDonateOccId = null;
+
+        function openDonateModal(occId) {
+            activeDonateOccId = occId;
+            let occ = publicOrgData ? publicOrgData.occasions.find(o => o.id === occId) : currentUser.occasions.find(o => o.id === occId);
+            if(occ) {
+                document.getElementById('donateOccName').innerText = occ.name;
+                document.getElementById('donationAmount').value = '';
+                openModal('donateModal');
+            }
+        }
+
+        function proceedToDonateUPI() {
+            let amount = document.getElementById('donationAmount').value.trim();
+            if(!amount || amount <= 0) { alert("Please enter a valid donation amount!"); return; }
+
+            let occ = publicOrgData ? publicOrgData.occasions.find(o => o.id === activeDonateOccId) : currentUser.occasions.find(o => o.id === activeDonateOccId);
+            if(occ && occ.upiId) {
+                let tn = encodeURIComponent(`Donation for ${occ.name}`);
+                let upiLink = `upi://pay?pa=${occ.upiId}&pn=${encodeURIComponent(publicOrgData ? publicOrgData.orgName : currentUser.orgName)}&am=${amount}&cu=INR&tn=${tn}`;
+                window.location.href = upiLink;
+                closeModal('donateModal');
+            } else {
+                alert("UPI ID not configured for this occasion!");
+            }
+        }
+
+        async function initDashboard() {
+            if(await checkPublicViewMode()) return;
+
+            let authHeaderButtons = document.getElementById('authHeaderButtons');
+            let userProfileHeader = document.getElementById('userProfileHeader');
+            let publicHomeView = document.getElementById('publicHomeView');
+            let userDashboardView = document.getElementById('userDashboardView');
+            let adminMembersBtn = document.getElementById('adminMembersBtn');
+            let languageDropdownContainer = document.getElementById('languageDropdownContainer');
+
+            if(currentUser) {
+                authHeaderButtons.classList.add('hidden');
+                if(languageDropdownContainer) languageDropdownContainer.classList.add('hidden');
+                userProfileHeader.classList.remove('hidden');
+                publicHomeView.classList.add('hidden');
+                userDashboardView.classList.remove('hidden');
+
+                document.getElementById('loggedUserName').innerText = currentUser.adminName || currentUser.mobile;
+                document.getElementById('displayOrgName').innerText = currentUser.orgName;
+
+                if(currentUser.isMainAdmin) {
+                    adminMembersBtn.classList.remove('hidden');
+                    renderControlMembers();
+                } else {
+                    adminMembersBtn.classList.add('hidden');
+                }
+
+                renderOccasions();
+            } else {
+                authHeaderButtons.classList.remove('hidden');
+                if(languageDropdownContainer) languageDropdownContainer.classList.remove('hidden');
+                userProfileHeader.classList.add('hidden');
+                publicHomeView.classList.remove('hidden');
+                userDashboardView.classList.add('hidden');
+            }
+        }
+
+        function addNewControlMember() {
+            let name = document.getElementById('memberName').value.trim();
+            let designation = document.getElementById('memberDesignation').value.trim() || "Member";
+            let mobile = document.getElementById('memberMobile').value.trim();
+            let pass = document.getElementById('memberPassword').value.trim();
+
+            if(!name || !mobile || !pass) { alert("Please fill name, mobile, and password!"); return; }
+
+            if(!currentUser.members) currentUser.members = [];
+            currentUser.members.push({ name, designation, mobile, pass, parentMobile: currentUser.mobile });
+            
+            syncUserDataWithSheet();
+            renderControlMembers();
+            document.getElementById('memberName').value = '';
+            document.getElementById('memberDesignation').value = '';
+            document.getElementById('memberMobile').value = '';
+            document.getElementById('memberPassword').value = '';
+            alert("Member added successfully!");
+        }
+
+        function renderControlMembers() {
+            let list = document.getElementById('controlMembersList');
+            if(!currentUser.members || currentUser.members.length === 0) {
+                list.innerHTML = `<p class="text-xs text-stone-500">No members added</p>`;
+                return;
+            }
+            list.innerHTML = currentUser.members.map((m, idx) => `
+                <div class="flex justify-between items-center bg-stone-50 p-2 rounded-lg moving-border text-xs text-stone-900">
+                    <div>
+                        <strong>${m.name}</strong> <span class="text-amber-700 font-bold">(${m.designation})</span>
+                        <span class="block text-[10px] text-stone-500">📞 ${m.mobile}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <a href="tel:${m.mobile}" class="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg shadow inline-flex items-center justify-center w-7 h-7" title="Call">📞</a>
+                        <a href="https://wa.me/91${m.mobile}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white p-1.5 rounded-lg shadow inline-flex items-center justify-center w-7 h-7" title="WhatsApp Chat">
+                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                        </a>
+                        <button onclick="removeControlMember(${idx})" class="text-red-600 font-bold px-1 ml-1 cursor-pointer" title="Delete">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeControlMember(idx) {
+            if(confirm("Are you sure you want to remove this member?")) {
+                currentUser.members.splice(idx, 1);
+                syncUserDataWithSheet();
+                renderControlMembers();
+            }
+        }
+
+        function openAddOccasionModal() {
+            let container = document.getElementById('occMembersCheckboxes');
+            if(!currentUser.members || currentUser.members.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-stone-500">Please add members first using 'Members & Designation'.</p>`;
+            } else {
+                container.innerHTML = currentUser.members.map((m, i) => `
+                    <label class="flex items-center gap-2 cursor-pointer text-stone-800">
+                        <input type="checkbox" value="${m.mobile}" class="occ-member-chk w-4 h-4 text-amber-600 rounded">
+                        <span>${m.name} - <strong class="text-amber-800">${m.designation}</strong> (${m.mobile})</span>
+                    </label>
+                `).join('');
+            }
+            document.getElementById('occName').value = '';
+            document.getElementById('occDate').value = '';
+            document.getElementById('occUpiId').value = '';
+            openModal('addOccasionModal');
+        }
+
+        function createOccasionFree() {
+            let name = document.getElementById('occName').value.trim();
+            let date = document.getElementById('occDate').value;
+            let upiId = document.getElementById('occUpiId').value.trim();
+
+            if(!name) { alert("Please enter occasion name!"); return; }
+
+            let selectedMembers = [];
+            document.querySelectorAll('.occ-member-chk:checked').forEach(chk => {
+                selectedMembers.push(chk.value);
+            });
+
+            let now = Date.now();
+            let gracePeriodExpiry = now + (24 * 60 * 60 * 1000); // 24 Hours
+
+            let newOccasion = { 
+                id: 'occ_' + now, 
+                name, 
+                date: date || "", 
+                upiId: upiId || "",
+                createdAt: now,
+                graceExpiry: gracePeriodExpiry,
+                trialExpiry: 0,
+                onetimeExpiry: 0,
+                subscriptionType: 'free_grace',
+                assignedMembers: selectedMembers,
+                entries: [] 
+            };
+
+            currentUser.occasions.push(newOccasion);
+            syncUserDataWithSheet();
+            closeModal('addOccasionModal');
+            alert("Occasion created successfully!");
+            renderOccasions();
+        }
+
+        let currentPayOccId = null;
+
+        function openPay49Modal(occId) {
+            currentPayOccId = occId;
+            let occ = currentUser.occasions.find(o => o.id === occId);
+            if(occ) {
+                document.getElementById('pay49OccName').innerText = occ.name;
+                openModal('pay49Modal');
+            }
+        }
+
+        function pay49UPI() {
+            let amount = "49.00";
+            let tn = encodeURIComponent("Occasion Registration Fee (15 Days Trial)");
+            let upiLink = `upi://pay?pa=${PORTAL_UPI_ID}&pn=DonationBook&am=${amount}&cu=INR&tn=${tn}`;
+
+            window.location.href = upiLink;
+
+            setTimeout(() => {
+                let confirmed = confirm("Did you complete the ₹49 UPI payment? Click OK to activate 15 days trial validity.");
+                if(!confirmed) return;
+
+                let occ = currentUser.occasions.find(o => o.id === currentPayOccId);
+                if(occ) {
+                    let now = Date.now();
+                    occ.trialExpiry = now + (15 * 24 * 60 * 60 * 1000); // 15 Days Trial
+                    occ.subscriptionType = 'trial_15days';
+                    syncUserDataWithSheet();
+                    closeModal('pay49Modal');
+                    alert("Payment Successful! 15 days trial activated.");
+                    renderOccasions();
+                }
+            }, 2000);
+        }
+
+        function openOnetimeModal(occId) {
+            currentPayOccId = occId;
+            let occ = currentUser.occasions.find(o => o.id === occId);
+            if(occ) {
+                document.getElementById('subOccName').innerText = occ.name;
+                openModal('subModal');
+            }
+        }
+
+        function payOnetime499() {
+            let amount = "499.00";
+            let tn = encodeURIComponent("Onetime Payment for Occasion Lifecycle");
+            let upiLink = `upi://pay?pa=${PORTAL_UPI_ID}&pn=DonationBook&am=${amount}&cu=INR&tn=${tn}`;
+
+            window.location.href = upiLink;
+
+            setTimeout(() => {
+                let confirmed = confirm("Did you complete the ₹499 onetime payment?");
+                if(!confirmed) return;
+
+                let occ = currentUser.occasions.find(o => o.id === currentPayOccId);
+                if(occ) {
+                    occ.onetimeExpiry = Date.now() + (100 * 365 * 24 * 60 * 60 * 1000);
+                    occ.subscriptionType = 'onetime_paid';
+                    syncUserDataWithSheet();
+                    closeModal('subModal');
+                    alert("Onetime Payment Successful! Full access & report downloading unlocked.");
+                    renderOccasions();
+                    openAccountsControl(occ.id);
+                }
+            }, 2000);
+        }
+
+        function renderOccasions() {
+            let container = document.getElementById('occasionsContainer');
+            if(!currentUser.occasions || currentUser.occasions.length === 0) {
+                container.innerHTML = `<div class="bg-stone-900/60 p-5 rounded-xl moving-border text-center text-stone-400 text-xs">No occasions added yet.</div>`;
+                return;
+            }
+
+            let now = Date.now();
+
+            container.innerHTML = currentUser.occasions.map(occ => {
+                let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+                let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
+                let bal = inc - exp;
+
+                let ageInHours = (now - occ.createdAt) / (1000 * 60 * 60);
+                let ageInDays = (now - occ.createdAt) / (1000 * 60 * 60 * 24);
+
+                let needs49Payment = ageInHours > 24 && (!occ.trialExpiry || occ.trialExpiry === 0);
+                let needs499Onetime = ageInDays > 15 && (!occ.onetimeExpiry || now > occ.onetimeExpiry);
+
+                let countdownHtml = occ.date ? `
+                    <div class="bg-stone-950 p-2.5 rounded-xl moving-border text-center">
+                        <span class="text-[10px] text-stone-400 block mb-1">⏳ Time Remaining</span>
+                        <div class="grid grid-cols-4 gap-1 text-[11px] font-black text-amber-300">
+                            <div><span id="d_${occ.id}">0</span>d</div>
+                            <div><span id="h_${occ.id}">0</span>h</div>
+                            <div><span id="m_${occ.id}">0</span>m</div>
+                            <div><span id="s_${occ.id}">0</span>s</div>
+                        </div>
+                    </div>
+                ` : '';
+
+                let actionButtonHtml = "";
+                if(needs49Payment) {
+                    actionButtonHtml = `<button onclick="openPay49Modal('${occ.id}')" class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer animate-pulse moving-border">💳 Pay ₹49 Fee (24 hrs passed)</button>`;
+                } else if(needs499Onetime) {
+                    actionButtonHtml = `<button onclick="openOnetimeModal('${occ.id}')" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-2 rounded-xl text-xs shadow cursor-pointer animate-pulse moving-border">⚠️ 15 Days Passed! Pay ₹499 Onetime</button>`;
+                } else {
+                    actionButtonHtml = `
+                        <div class="space-y-1.5">
+                            ${occ.upiId ? `<button onclick="openDonateModal('${occ.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2 rounded-xl text-xs shadow cursor-pointer waterdrop-btn moving-border">💖 Donate / విరాళం ఇవ్వండి</button>` : ''}
+                            <div class="flex gap-2">
+                                <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
+                                <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Occasion Link">🔗</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                let currentLang = localStorage.getItem('portal_lang') || 'te';
+                let donText = translations[currentLang] ? translations[currentLang].donation : "Donation";
+                let expText = translations[currentLang] ? translations[currentLang].expense : "Expense";
+
+                let badgeText = "Occasion";
+                if(needs49Payment) badgeText = "24h Passed - ₹49 Fee Due";
+                else if(needs499Onetime) badgeText = "15 Days Passed - ₹499 Due";
+                else if(ageInHours <= 24) badgeText = "Free Grace Period (24h)";
+                else if(occ.trialExpiry && now < occ.trialExpiry) badgeText = "15 Days Trial Active";
+
+                return `
+                    <div class="bg-stone-900 rounded-2xl p-4 moving-border shadow-xl space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] ${needs49Payment || needs499Onetime ? 'text-red-400' : 'text-amber-400'} font-bold uppercase tracking-wider">${badgeText}</span>
+                                <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
+                            </div>
+                            ${currentUser.isMainAdmin ? `<button onclick="deleteOccasion('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
+                        </div>
+                        ${countdownHtml}
+                        <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950/50 p-2 rounded-xl moving-border">
+                            <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
+                            <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
+                            <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
+                        </div>
+                        <div class="pt-1">
+                            ${actionButtonHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteOccasion(id) {
+            if(confirm("Are you sure you want to delete this occasion?")) {
+                currentUser.occasions = currentUser.occasions.filter(o => o.id !== id);
+                syncUserDataWithSheet();
+                renderOccasions();
+            }
+        }
+
+        setInterval(() => {
+            if(!currentUser || !currentUser.occasions) return;
+            let now = Date.now();
+            currentUser.occasions.forEach(occ => {
+                if(!occ.date) return;
+                let target = new Date(occ.date).getTime();
+                let diff = target - now;
+                if(diff > 0) {
+                    let dElem = document.getElementById(`d_${occ.id}`);
+                    let hElem = document.getElementById(`h_${occ.id}`);
+                    let mElem = document.getElementById(`m_${occ.id}`);
+                    let sElem = document.getElementById(`s_${occ.id}`);
+                    if(dElem) dElem.innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    if(hElem) hElem.innerText = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    if(mElem) mElem.innerText = Math.floor((diff / (1000 * 60)) % 60);
+                    if(sElem) sElem.innerText = Math.floor((diff / 1000) % 60);
+                }
+            });
+        }, 1000);
+
+        function openAccountsControl(occId) {
+            selectedOccasionId = occId;
+            let occ = currentUser.occasions.find(o => o.id === occId);
+            if(!occ) return;
+
+            let now = Date.now();
+            let ageInHours = (now - occ.createdAt) / (1000 * 60 * 60);
+            let ageInDays = (now - occ.createdAt) / (1000 * 60 * 60 * 24);
+
+            if(ageInHours > 24 && (!occ.trialExpiry || occ.trialExpiry === 0)) {
+                openPay49Modal(occId);
+                return;
+            }
+            if(ageInDays > 15 && (!occ.onetimeExpiry || now > occ.onetimeExpiry)) {
+                openOnetimeModal(occId);
+                return;
+            }
+
+            document.getElementById('modalOccasionTitle').innerText = occ.name;
+
+            let downloadSection = document.getElementById('downloadReportSection');
+            if(occ.onetimeExpiry && now < occ.onetimeExpiry) {
+                downloadSection.classList.remove('hidden');
+            } else {
+                downloadSection.classList.add('hidden');
+            }
+
+            let isAllowed = currentUser.isMainAdmin || (occ.assignedMembers && occ.assignedMembers.includes(currentUser.mobile));
+            
+            let entryForm = document.getElementById('entryFormSection');
+            let unauthMsg = document.getElementById('unauthorizedMsg');
+
+            if(isAllowed) {
+                entryForm.classList.remove('hidden');
+                unauthMsg.classList.add('hidden');
+            } else {
+                entryForm.classList.add('hidden');
+                unauthMsg.classList.remove('hidden');
+            }
+
+            renderFinancialEntries();
+            openModal('accountsModal');
+        }
+
+        function downloadOccasionReport() {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(!occ) return;
+
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
+            let bal = inc - exp;
+
+            let reportText = `========================================\n`;
+            reportText += ` ORGANIZATION: ${currentUser.orgName}\n`;
+            reportText += ` OCCASION REPORT: ${occ.name}\n`;
+            reportText += ` DATE: ${new Date().toLocaleString()}\n`;
+            reportText += `========================================\n\n`;
+            reportText += `FINANCIAL SUMMARY:\n`;
+            reportText += `----------------------------------------\n`;
+            reportText += `Total Donations: ₹${inc}\n`;
+            reportText += `Total Expenses:  ₹${exp}\n`;
+            reportText += `Net Balance:     ₹${bal}\n\n`;
+            reportText += `TRANSACTIONS DETAILS:\n`;
+            reportText += `----------------------------------------\n`;
+
+            if(occ.entries.length === 0) {
+                reportText += `No transactions recorded yet.\n`;
+            } else {
+                occ.entries.forEach((ent, index) => {
+                    reportText += `${index + 1}. [${ent.type.toUpperCase()}] ₹${ent.amount} - ${ent.desc} (${ent.date})\n`;
+                });
+            }
+
+            reportText += `\n========================================\n`;
+            reportText += ` Generated via Donation Book Portal\n`;
+            reportText += `========================================\n`;
+
+            let blob = new Blob([reportText], { type: 'text/plain;charset=utf-8' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${occ.name}_Accounts_Report.txt`;
+            link.click();
+        }
+
+        function addFinancialEntry() {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(!occ) return;
+
+            let now = Date.now();
+            let ageInHours = (now - occ.createdAt) / (1000 * 60 * 60);
+            let ageInDays = (now - occ.createdAt) / (1000 * 60 * 60 * 24);
+
+            if(ageInHours > 24 && (!occ.trialExpiry || occ.trialExpiry === 0)) {
+                closeModal('accountsModal');
+                openPay49Modal(occ.id);
+                return;
+            }
+            if(ageInDays > 15 && (!occ.onetimeExpiry || now > occ.onetimeExpiry)) {
+                closeModal('accountsModal');
+                openOnetimeModal(occ.id);
+                return;
+            }
+
+            let isAllowed = currentUser.isMainAdmin || (occ.assignedMembers && occ.assignedMembers.includes(currentUser.mobile));
+            if(!isAllowed) { alert("You don't have permission to add entries!"); return; }
+
+            let type = document.getElementById('entryType').value;
+            let amount = document.getElementById('entryAmount').value.trim();
+            let desc = document.getElementById('entryDesc').value.trim();
+
+            if(!amount || !desc) { alert("Please enter amount and description!"); return; }
+
+            occ.entries.push({ id: 'ent_' + Date.now(), type, amount: Number(amount), desc, date: new Date().toLocaleDateString() });
+            syncUserDataWithSheet();
+            document.getElementById('entryAmount').value = '';
+            document.getElementById('entryDesc').value = '';
+            renderFinancialEntries();
+            renderOccasions();
+        }
+
+        function renderFinancialEntries() {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(!occ) return;
+
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
+            let bal = inc - exp;
+
+            document.getElementById('accTotInc').innerText = `₹${inc}`;
+            document.getElementById('accTotExp').innerText = `₹${exp}`;
+            document.getElementById('accBal').innerText = `₹${bal}`;
+
+            let listContainer = document.getElementById('financialEntriesList');
+            if(occ.entries.length === 0) { listContainer.innerHTML = `<p class="text-stone-500 text-center py-2 text-xs">No transactions</p>`; return; }
+
+            let currentLang = localStorage.getItem('portal_lang') || 'te';
+            let donText = translations[currentLang] ? translations[currentLang].donation : "Donation";
+            let expText = translations[currentLang] ? translations[currentLang].expense : "Expense";
+
+            listContainer.innerHTML = occ.entries.map((ent) => `
+                <div class="flex justify-between items-center bg-stone-800 p-2 rounded-lg moving-border text-xs">
+                    <div>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${ent.type === 'income' ? 'bg-emerald-800 text-emerald-200' : 'bg-red-800 text-red-200'}">${ent.type === 'income' ? donText : expText}</span>
+                        <strong class="ml-1 text-stone-200">${ent.desc}</strong>
+                        <span class="text-[9px] text-stone-400 block">${ent.date}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold ${ent.type === 'income' ? 'text-emerald-400' : 'text-red-400'}">₹${ent.amount}</span>
+                        ${currentUser.isMainAdmin || occ.assignedMembers?.includes(currentUser.mobile) ? `<button onclick="deleteFinancialEntry('${ent.id}')" class="text-red-400 hover:text-red-300 font-bold px-1 cursor-pointer">×</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteFinancialEntry(entId) {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(occ) {
+                occ.entries = occ.entries.filter(e => e.id !== entId);
+                syncUserDataWithSheet();
+                renderFinancialEntries();
+                renderOccasions();
+            }
+        }
+
+        function shareOrgLinkDirectly() {
+            let mainMobile = currentUser.parentMobile || currentUser.mobile;
+            let shareLink = `${window.location.origin}${window.location.pathname}?org=${mainMobile}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'DONATION BOOK',
+                    text: `Check out our organization accounts & donations portal:`,
+                    url: shareLink,
+                }).catch((error) => console.log('Sharing failed', error));
+            } else {
+                alert("Sharing is not supported on this browser.");
+            }
+        }
+
+        function shareOccasionLinkDirectly(occId, occName) {
+            let mainMobile = currentUser.parentMobile || currentUser.mobile;
+            let shareLink = `${window.location.origin}${window.location.pathname}?org=${mainMobile}&occ=${occId}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: occName,
+                    text: `Check out accounts and donations for ${occName}:`,
+                    url: shareLink,
+                }).catch((error) => console.log('Sharing failed', error));
+            } else {
+                alert("Sharing is not supported on this browser.");
+            }
+        }
+
+        initDashboard();
+    </script>
+</body>
+</html>

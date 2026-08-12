@@ -228,17 +228,23 @@
         </div>
     </div>
 
-    <!-- Pay ₹49 Fee QR Code Modal -->
+    <!-- Pay ₹49 Fee QR Code & UPI ID Modal -->
     <div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
-            <h3 class="font-black text-lg text-yellow-400">💳 Scan QR to Pay ₹49</h3>
-            <p class="text-xs text-stone-300">Scan via any UPI app (GPay, PhonePe, Paytm) to activate <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
+            <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
+            <p class="text-xs text-stone-300">Scan QR code using your UPI app or enter your UPI ID below to pay for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
             
+            <!-- QR Code Image -->
             <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
-                <img id="upiQrCodeImg" src="" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
+                <img src="image_f52ebe.png" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
             </div>
 
-            <p class="text-[10px] text-stone-400">After successful payment in your UPI app, click below:</p>
+            <div class="space-y-2 text-left">
+                <label class="text-[11px] font-bold text-amber-300 block">Or Enter Your UPI ID (Optional):</label>
+                <input type="text" id="userUpiIdInput" placeholder="Ex: yourname@oksbi" class="w-full p-2.5 rounded-xl bg-stone-950 moving-border text-white text-xs font-mono">
+            </div>
+
+            <p class="text-[10px] text-stone-400">After completing the payment in your own UPI app, click below:</p>
 
             <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl shadow cursor-pointer moving-border">I have paid ₹49 (Activate Occasion)</button>
             <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer">Cancel</button>
@@ -319,7 +325,6 @@
     <!-- JavaScript Application Logic -->
     <script>
         const _URL = "https://script.google.com/macros/s/AKfycbw18aGyXsrkIOGCZdqnwmGQgNx9IoIbp966UhEf5vsfT1gF_CpuLxkB3e5E9Lha6w/exec"; 
-        const PORTAL_UPI_ID = "nageshyadav4u@oksbi"; 
         const DB_CURRENT = 'youth_current_user';
 
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
@@ -803,17 +808,13 @@
 
             closeModal('addOccasionModal');
             document.getElementById('pay49OccName').innerText = name;
-
-            // Generate UPI QR Code via public API
-            let upiString = `upi://pay?pa=${PORTAL_UPI_ID}&pn=DonationBook&am=49.00&cu=INR&tn=${encodeURIComponent("Occasion Creation Fee")}`;
-            let qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiString)}`;
-            document.getElementById('upiQrCodeImg').src = qrApiUrl;
-
+            document.getElementById('userUpiIdInput').value = '';
             openModal('pay49Modal');
         }
 
         function confirmPaymentDone() {
-            let confirmed = confirm("Did you complete the ₹49 UPI payment? Click OK to save and activate your occasion.");
+            let userUpi = document.getElementById('userUpiIdInput').value.trim();
+            let confirmed = confirm(userUpi ? `Proceeding with UPI ID: ${userUpi}. Did you complete the ₹49 payment?` : "Did you complete the ₹49 UPI payment via QR code? Click OK to activate your occasion.");
             if(!confirmed) return;
 
             if(pendingOccasionData) {
@@ -821,7 +822,7 @@
                 syncUserDataWithSheet();
                 pendingOccasionData = null;
                 closeModal('pay49Modal');
-                alert("Payment Successful! Occasion created.");
+                alert("Payment Verified! Occasion created successfully.");
                 renderOccasions();
             }
         }

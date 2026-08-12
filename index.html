@@ -80,7 +80,7 @@
         <p id="loaderText" class="text-amber-300 font-bold text-xs tracking-wider">Loading, please wait...</p>
     </div>
 
-    <!-- Header Section (Fixed in English) -->
+    <!-- Header Section -->
     <header class="w-full max-w-md bg-stone-950 py-2.5 px-2.5 sticky top-0 z-45 shadow-xl moving-border">
         <div class="flex items-center justify-between gap-1">
             <div class="flex items-center gap-1.5 shrink-0">
@@ -89,7 +89,7 @@
             </div>
 
             <div class="flex items-center gap-1.5 shrink-0">
-                <!-- Language Selection Dropdown (Visible only before login) -->
+                <!-- Language Selection Dropdown -->
                 <div id="languageDropdownContainer">
                     <select id="languageSelect" onchange="changeLanguage(this.value)" class="bg-stone-900 text-amber-300 text-[10px] sm:text-[11px] font-bold py-1 px-1 rounded moving-border outline-none cursor-pointer">
                         <option value="te">తెలుగు</option>
@@ -261,7 +261,7 @@
                 </div>
 
                 <!-- Download Account Report Button -->
-                <div id="downloadReportSection" class="hidden">
+                <div id="downloadReportSection">
                     <button onclick="downloadOccasionReport()" id="btnDownloadReport" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer flex items-center justify-center gap-2 moving-border">
                         <span>📥 Download Accounts Report (TXT)</span>
                     </button>
@@ -313,14 +313,30 @@
         </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
-    <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbw7MgtsRtNqEB3Wir5fPNVaLAnII0CMv512afCU3owyeTCK9MKPQmje5ZvBKxtg8A/exec"; 
+    <!-- JavaScript Application Logic with Firebase Cloud Database -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCH1VF62e3j7fza5wStjZBGNld5xFjRIbI",
+            authDomain: "donation-book-e0cb5.firebaseapp.com",
+            projectId: "donation-book-e0cb5",
+            storageBucket: "donation-book-e0cb5.firebasestorage.app",
+            messagingSenderId: "674133692595",
+            appId: "1:674133692595:web:51d5d8907b37d6889720c6",
+            measurementId: "G-W1P54R2ZF1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         const PORTAL_UPI_ID = "nageshyadav4u@oksbi"; 
         const DB_CURRENT = 'youth_current_user';
 
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
         let selectedOccasionId = null;
+        let publicOrgData = null;
 
         const translations = {
             te: {
@@ -434,15 +450,15 @@
             document.getElementById('globalLoader').classList.add('hidden');
         }
 
-        function handleLoginButtonClick() {
+        window.handleLoginButtonClick = function() {
             showLoader("Opening login window...");
             setTimeout(() => {
                 hideLoader();
                 openModal('loginModal');
             }, 300);
-        }
+        };
 
-        function changeLanguage(lang) {
+        window.changeLanguage = function(lang) {
             localStorage.setItem('portal_lang', lang);
             let t = translations[lang] || translations['en'];
 
@@ -457,30 +473,12 @@
             document.getElementById('optDonation').innerText = t.donation;
             document.getElementById('optExpense').innerText = t.expense;
             document.getElementById('lblTransList').innerText = t.transList;
-        }
+        };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            let savedLang = localStorage.getItem('portal_lang') || 'te';
-            let selectElem = document.getElementById('languageSelect');
-            if(selectElem) selectElem.value = savedLang;
-            changeLanguage(savedLang);
-            startRealtimeClock();
-        });
+        window.openModal = function(id) { document.getElementById(id).classList.remove('hidden'); };
+        window.closeModal = function(id) { document.getElementById(id).classList.add('hidden'); };
 
-        function startRealtimeClock() {
-            setInterval(() => {
-                let clockElem = document.getElementById('realtimeClock');
-                if(clockElem) {
-                    let now = new Date();
-                    clockElem.innerText = now.toLocaleString();
-                }
-            }, 1000);
-        }
-
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-        async function registerOrganization() {
+        window.registerOrganization = async function() {
             let orgName = document.getElementById('regOrgName').value.trim();
             let adminName = document.getElementById('regAdminName').value.trim();
             let mobile = document.getElementById('regMobile').value.trim();
@@ -489,60 +487,75 @@
             if(!orgName || !mobile || !pass) { alert("Please fill all required fields!"); return; }
             if(mobile.length !== 10 || isNaN(mobile)) { alert("Please enter a valid 10-digit mobile number!"); return; }
 
-            showLoader("Registering organization...");
+            showLoader("Registering organization online...");
+            try {
+                const docRef = doc(db, "organizations", mobile);
+                const docSnap = await getDoc(docRef);
 
-            let payload = {
-                action: "register",
-                orgName, adminName, mobile, pass,
-                userData: { 
-                    orgName, adminName, mobile, pass, 
+                if (docSnap.exists()) {
+                    hideLoader();
+                    alert("This mobile number is already registered!");
+                    return;
+                }
+
+                let newOrgData = {
+                    orgName,
+                    adminName,
+                    mobile,
+                    pass,
                     isMainAdmin: true,
                     parentMobile: mobile,
-                    occasions: [], 
-                    members: [] 
-                }
-            };
+                    occasions: [],
+                    members: []
+                };
 
-            try {
-                let res = await fetch(_URL, { 
-                    method: "POST", 
-                    body: JSON.stringify(payload),
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    mode: "cors"
-                });
-                let result = await res.json();
+                await setDoc(docRef, newOrgData);
                 hideLoader();
-                if(result.status === "success") {
-                    alert("Registration successful! Please login now.");
-                    closeModal('registerModal');
-                    openModal('loginModal');
-                } else if(result.status === "exists") {
-                    alert("This mobile number is already registered!");
-                }
+                alert("Registration successful! Please login now.");
+                closeModal('registerModal');
+                openModal('loginModal');
             } catch(e) {
                 hideLoader();
-                alert("Server connection error!");
+                alert("Database connection error: " + e.message);
             }
-        }
+        };
 
-        async function loginUser() {
+        window.loginUser = async function() {
             let mobile = document.getElementById('loginMobile').value.trim();
             let pass = document.getElementById('loginPassword').value.trim();
 
             if(!mobile || !pass) { alert("Please enter mobile number and password!"); return; }
 
-            showLoader("Logging in & syncing data...");
-
+            showLoader("Logging in from cloud database...");
             try {
-                let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
-                    method: "GET",
-                    headers: { "Accept": "application/json" },
-                    mode: "cors"
+                const docRef = doc(db, "organizations", mobile);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists() && docSnap.data().pass === pass) {
+                    currentUser = docSnap.data();
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    hideLoader();
+                    closeModal('loginModal');
+                    initDashboard();
+                    return;
+                }
+
+                const querySnapshot = await getDocs(collection(db, "organizations"));
+                let foundOrg = null;
+
+                querySnapshot.forEach((document) => {
+                    let orgData = document.data();
+                    if(orgData.members && orgData.members.length > 0) {
+                        let sub = orgData.members.find(m => m.mobile === mobile && m.pass === pass);
+                        if(sub) {
+                            foundOrg = orgData;
+                        }
+                    }
                 });
-                let result = await res.json();
+
                 hideLoader();
-                if(result.status === "success") {
-                    currentUser = result.user;
+                if(foundOrg) {
+                    currentUser = foundOrg;
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
                     closeModal('loginModal');
                     initDashboard();
@@ -551,32 +564,30 @@
                 }
             } catch(e) {
                 hideLoader();
-                alert("Login error! Please check connection.");
+                alert("Login error: " + e.message);
             }
-        }
+        };
 
-        async function syncUserDataWithSheet() {
+        window.saveOrgData = async function() {
             if(!currentUser) return;
             let targetMobile = currentUser.parentMobile || currentUser.mobile;
-            let payload = { action: "update", mobile: targetMobile, userData: currentUser };
             try {
-                await fetch(_URL, { 
-                    method: "POST", 
-                    body: JSON.stringify(payload),
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    mode: "cors"
+                const docRef = doc(db, "organizations", targetMobile);
+                await updateDoc(docRef, {
+                    occasions: currentUser.occasions,
+                    members: currentUser.members
                 });
                 localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-            } catch(e) { console.error("Sync error", e); }
-        }
+            } catch(e) {
+                console.error("Cloud sync error:", e);
+            }
+        };
 
-        function logoutUser() {
+        window.logoutUser = function() {
             currentUser = null;
             localStorage.removeItem(DB_CURRENT);
             window.location.href = window.location.pathname;
-        }
-
-        let publicOrgData = null;
+        };
 
         async function checkPublicViewMode() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -589,17 +600,14 @@
                 document.getElementById('publicHomeView').classList.add('hidden');
                 document.getElementById('publicViewContainer').classList.remove('hidden');
 
-                showLoader("Loading public view...");
+                showLoader("Loading live public view...");
                 try {
-                    let res = await fetch(`${_URL}?action=getOrg&mobile=${viewMobile}`, {
-                        method: "GET",
-                        headers: { "Accept": "application/json" },
-                        mode: "cors"
-                    });
-                    let result = await res.json();
+                    const docRef = doc(db, "organizations", viewMobile);
+                    const docSnap = await getDoc(docRef);
                     hideLoader();
-                    if(result.status === "success") {
-                        publicOrgData = result.user;
+
+                    if(docSnap.exists()) {
+                        publicOrgData = docSnap.data();
                         document.getElementById('pubOrgName').innerText = publicOrgData.orgName;
 
                         let container = document.getElementById('pubContentArea');
@@ -610,7 +618,7 @@
                         if(viewOccId) {
                             let occ = publicOrgData.occasions.find(o => o.id === viewOccId);
                             if(occ) {
-                                document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (View Mode)`;
+                                document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (Live View)`;
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let bal = inc - exp;
@@ -642,7 +650,7 @@
                                 container.innerHTML = `<p class="text-center text-xs text-stone-400">Occasion not found.</p>`;
                             }
                         } else {
-                            document.getElementById('pubSubTitle').innerText = `All Organization Occasions (View Mode)`;
+                            document.getElementById('pubSubTitle').innerText = `All Organization Occasions (Live View)`;
                             container.innerHTML = publicOrgData.occasions.map(occ => {
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
@@ -675,7 +683,7 @@
 
         let activeDonateOccId = null;
 
-        function openDonateModal(occId) {
+        window.openDonateModal = function(occId) {
             activeDonateOccId = occId;
             let occ = publicOrgData ? publicOrgData.occasions.find(o => o.id === occId) : currentUser.occasions.find(o => o.id === occId);
             if(occ) {
@@ -683,9 +691,9 @@
                 document.getElementById('donationAmount').value = '';
                 openModal('donateModal');
             }
-        }
+        };
 
-        function proceedToDonateUPI() {
+        window.proceedToDonateUPI = function() {
             let amount = document.getElementById('donationAmount').value.trim();
             if(!amount || amount <= 0) { alert("Please enter a valid donation amount!"); return; }
 
@@ -698,11 +706,9 @@
             } else {
                 alert("UPI ID not configured for this occasion!");
             }
-        }
+        };
 
-        async function initDashboard() {
-            if(await checkPublicViewMode()) return;
-
+        function initDashboard() {
             let authHeaderButtons = document.getElementById('authHeaderButtons');
             let userProfileHeader = document.getElementById('userProfileHeader');
             let publicHomeView = document.getElementById('publicHomeView');
@@ -737,7 +743,7 @@
             }
         }
 
-        function addNewControlMember() {
+        window.addNewControlMember = function() {
             let name = document.getElementById('memberName').value.trim();
             let designation = document.getElementById('memberDesignation').value.trim() || "Member";
             let mobile = document.getElementById('memberMobile').value.trim();
@@ -748,14 +754,14 @@
             if(!currentUser.members) currentUser.members = [];
             currentUser.members.push({ name, designation, mobile, pass, parentMobile: currentUser.mobile });
             
-            syncUserDataWithSheet();
+            saveOrgData();
             renderControlMembers();
             document.getElementById('memberName').value = '';
             document.getElementById('memberDesignation').value = '';
             document.getElementById('memberMobile').value = '';
             document.getElementById('memberPassword').value = '';
             alert("Member added successfully!");
-        }
+        };
 
         function renderControlMembers() {
             let list = document.getElementById('controlMembersList');
@@ -780,15 +786,15 @@
             `).join('');
         }
 
-        function removeControlMember(idx) {
+        window.removeControlMember = function(idx) {
             if(confirm("Are you sure you want to remove this member?")) {
                 currentUser.members.splice(idx, 1);
-                syncUserDataWithSheet();
+                saveOrgData();
                 renderControlMembers();
             }
-        }
+        };
 
-        function openAddOccasionModal() {
+        window.openAddOccasionModal = function() {
             let container = document.getElementById('occMembersCheckboxes');
             if(!currentUser.members || currentUser.members.length === 0) {
                 container.innerHTML = `<p class="text-[11px] text-stone-500">Please add members first using 'Members & Designation'.</p>`;
@@ -804,9 +810,9 @@
             document.getElementById('occDate').value = '';
             document.getElementById('occUpiId').value = '';
             openModal('addOccasionModal');
-        }
+        };
 
-        function createOccasionFree() {
+        window.createOccasionFree = function() {
             let name = document.getElementById('occName').value.trim();
             let date = document.getElementById('occDate').value;
             let upiId = document.getElementById('occUpiId').value.trim();
@@ -830,11 +836,11 @@
             };
 
             currentUser.occasions.push(newOccasion);
-            syncUserDataWithSheet();
+            saveOrgData();
             closeModal('addOccasionModal');
             alert("Occasion created successfully!");
             renderOccasions();
-        }
+        };
 
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');
@@ -847,18 +853,6 @@
                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
                 let bal = inc - exp;
-
-                let countdownHtml = occ.date ? `
-                    <div class="bg-stone-950 p-2.5 rounded-xl moving-border text-center">
-                        <span class="text-[10px] text-stone-400 block mb-1">⏳ Time Remaining</span>
-                        <div class="grid grid-cols-4 gap-1 text-[11px] font-black text-amber-300">
-                            <div><span id="d_${occ.id}">0</span>d</div>
-                            <div><span id="h_${occ.id}">0</span>h</div>
-                            <div><span id="m_${occ.id}">0</span>m</div>
-                            <div><span id="s_${occ.id}">0</span>s</div>
-                        </div>
-                    </div>
-                ` : '';
 
                 let actionButtonHtml = `
                     <div class="space-y-1.5">
@@ -883,7 +877,6 @@
                             </div>
                             ${currentUser.isMainAdmin ? `<button onclick="deleteOccasion('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
                         </div>
-                        ${countdownHtml}
                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950/50 p-2 rounded-xl moving-border">
                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
                             <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
@@ -897,46 +890,22 @@
             }).join('');
         }
 
-        function deleteOccasion(id) {
+        window.deleteOccasion = function(id) {
             if(confirm("Are you sure you want to delete this occasion?")) {
                 currentUser.occasions = currentUser.occasions.filter(o => o.id !== id);
-                syncUserDataWithSheet();
+                saveOrgData();
                 renderOccasions();
             }
-        }
+        };
 
-        setInterval(() => {
-            if(!currentUser || !currentUser.occasions) return;
-            let now = Date.now();
-            currentUser.occasions.forEach(occ => {
-                if(!occ.date) return;
-                let target = new Date(occ.date).getTime();
-                let diff = target - now;
-                if(diff > 0) {
-                    let dElem = document.getElementById(`d_${occ.id}`);
-                    let hElem = document.getElementById(`h_${occ.id}`);
-                    let mElem = document.getElementById(`m_${occ.id}`);
-                    let sElem = document.getElementById(`s_${occ.id}`);
-                    if(dElem) dElem.innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    if(hElem) hElem.innerText = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                    if(mElem) mElem.innerText = Math.floor((diff / (1000 * 60)) % 60);
-                    if(sElem) sElem.innerText = Math.floor((diff / 1000) % 60);
-                }
-            });
-        }, 1000);
-
-        function openAccountsControl(occId) {
+        window.openAccountsControl = function(occId) {
             selectedOccasionId = occId;
             let occ = currentUser.occasions.find(o => o.id === occId);
             if(!occ) return;
 
             document.getElementById('modalOccasionTitle').innerText = occ.name;
 
-            let downloadSection = document.getElementById('downloadReportSection');
-            downloadSection.classList.remove('hidden');
-
             let isAllowed = currentUser.isMainAdmin || (occ.assignedMembers && occ.assignedMembers.includes(currentUser.mobile));
-            
             let entryForm = document.getElementById('entryFormSection');
             let unauthMsg = document.getElementById('unauthorizedMsg');
 
@@ -950,9 +919,9 @@
 
             renderFinancialEntries();
             openModal('accountsModal');
-        }
+        };
 
-        function downloadOccasionReport() {
+        window.downloadOccasionReport = function() {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(!occ) return;
 
@@ -990,9 +959,9 @@
             link.href = URL.createObjectURL(blob);
             link.download = `${occ.name}_Accounts_Report.txt`;
             link.click();
-        }
+        };
 
-        function addFinancialEntry() {
+        window.addFinancialEntry = function() {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(!occ) return;
 
@@ -1006,12 +975,12 @@
             if(!amount || !desc) { alert("Please enter amount and description!"); return; }
 
             occ.entries.push({ id: 'ent_' + Date.now(), type, amount: Number(amount), desc, date: new Date().toLocaleDateString() });
-            syncUserDataWithSheet();
+            saveOrgData();
             document.getElementById('entryAmount').value = '';
             document.getElementById('entryDesc').value = '';
             renderFinancialEntries();
             renderOccasions();
-        }
+        };
 
         function renderFinancialEntries() {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
@@ -1047,17 +1016,17 @@
             `).join('');
         }
 
-        function deleteFinancialEntry(entId) {
+        window.deleteFinancialEntry = function(entId) {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(occ) {
                 occ.entries = occ.entries.filter(e => e.id !== entId);
-                syncUserDataWithSheet();
+                saveOrgData();
                 renderFinancialEntries();
                 renderOccasions();
             }
-        }
+        };
 
-        function shareOrgLinkDirectly() {
+        window.shareOrgLinkDirectly = function() {
             let mainMobile = currentUser.parentMobile || currentUser.mobile;
             let shareLink = `${window.location.origin}${window.location.pathname}?org=${mainMobile}`;
             
@@ -1070,9 +1039,9 @@
             } else {
                 alert("Sharing is not supported on this browser.");
             }
-        }
+        };
 
-        function shareOccasionLinkDirectly(occId, occName) {
+        window.shareOccasionLinkDirectly = function(occId, occName) {
             let mainMobile = currentUser.parentMobile || currentUser.mobile;
             let shareLink = `${window.location.origin}${window.location.pathname}?org=${mainMobile}&occ=${occId}`;
             
@@ -1085,9 +1054,14 @@
             } else {
                 alert("Sharing is not supported on this browser.");
             }
+        };
+
+        async function bootApp() {
+            if(await checkPublicViewMode()) return;
+            initDashboard();
         }
 
-        initDashboard();
+        bootApp();
     </script>
 </body>
 </html>

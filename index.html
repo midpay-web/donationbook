@@ -216,6 +216,7 @@
             </div>
             <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
                 <div><label id="lblOccNameInput" class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblOccEstInput" class="font-bold block mb-1 text-amber-900">💰 Estimated Cost / Funding Required (₹):</label><input type="number" id="occEstimatedCost" placeholder="Ex: 50000" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 <div><label id="lblOccDateInput" class="font-bold block mb-1">Start Date & Time <span class="text-stone-400 font-normal">(Optional)</span>:</label><input type="datetime-local" id="occDate" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 
                 <div>
@@ -263,6 +264,22 @@
             </div>
 
             <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
+                <!-- Funding Estimation Summary Box -->
+                <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2">
+                    <div class="flex justify-between font-bold">
+                        <span class="text-stone-400">Estimated Cost:</span>
+                        <span id="estCostDisplay" class="text-amber-400">₹0</span>
+                    </div>
+                    <div class="flex justify-between font-bold">
+                        <span class="text-stone-400">Total Collected:</span>
+                        <span id="estCollectedDisplay" class="text-emerald-400">₹0</span>
+                    </div>
+                    <div class="flex justify-between font-bold border-t border-stone-800 pt-1.5">
+                        <span id="fundingGapLabel" class="text-yellow-300">Funding Gap / Deficit:</span>
+                        <span id="estGapDisplay" class="text-yellow-400">₹0</span>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-3 gap-2 text-center">
                     <div class="bg-emerald-900/80 p-2.5 rounded-xl moving-border"><span id="lblCollections" class="text-[10px] text-emerald-200 block">Donation</span><span id="accTotInc" class="font-black text-sm text-white">₹0</span></div>
                     <div class="bg-red-900/80 p-2.5 rounded-xl moving-border"><span id="lblExpenses" class="text-[10px] text-red-200 block">Expenses</span><span id="accTotExp" class="font-black text-sm text-white">₹0</span></div>
@@ -623,10 +640,17 @@
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let bal = inc - exp;
+                                let estCost = Number(occ.estimatedCost || 0);
+                                let gap = estCost - inc;
 
                                 container.innerHTML = `
                                     <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
                                         <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
+                                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-1 text-xs">
+                                            <div class="flex justify-between font-bold"><span class="text-stone-400">Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
+                                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                                            <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                                        </div>
                                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2.5 rounded-xl moving-border">
                                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
                                             <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
@@ -655,9 +679,16 @@
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let bal = inc - exp;
+                                let estCost = Number(occ.estimatedCost || 0);
+                                let gap = estCost - inc;
                                 return `
                                     <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
                                         <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
+                                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-1 text-xs">
+                                            <div class="flex justify-between font-bold"><span class="text-stone-400">Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
+                                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                                            <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                                        </div>
                                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2 rounded-xl moving-border">
                                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
                                             <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
@@ -781,12 +812,14 @@
                 `).join('');
             }
             document.getElementById('occName').value = '';
+            document.getElementById('occEstimatedCost').value = '';
             document.getElementById('occDate').value = '';
             openModal('addOccasionModal');
         }
 
         function createOccasionAndPay() {
             let name = document.getElementById('occName').value.trim();
+            let estimatedCost = document.getElementById('occEstimatedCost').value.trim();
             let date = document.getElementById('occDate').value;
 
             if(!name) { alert("Please enter occasion name!"); return; }
@@ -800,6 +833,7 @@
             pendingOccasionData = { 
                 id: 'occ_' + now, 
                 name, 
+                estimatedCost: Number(estimatedCost || 0),
                 date: date || "", 
                 createdAt: now,
                 assignedMembers: selectedMembers,
@@ -838,6 +872,8 @@
                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
                 let bal = inc - exp;
+                let estCost = Number(occ.estimatedCost || 0);
+                let gap = estCost - inc;
 
                 let actionButtonHtml = `
                     <div class="flex gap-2">
@@ -858,6 +894,11 @@
                                 <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
                             </div>
                             ${currentUser.isMainAdmin ? `<button onclick="deleteOccasion('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
+                        </div>
+                        <div class="bg-stone-950 p-2.5 rounded-xl moving-border space-y-1 text-xs">
+                            <div class="flex justify-between font-bold"><span class="text-stone-400">Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
+                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                            <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
                         </div>
                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950/50 p-2 rounded-xl moving-border">
                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
@@ -887,6 +928,14 @@
 
             document.getElementById('modalOccasionTitle').innerText = occ.name;
 
+            let estCost = Number(occ.estimatedCost || 0);
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let gap = estCost - inc;
+
+            document.getElementById('estCostDisplay').innerText = `₹${estCost}`;
+            document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
+            document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
+
             let downloadSection = document.getElementById('downloadReportSection');
             downloadSection.classList.remove('hidden');
 
@@ -914,12 +963,19 @@
             let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
             let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
             let bal = inc - exp;
+            let estCost = Number(occ.estimatedCost || 0);
+            let gap = estCost - inc;
 
             let reportText = `========================================\n`;
             reportText += ` ORGANIZATION: ${currentUser.orgName}\n`;
             reportText += ` OCCASION REPORT: ${occ.name}\n`;
             reportText += ` DATE: ${new Date().toLocaleString()}\n`;
             reportText += `========================================\n\n`;
+            reportText += `FUNDING & ESTIMATION:\n`;
+            reportText += `----------------------------------------\n`;
+            reportText += `Estimated Cost: ₹${estCost}\n`;
+            reportText += `Total Collected: ₹${inc}\n`;
+            reportText += `Funding Gap/Deficit: ₹${gap > 0 ? gap : 0}\n\n`;
             reportText += `FINANCIAL SUMMARY:\n`;
             reportText += `----------------------------------------\n`;
             reportText += `Total Donations: ₹${inc}\n`;
@@ -964,6 +1020,14 @@
             syncUserDataWithSheet();
             document.getElementById('entryAmount').value = '';
             document.getElementById('entryDesc').value = '';
+            
+            // Recalculate and update modal funding display
+            let estCost = Number(occ.estimatedCost || 0);
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let gap = estCost - inc;
+            document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
+            document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
+
             renderFinancialEntries();
             renderOccasions();
         }
@@ -1007,6 +1071,13 @@
             if(occ) {
                 occ.entries = occ.entries.filter(e => e.id !== entId);
                 syncUserDataWithSheet();
+                
+                let estCost = Number(occ.estimatedCost || 0);
+                let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+                let gap = estCost - inc;
+                document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
+                document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
+
                 renderFinancialEntries();
                 renderOccasions();
             }

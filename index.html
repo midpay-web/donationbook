@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <html lang="te">
 <head>
     <meta charset="UTF-8">
@@ -255,30 +254,31 @@
         </div>
     </div>
 
-  <!-- Pay ₹49 Fee UPI Verification Modal -->
-<div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
-        <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
-        <p class="text-xs text-stone-300">Scan QR to pay for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
-        
-        <!-- QR Code Image -->
-        <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
-            <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
-        </div>
-
-        <div class="space-y-3 text-left">
-            <div>
-                <label class="text-[11px] font-bold text-amber-300 block">Enter UPI Transaction ID (Required):</label>
-                <input type="text" id="upiTransactionId" placeholder="Ex: 123456789012" class="w-full p-2.5 rounded-xl bg-stone-950 moving-border text-white text-xs font-mono">
+    <!-- Pay ₹49 Fee UPI Verification Modal -->
+    <div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
+            <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
+            <p class="text-xs text-stone-300">Scan QR to pay (nageshyadav4u@oksbi) for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
+            
+            <!-- QR Code Image -->
+            <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
+                <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
             </div>
+
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="text-[11px] font-bold text-amber-300 block">Enter UPI Transaction ID (Required):</label>
+                    <input type="text" id="upiTransactionId" placeholder="Ex: 123456789012" class="w-full p-2.5 rounded-xl bg-stone-950 moving-border text-white text-xs font-mono">
+                </div>
+            </div>
+
+            <p class="text-[10px] text-stone-400">దయచేసి మీ Google Pay / PhonePe ద్వారా చెల్లించి, Transaction ID ని ఇక్కడ ఎంటర్ చేయండి.</p>
+
+            <!-- Submit Button -->
+            <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl shadow cursor-pointer moving-border">Submit</button>
+            <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer block mx-auto">Cancel</button>
         </div>
-
-        <p class="text-[10px] text-stone-400">Payment verify చేయడానికి మీ UPI Transaction ID ని తప్పనిసరిగా ఎంటర్ చేయండి.</p>
-
-        <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl shadow cursor-pointer moving-border">Submit Payment Details</button>
-        <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer block mx-auto">Cancel</button>
     </div>
-</div>
 
     <!-- Accounts Control Panel Modal -->
     <div id="accountsModal" class="fixed inset-0 bg-black/85 hidden z-50 flex items-center justify-center p-4">
@@ -901,32 +901,29 @@
 
             closeModal('addOccasionModal');
             document.getElementById('pay49OccName').innerText = name;
-            document.getElementById('userUpiIdInput').value = '';
+            document.getElementById('upiTransactionId').value = '';
             openModal('pay49Modal');
         }
 
         function confirmPaymentDone() {
-    let transactionId = document.getElementById('upiTransactionId').value.trim();
-    
-    // ట్రాన్సాక్షన్ ఐడి ఎంటర్ చేశారో లేదో చూస్తుంది
-    if(!transactionId) {
-        alert("దయచేసి మీ UPI Transaction ID ని ఎంటర్ చేయండి!");
-        return;
-    }
+            let transactionId = document.getElementById('upiTransactionId').value.trim();
+            
+            if(!transactionId) {
+                alert("దయచేసి మీ UPI Transaction ID ని ఎంటర్ చేయండి!");
+                return;
+            }
 
-    if(pendingOccasionData) {
-        // ట్రాన్సాక్షన్ ఐడిని అకేషన్ డేటాలో సేవ్ చేస్తున్నాం
-        pendingOccasionData.transactionId = transactionId;
-        
-        currentUser.occasions.push(pendingOccasionData);
-        syncUserDataWithSheet();
-        
-        pendingOccasionData = null;
-        closeModal('pay49Modal');
-        alert("వివరాలు సబ్మిట్ చేయబడ్డాయి! అకేషన్ క్రియేట్ అయ్యింది.");
-        renderOccasions();
-    }
-}
+            if(pendingOccasionData) {
+                pendingOccasionData.transactionId = transactionId;
+                
+                currentUser.occasions.push(pendingOccasionData);
+                syncUserDataWithSheet();
+                
+                pendingOccasionData = null;
+                closeModal('pay49Modal');
+                alert("వివరాలు సబ్మిట్ చేయబడ్డాయి! అకేషన్ క్రియేట్ అయ్యింది.");
+                renderOccasions();
+            }
         }
 
         function renderOccasions() {

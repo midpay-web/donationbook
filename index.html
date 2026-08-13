@@ -456,7 +456,7 @@
             },
             pa: {
                 title: "ਦਾਨ, ਖਰਚੇ ਅਤੇ ਵਿੱਤੀ ਰਿਕਾਰਡ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
-                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ සහ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
+                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ ਅਤੇ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
                 registerBtn: "REGISTER HERE",
                 donation: "ਦਾਨ",
                 expense: "ਖਰਚਾ",
@@ -718,7 +718,7 @@
                                                 <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
                                             </div>
                                         </div>
-                                        <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2 rounded-xl moving-border">
+                                        <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2.5 rounded-xl moving-border">
                                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
                                             <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
                                             <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
@@ -971,7 +971,6 @@
             document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
             document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
 
-            // Render view mode items list
             let parts = occ.estimations || [];
             let listDiv = document.getElementById('estimationItemsList');
             if(parts.length === 0) {
@@ -980,7 +979,6 @@
                 listDiv.innerHTML = parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300 border-b border-stone-800/50 pb-0.5"><span>${p.name}:</span><span class="text-amber-300 font-bold">₹${p.cost}</span></div>`).join('');
             }
 
-            // Populate edit inputs container
             let editInputsContainer = document.getElementById('dynamicEstimationInputs');
             editInputsContainer.innerHTML = '';
             if(parts.length === 0) {
@@ -989,7 +987,6 @@
                 parts.forEach(p => addEstimationRow(p.name, p.cost));
             }
 
-            // Ensure view mode is active
             document.getElementById('estViewMode').classList.remove('hidden');
             document.getElementById('estEditMode').classList.add('hidden');
 
@@ -1015,7 +1012,6 @@
 
         function addEstimationRow(name, cost) {
             let container = document.getElementById('dynamicEstimationInputs');
-            let rowId = 'row_' + Date.now() + Math.random().toString(36.substring(2, 5));
             let rowDiv = document.createElement('div');
             rowDiv.className = "flex gap-1 items-center est-row";
             rowDiv.innerHTML = `
@@ -1060,7 +1056,6 @@
 
             syncUserDataWithSheet();
 
-            // Update View Mode List UI
             let listDiv = document.getElementById('estimationItemsList');
             if(newEstimations.length === 0) {
                 listDiv.innerHTML = `<p class="text-stone-500 text-center py-1">No estimations added yet</p>`;
@@ -1152,7 +1147,6 @@
             document.getElementById('entryAmount').value = '';
             document.getElementById('entryDesc').value = '';
             
-            // Recalculate and update modal funding display
             let estCost = Number(occ.estimatedCost || 0);
             let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
             let gap = estCost - inc;

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donation Book</title>
-    <!-- Tailwind CSS Script -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Tailwind CSS CDN v3 (Stable) -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for Telugu Text -->
     <link href="https://fonts.googleapis.com/css2?family=Ramabhadra&family=Suranna&display=swap" rel="stylesheet">
     <style>
@@ -17,24 +17,11 @@
             font-family: 'Suranna', serif;
         }
 
-        /* Moving Gradient Border Animation */
         @keyframes glowingBorder {
-            0% {
-                border-color: #f59e0b;
-                box-shadow: 0 0 5px rgba(245, 158, 11, 0.4), inset 0 0 5px rgba(245, 158, 11, 0.2);
-            }
-            33% {
-                border-color: #10b981;
-                box-shadow: 0 0 10px rgba(16, 185, 129, 0.6), inset 0 0 8px rgba(16, 185, 129, 0.3);
-            }
-            66% {
-                border-color: #3b82f6;
-                box-shadow: 0 0 10px rgba(59, 130, 246, 0.6), inset 0 0 8px rgba(59, 130, 246, 0.3);
-            }
-            100% {
-                border-color: #f59e0b;
-                box-shadow: 0 0 5px rgba(245, 158, 11, 0.4), inset 0 0 5px rgba(245, 158, 11, 0.2);
-            }
+            0% { border-color: #f59e0b; box-shadow: 0 0 5px rgba(245, 158, 11, 0.4); }
+            33% { border-color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+            66% { border-color: #3b82f6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.6); }
+            100% { border-color: #f59e0b; box-shadow: 0 0 5px rgba(245, 158, 11, 0.4); }
         }
 
         .moving-border {
@@ -385,6 +372,13 @@
 
     <!-- JavaScript Application Logic -->
     <script>
+        // Tailwind Play CDN support
+        tailwind.config = {
+            theme: {
+                extend: {}
+            }
+        }
+
         const _URL = "https://script.google.com/macros/s/AKfycbw18aGyXsrkIOGCZdqnwmGQgNx9IoIbp966UhEf5vsfT1gF_CpuLxkB3e5E9Lha6w/exec"; 
         const DB_CURRENT = 'youth_current_user';
 
@@ -1277,5 +1271,7 @@
 
         initDashboard();
     </script>
+    <!-- Tailwind CSS v3 Play CDN Script -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </body>
 </html>

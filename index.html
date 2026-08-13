@@ -207,24 +207,41 @@
         </div>
     </div>
 
-    <!-- Add Occasion Modal -->
+    <!-- Add Occasion Modal with Detailed Estimations -->
     <div id="addOccasionModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
             <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
-                <h3 id="lblAddOccModalTitle" class="font-bold text-base">➕ Add New Occasion</h3>
+                <h3 id="lblAddOccModalTitle" class="font-bold text-base">➕ Add New Occasion & Budget</h3>
                 <button onclick="closeModal('addOccasionModal')" class="text-xl font-bold cursor-pointer">&times;</button>
             </div>
             <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
-                <div><label id="lblOccNameInput" class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label id="lblOccEstInput" class="font-bold block mb-1 text-amber-900">💰 Estimated Cost / Funding Required (₹):</label><input type="number" id="occEstimatedCost" placeholder="Ex: 50000" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label id="lblOccDateInput" class="font-bold block mb-1">Start Date & Time <span class="text-stone-400 font-normal">(Optional)</span>:</label><input type="datetime-local" id="occDate" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2 border rounded-lg bg-stone-50"></div>
                 
-                <div>
-                    <label id="lblAssignMembers" class="font-bold block mb-1 text-amber-900">👥 Assign Members for this Occasion:</label>
-                    <div id="occMembersCheckboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg moving-border bg-stone-50"></div>
+                <!-- Detailed Cost Breakdown Inputs -->
+                <div class="bg-amber-50 p-3 rounded-lg border border-amber-200 space-y-2">
+                    <label class="font-bold block text-amber-900">💡 Detailed Cost Estimations (₹):</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><span class="text-[10px] font-bold text-stone-700">Lighting</span><input type="number" id="estLighting" placeholder="₹0" oninput="calculateTotalEstimation()" class="w-full p-1.5 border rounded bg-white"></div>
+                        <div><span class="text-[10px] font-bold text-stone-700">Decoration</span><input type="number" id="estDecoration" placeholder="₹0" oninput="calculateTotalEstimation()" class="w-full p-1.5 border rounded bg-white"></div>
+                        <div><span class="text-[10px] font-bold text-stone-700">Sound System</span><input type="number" id="estSound" placeholder="₹0" oninput="calculateTotalEstimation()" class="w-full p-1.5 border rounded bg-white"></div>
+                        <div><span class="text-[10px] font-bold text-stone-700">Food / Prasadam</span><input type="number" id="estFood" placeholder="₹0" oninput="calculateTotalEstimation()" class="w-full p-1.5 border rounded bg-white"></div>
+                        <div><span class="text-[10px] font-bold text-stone-700">Venue / Tent</span><input type="number" id="estVenue" placeholder="₹0" oninput="calculateTotalEstimation()" class="w-full p-1.5 border rounded bg-white"></div>
+                        <div><span class="text-[10px] font-bold text-stone-700">Others / Misc</span><input type="number" id="estOthers" placeholder="₹0" oninput="calculateTotalEstimation()" class="w-full p-1.5 border rounded bg-white"></div>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t border-amber-200 font-bold text-amber-950">
+                        <span>Total Estimated Cost:</span>
+                        <span id="estTotalPreview" class="text-sm text-emerald-700 font-black">₹0</span>
+                    </div>
                 </div>
 
-                <button onclick="createOccasionAndPay()" id="btnSaveOccasion" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Proceed to Pay & Create</button>
+                <div><label class="font-bold block mb-1">Start Date & Time <span class="text-stone-400 font-normal">(Optional)</span>:</label><input type="datetime-local" id="occDate" class="w-full p-2.5 border rounded-lg bg-stone-50"></div>
+                
+                <div>
+                    <label class="font-bold block mb-1 text-amber-900">👥 Assign Members for this Occasion:</label>
+                    <div id="occMembersCheckboxes" class="space-y-1.5 max-h-24 overflow-y-auto border p-2 rounded-lg bg-stone-50"></div>
+                </div>
+
+                <button onclick="createOccasionAndPay()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer">Proceed to Pay & Create</button>
             </div>
         </div>
     </div>
@@ -264,19 +281,24 @@
             </div>
 
             <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
-                <!-- Funding Estimation Summary Box -->
+                <!-- Detailed Funding Estimation Summary Box -->
                 <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2">
-                    <div class="flex justify-between font-bold">
-                        <span class="text-stone-400">Estimated Cost:</span>
-                        <span id="estCostDisplay" class="text-amber-400">₹0</span>
+                    <h4 class="font-bold text-amber-400 text-center pb-1 border-b border-stone-800">📊 Budget Breakdown & Funding</h4>
+                    <div class="grid grid-cols-2 gap-1 text-[11px] text-stone-300 pt-1">
+                        <div>Lighting: <span id="dtlLighting" class="text-amber-300">₹0</span></div>
+                        <div>Decoration: <span id="dtlDecoration" class="text-amber-300">₹0</span></div>
+                        <div>Sound System: <span id="dtlSound" class="text-amber-300">₹0</span></div>
+                        <div>Food/Prasadam: <span id="dtlFood" class="text-amber-300">₹0</span></div>
+                        <div>Venue/Tent: <span id="dtlVenue" class="text-amber-300">₹0</span></div>
+                        <div>Others: <span id="dtlOthers" class="text-amber-300">₹0</span></div>
                     </div>
-                    <div class="flex justify-between font-bold">
-                        <span class="text-stone-400">Total Collected:</span>
-                        <span id="estCollectedDisplay" class="text-emerald-400">₹0</span>
-                    </div>
-                    <div class="flex justify-between font-bold border-t border-stone-800 pt-1.5">
-                        <span id="fundingGapLabel" class="text-yellow-300">Funding Gap / Deficit:</span>
-                        <span id="estGapDisplay" class="text-yellow-400">₹0</span>
+                    <div class="border-t border-stone-800 pt-2 space-y-1">
+                        <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span id="estCostDisplay" class="text-amber-400">₹0</span></div>
+                        <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span id="estCollectedDisplay" class="text-emerald-400">₹0</span></div>
+                        <div class="flex justify-between font-bold border-t border-stone-800 pt-1.5">
+                            <span id="fundingGapLabel" class="text-yellow-300">Funding Gap / Deficit:</span>
+                            <span id="estGapDisplay" class="text-yellow-400">₹0</span>
+                        </div>
                     </div>
                 </div>
 
@@ -812,17 +834,40 @@
                 `).join('');
             }
             document.getElementById('occName').value = '';
-            document.getElementById('occEstimatedCost').value = '';
+            document.getElementById('estLighting').value = '';
+            document.getElementById('estDecoration').value = '';
+            document.getElementById('estSound').value = '';
+            document.getElementById('estFood').value = '';
+            document.getElementById('estVenue').value = '';
+            document.getElementById('estOthers').value = '';
+            document.getElementById('estTotalPreview').innerText = '₹0';
             document.getElementById('occDate').value = '';
             openModal('addOccasionModal');
         }
 
+        function calculateTotalEstimation() {
+            let l = Number(document.getElementById('estLighting').value || 0);
+            let d = Number(document.getElementById('estDecoration').value || 0);
+            let s = Number(document.getElementById('estSound').value || 0);
+            let f = Number(document.getElementById('estFood').value || 0);
+            let v = Number(document.getElementById('estVenue').value || 0);
+            let o = Number(document.getElementById('estOthers').value || 0);
+            let total = l + d + s + f + v + o;
+            document.getElementById('estTotalPreview').innerText = `₹${total}`;
+        }
+
         function createOccasionAndPay() {
             let name = document.getElementById('occName').value.trim();
-            let estimatedCost = document.getElementById('occEstimatedCost').value.trim();
-            let date = document.getElementById('occDate').value;
-
             if(!name) { alert("Please enter occasion name!"); return; }
+
+            let lighting = Number(document.getElementById('estLighting').value || 0);
+            let decoration = Number(document.getElementById('estDecoration').value || 0);
+            let sound = Number(document.getElementById('estSound').value || 0);
+            let food = Number(document.getElementById('estFood').value || 0);
+            let venue = Number(document.getElementById('estVenue').value || 0);
+            let others = Number(document.getElementById('estOthers').value || 0);
+            let estimatedCost = lighting + decoration + sound + food + venue + others;
+            let date = document.getElementById('occDate').value;
 
             let selectedMembers = [];
             document.querySelectorAll('.occ-member-chk:checked').forEach(chk => {
@@ -833,7 +878,8 @@
             pendingOccasionData = { 
                 id: 'occ_' + now, 
                 name, 
-                estimatedCost: Number(estimatedCost || 0),
+                estimatedCost,
+                breakdown: { lighting, decoration, sound, food, venue, others },
                 date: date || "", 
                 createdAt: now,
                 assignedMembers: selectedMembers,
@@ -936,6 +982,22 @@
             document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
             document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
 
+            if(occ.breakdown) {
+                document.getElementById('dtlLighting').innerText = `₹${occ.breakdown.lighting || 0}`;
+                document.getElementById('dtlDecoration').innerText = `₹${occ.breakdown.decoration || 0}`;
+                document.getElementById('dtlSound').innerText = `₹${occ.breakdown.sound || 0}`;
+                document.getElementById('dtlFood').innerText = `₹${occ.breakdown.food || 0}`;
+                document.getElementById('dtlVenue').innerText = `₹${occ.breakdown.venue || 0}`;
+                document.getElementById('dtlOthers').innerText = `₹${occ.breakdown.others || 0}`;
+            } else {
+                document.getElementById('dtlLighting').innerText = `₹0`;
+                document.getElementById('dtlDecoration').innerText = `₹0`;
+                document.getElementById('dtlSound').innerText = `₹0`;
+                document.getElementById('dtlFood').innerText = `₹0`;
+                document.getElementById('dtlVenue').innerText = `₹0`;
+                document.getElementById('dtlOthers').innerText = `₹0`;
+            }
+
             let downloadSection = document.getElementById('downloadReportSection');
             downloadSection.classList.remove('hidden');
 
@@ -971,11 +1033,19 @@
             reportText += ` OCCASION REPORT: ${occ.name}\n`;
             reportText += ` DATE: ${new Date().toLocaleString()}\n`;
             reportText += `========================================\n\n`;
-            reportText += `FUNDING & ESTIMATION:\n`;
+            reportText += `FUNDING & ESTIMATION BREAKDOWN:\n`;
             reportText += `----------------------------------------\n`;
-            reportText += `Estimated Cost: ₹${estCost}\n`;
-            reportText += `Total Collected: ₹${inc}\n`;
-            reportText += `Funding Gap/Deficit: ₹${gap > 0 ? gap : 0}\n\n`;
+            if(occ.breakdown) {
+                reportText += ` Lighting: ₹${occ.breakdown.lighting || 0}\n`;
+                reportText += ` Decoration: ₹${occ.breakdown.decoration || 0}\n`;
+                reportText += ` Sound System: ₹${occ.breakdown.sound || 0}\n`;
+                reportText += ` Food/Prasadam: ₹${occ.breakdown.food || 0}\n`;
+                reportText += ` Venue/Tent: ₹${occ.breakdown.venue || 0}\n`;
+                reportText += ` Others: ₹${occ.breakdown.others || 0}\n`;
+            }
+            reportText += ` Total Estimated Cost: ₹${estCost}\n`;
+            reportText += ` Total Collected: ₹${inc}\n`;
+            reportText += ` Funding Gap/Deficit: ₹${gap > 0 ? gap : 0}\n\n`;
             reportText += `FINANCIAL SUMMARY:\n`;
             reportText += `----------------------------------------\n`;
             reportText += `Total Donations: ₹${inc}\n`;

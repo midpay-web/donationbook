@@ -906,18 +906,27 @@
         }
 
         function confirmPaymentDone() {
-            let userUpi = document.getElementById('userUpiIdInput').value.trim();
-            let confirmed = confirm(userUpi ? `Proceeding with UPI ID: ${userUpi}. Did you complete the ₹49 payment?` : "Did you complete the ₹49 UPI payment via QR code? Click OK to activate your occasion.");
-            if(!confirmed) return;
+    let transactionId = document.getElementById('upiTransactionId').value.trim();
+    
+    // ట్రాన్సాక్షన్ ఐడి ఎంటర్ చేశారో లేదో చూస్తుంది
+    if(!transactionId) {
+        alert("దయచేసి మీ UPI Transaction ID ని ఎంటర్ చేయండి!");
+        return;
+    }
 
-            if(pendingOccasionData) {
-                currentUser.occasions.push(pendingOccasionData);
-                syncUserDataWithSheet();
-                pendingOccasionData = null;
-                closeModal('pay49Modal');
-                alert("Payment Verified! Occasion created successfully.");
-                renderOccasions();
-            }
+    if(pendingOccasionData) {
+        // ట్రాన్సాక్షన్ ఐడిని అకేషన్ డేటాలో సేవ్ చేస్తున్నాం
+        pendingOccasionData.transactionId = transactionId;
+        
+        currentUser.occasions.push(pendingOccasionData);
+        syncUserDataWithSheet();
+        
+        pendingOccasionData = null;
+        closeModal('pay49Modal');
+        alert("వివరాలు సబ్మిట్ చేయబడ్డాయి! అకేషన్ క్రియేట్ అయ్యింది.");
+        renderOccasions();
+    }
+}
         }
 
         function renderOccasions() {

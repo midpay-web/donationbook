@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donation Book</title>
-    <!-- Tailwind CSS CDN v3 (Stable) -->
+    <!-- Tailwind CSS v3 Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts for Telugu Text -->
     <link href="https://fonts.googleapis.com/css2?family=Ramabhadra&family=Suranna&display=swap" rel="stylesheet">
@@ -127,7 +127,6 @@
 
         <!-- Logged-in User Dashboard View -->
         <div id="userDashboardView" class="space-y-5 hidden">
-            <!-- Real-time Date & Time Display Bar -->
             <div class="bg-stone-900 text-amber-300 px-3 py-2 rounded-xl moving-border text-center text-xs font-bold flex justify-between items-center shadow">
                 <span id="lblLiveClock">🕒 Live Clock:</span>
                 <span id="realtimeClock" class="text-yellow-400 font-mono">--</span>
@@ -160,7 +159,6 @@
     <!-- MODALS SECTION -->
     <div id="registerModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col moving-border relative">
-            <!-- Popup Loading Overlay -->
             <div id="globalLoader" class="absolute inset-0 bg-black/85 z-50 hidden flex flex-col items-center justify-center space-y-3">
                 <div class="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full spinner"></div>
                 <p id="loaderText" class="text-amber-300 font-bold text-xs tracking-wider">Loading, please wait...</p>
@@ -176,7 +174,6 @@
                 <div><label id="lblRegMobile" class="font-bold block mb-1">Mobile Number (User ID):</label><input type="tel" id="regMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 <div><label id="lblRegPassword" class="font-bold block mb-1">Create Password:</label><input type="password" id="regPassword" placeholder="Password" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 
-                <!-- Privacy Policy Checkbox -->
                 <div class="flex items-start gap-2 pt-1">
                     <input type="checkbox" id="privacyPolicyCheck" class="w-4 h-4 mt-0.5 text-amber-600 rounded cursor-pointer">
                     <label for="privacyPolicyCheck" class="text-[11px] text-stone-700 leading-tight cursor-pointer">
@@ -247,7 +244,6 @@
             <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
             <p class="text-xs text-stone-300">Scan QR to pay (nageshyadav4u@oksbi) for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
             
-            <!-- QR Code Image -->
             <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
                 <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
             </div>
@@ -261,7 +257,6 @@
 
             <p class="text-[10px] text-stone-400">దయచేసి మీ Google Pay / PhonePe ద్వారా చెల్లించి, Transaction ID ని ఇక్కడ ఎంటర్ చేయండి.</p>
 
-            <!-- Submit Button -->
             <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl shadow cursor-pointer moving-border">Submit</button>
             <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer block mx-auto">Cancel</button>
         </div>
@@ -279,14 +274,12 @@
             </div>
 
             <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
-                <!-- Dynamic Cost Estimation Section -->
                 <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2.5">
                     <h4 class="font-bold text-amber-400 border-b border-stone-800 pb-1 flex justify-between items-center">
                         <span>📊 Dynamic Cost Estimation</span>
                         <button onclick="toggleEditEstimation()" id="estToggleBtn" class="text-[10px] bg-amber-600 text-stone-950 font-bold px-2 py-0.5 rounded cursor-pointer">Add/Edit</button>
                     </h4>
                     
-                    <!-- View Mode for Estimation -->
                     <div id="estViewMode" class="space-y-1.5 text-stone-300">
                         <div id="estimationItemsList" class="space-y-1 max-h-28 overflow-y-auto pr-1">
                             <p class="text-stone-500 text-center py-1">No estimations added yet</p>
@@ -301,11 +294,8 @@
                         </div>
                     </div>
 
-                    <!-- Edit Mode for Adding/Removing Estimations (Hidden by default) -->
                     <div id="estEditMode" class="hidden space-y-2 pt-1">
-                        <div id="dynamicEstimationInputs" class="space-y-2 max-h-36 overflow-y-auto pr-1">
-                            <!-- Dynamic rows injected here -->
-                        </div>
+                        <div id="dynamicEstimationInputs" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
                         <button onclick="addEstimationRow('', '')" class="w-full bg-stone-800 text-amber-300 font-bold py-1 rounded text-[11px] border border-amber-500/30 cursor-pointer">+ Add Particular</button>
                         <button onclick="saveEstimationUpdates()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded shadow cursor-pointer mt-2">Save Estimations</button>
                     </div>
@@ -317,7 +307,6 @@
                     <div class="bg-yellow-600 p-2.5 rounded-xl moving-border text-stone-950"><span id="lblBalance" class="text-[10px] font-bold block opacity-90">Balance</span><span id="accBal" class="font-black text-sm">₹0</span></div>
                 </div>
 
-                <!-- Download Account Report Button -->
                 <div id="downloadReportSection">
                     <button onclick="downloadOccasionReport()" id="btnDownloadReport" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer flex items-center justify-center gap-2 moving-border">
                         <span>📥 Download Accounts Report (TXT)</span>
@@ -372,13 +361,6 @@
 
     <!-- JavaScript Application Logic -->
     <script>
-        // Tailwind Play CDN support
-        tailwind.config = {
-            theme: {
-                extend: {}
-            }
-        }
-
         const _URL = "https://script.google.com/macros/s/AKfycbw18aGyXsrkIOGCZdqnwmGQgNx9IoIbp966UhEf5vsfT1gF_CpuLxkB3e5E9Lha6w/exec"; 
         const DB_CURRENT = 'youth_current_user';
 
@@ -490,37 +472,46 @@
         };
 
         function showLoader(text = "Loading, please wait...") {
-            document.getElementById('loaderText').innerText = text;
-            document.getElementById('globalLoader').classList.remove('hidden');
+            let loader = document.getElementById('globalLoader');
+            let textElem = document.getElementById('loaderText');
+            if(loader) loader.classList.remove('hidden');
+            if(textElem) textElem.innerText = text;
         }
 
         function hideLoader() {
-            document.getElementById('globalLoader').classList.add('hidden');
+            let loader = document.getElementById('globalLoader');
+            if(loader) loader.classList.add('hidden');
         }
 
         function handleLoginButtonClick() {
-            showLoader("Opening login window...");
-            setTimeout(() => {
-                hideLoader();
-                openModal('loginModal');
-            }, 300);
+            openModal('loginModal');
         }
 
         function changeLanguage(lang) {
             localStorage.setItem('portal_lang', lang);
             let t = translations[lang] || translations['en'];
 
-            document.getElementById('homeTitleText').innerText = t.title;
-            document.getElementById('homeSubText').innerText = t.subtitle;
-            document.getElementById('homeRegBtn').innerText = t.registerBtn;
+            let titleElem = document.getElementById('homeTitleText');
+            let subElem = document.getElementById('homeSubText');
+            let regBtnElem = document.getElementById('homeRegBtn');
+            let colElem = document.getElementById('lblCollections');
+            let expElem = document.getElementById('lblExpenses');
+            let balElem = document.getElementById('lblBalance');
+            let addEntElem = document.getElementById('lblAddEntry');
+            let optDonElem = document.getElementById('optDonation');
+            let optExpElem = document.getElementById('optExpense');
+            let transListElem = document.getElementById('lblTransList');
 
-            document.getElementById('lblCollections').innerText = t.donation;
-            document.getElementById('lblExpenses').innerText = t.expense;
-            document.getElementById('lblBalance').innerText = t.balance;
-            document.getElementById('lblAddEntry').innerText = t.addEntry;
-            document.getElementById('optDonation').innerText = t.donation;
-            document.getElementById('optExpense').innerText = t.expense;
-            document.getElementById('lblTransList').innerText = t.transList;
+            if(titleElem) titleElem.innerText = t.title;
+            if(subElem) subElem.innerText = t.subtitle;
+            if(regBtnElem) regBtnElem.innerText = t.registerBtn;
+            if(colElem) colElem.innerText = t.donation;
+            if(expElem) expElem.innerText = t.expense;
+            if(balElem) balElem.innerText = t.balance;
+            if(addEntElem) addEntElem.innerText = t.addEntry;
+            if(optDonElem) optDonElem.innerText = t.donation;
+            if(optExpElem) optExpElem.innerText = t.expense;
+            if(transListElem) transListElem.innerText = t.transList;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -529,6 +520,7 @@
             if(selectElem) selectElem.value = savedLang;
             changeLanguage(savedLang);
             startRealtimeClock();
+            initDashboard();
         });
 
         function startRealtimeClock() {
@@ -541,8 +533,15 @@
             }, 1000);
         }
 
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openModal(id) { 
+            let modal = document.getElementById(id);
+            if(modal) modal.classList.remove('hidden'); 
+        }
+
+        function closeModal(id) { 
+            let modal = document.getElementById(id);
+            if(modal) modal.classList.add('hidden'); 
+        }
 
         async function registerOrganization() {
             let orgName = document.getElementById('regOrgName').value.trim();
@@ -642,8 +641,6 @@
             window.location.href = window.location.pathname;
         }
 
-        let publicOrgData = null;
-
         async function checkPublicViewMode() {
             const urlParams = new URLSearchParams(window.location.search);
             const viewMobile = urlParams.get('org');
@@ -665,7 +662,7 @@
                     let result = await res.json();
                     hideLoader();
                     if(result.status === "success") {
-                        publicOrgData = result.user;
+                        let publicOrgData = result.user;
                         document.getElementById('pubOrgName').innerText = publicOrgData.orgName;
 
                         let container = document.getElementById('pubContentArea');
@@ -776,29 +773,31 @@
             let languageDropdownContainer = document.getElementById('languageDropdownContainer');
 
             if(currentUser) {
-                authHeaderButtons.classList.add('hidden');
+                if(authHeaderButtons) authHeaderButtons.classList.add('hidden');
                 if(languageDropdownContainer) languageDropdownContainer.classList.add('hidden');
-                userProfileHeader.classList.remove('hidden');
-                publicHomeView.classList.add('hidden');
-                userDashboardView.classList.remove('hidden');
+                if(userProfileHeader) userProfileHeader.classList.remove('hidden');
+                if(publicHomeView) publicHomeView.classList.add('hidden');
+                if(userDashboardView) userDashboardView.classList.remove('hidden');
 
-                document.getElementById('loggedUserName').innerText = currentUser.adminName || currentUser.mobile;
-                document.getElementById('displayOrgName').innerText = currentUser.orgName;
+                let userNameElem = document.getElementById('loggedUserName');
+                let orgNameElem = document.getElementById('displayOrgName');
+                if(userNameElem) userNameElem.innerText = currentUser.adminName || currentUser.mobile;
+                if(orgNameElem) orgNameElem.innerText = currentUser.orgName;
 
                 if(currentUser.isMainAdmin) {
-                    adminMembersBtn.classList.remove('hidden');
+                    if(adminMembersBtn) adminMembersBtn.classList.remove('hidden');
                     renderControlMembers();
                 } else {
-                    adminMembersBtn.classList.add('hidden');
+                    if(adminMembersBtn) adminMembersBtn.classList.add('hidden');
                 }
 
                 renderOccasions();
             } else {
-                authHeaderButtons.classList.remove('hidden');
+                if(authHeaderButtons) authHeaderButtons.classList.remove('hidden');
                 if(languageDropdownContainer) languageDropdownContainer.classList.remove('hidden');
-                userProfileHeader.classList.add('hidden');
-                publicHomeView.classList.remove('hidden');
-                userDashboardView.classList.add('hidden');
+                if(userProfileHeader) userProfileHeader.classList.add('hidden');
+                if(publicHomeView) publicHomeView.classList.remove('hidden');
+                if(userDashboardView) userDashboardView.classList.add('hidden');
             }
         }
 
@@ -1268,10 +1267,6 @@
                 alert("Sharing is not supported on this browser.");
             }
         }
-
-        initDashboard();
     </script>
-    <!-- Tailwind CSS v3 Play CDN Script -->
-    <script src="https://cdn.tailwindcss.com"></script>
 </body>
 </html>

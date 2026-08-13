@@ -188,7 +188,33 @@
                 <div><label id="lblRegAdminName" class="font-bold block mb-1">Your Name (Admin Name):</label><input type="text" id="regAdminName" placeholder="Full Name" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 <div><label id="lblRegMobile" class="font-bold block mb-1">Mobile Number (User ID):</label><input type="tel" id="regMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 <div><label id="lblRegPassword" class="font-bold block mb-1">Password:</label><input type="password" id="regPassword" placeholder="Password" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                
+                <!-- Privacy Policy Checkbox -->
+                <div class="flex items-start gap-2 pt-1">
+                    <input type="checkbox" id="privacyPolicyCheck" class="w-4 h-4 mt-0.5 text-amber-600 rounded cursor-pointer">
+                    <label for="privacyPolicyCheck" class="text-[11px] text-stone-700 leading-tight cursor-pointer">
+                        I agree to the <span onclick="openModal('privacyModal'); event.stopPropagation();" class="text-amber-700 underline font-bold">Privacy Policy</span> regarding data security & transparency.
+                    </label>
+                </div>
+
                 <button onclick="registerOrganization()" id="btnRegisterSubmit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="fixed inset-0 bg-black/85 hidden z-60 flex items-center justify-center p-4">
+        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base text-amber-300">🔒 Privacy Policy</h3>
+                <button onclick="closeModal('privacyModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs text-stone-700 leading-relaxed">
+                <p><strong>1. Information We Collect:</strong> We collect your Organization Name, Admin Name, Mobile Number (used as your unique ID), and password for authentication purposes.</p>
+                <p><strong>2. Financial & Occasion Data:</strong> All financial entries, donations, expenses, and cost estimations you record are safely stored in your organization database to provide transparent account tracking.</p>
+                <p><strong>3. Data Security:</strong> Your mobile number and credentials are strictly used to secure your organizational dashboard and allow authorized members to manage records.</p>
+                <p><strong>4. Public Sharing:</strong> When you share your organization or occasion link, only the financial summary and public transaction records are visible for transparency.</p>
+                <button onclick="closeModal('privacyModal')" class="w-full bg-stone-900 text-amber-300 font-bold py-2 rounded-lg mt-2 cursor-pointer">Got It / Close</button>
             </div>
         </div>
     </div>
@@ -526,8 +552,10 @@
             let adminName = document.getElementById('regAdminName').value.trim();
             let mobile = document.getElementById('regMobile').value.trim();
             let pass = document.getElementById('regPassword').value.trim();
+            let privacyChecked = document.getElementById('privacyPolicyCheck').checked;
 
             if(!orgName || !mobile || !pass) { alert("Please fill all required fields!"); return; }
+            if(!privacyChecked) { alert("Please agree to the Privacy Policy before registering."); return; }
             if(mobile.length !== 10 || isNaN(mobile)) { alert("Please enter a valid 10-digit mobile number!"); return; }
 
             showLoader("Registering organization...");

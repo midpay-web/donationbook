@@ -188,7 +188,7 @@
                 <div><label id="lblRegOrgName" class="font-bold block mb-1">Organization Name:</label><input type="text" id="regOrgName" placeholder="Ex: Ganapati Youth Wing" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 <div><label id="lblRegAdminName" class="font-bold block mb-1">Your Name (Admin Name):</label><input type="text" id="regAdminName" placeholder="Full Name" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 <div><label id="lblRegMobile" class="font-bold block mb-1">Mobile Number (User ID):</label><input type="tel" id="regMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label id="lblRegPassword" class="font-bold block mb-1">Password:</label><input type="password" id="regPassword" placeholder="Password" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
+                <div><label id="lblRegPassword" class="font-bold block mb-1">Create Password:</label><input type="password" id="regPassword" placeholder="Password" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
                 
                 <!-- Privacy Policy Checkbox -->
                 <div class="flex items-start gap-2 pt-1">
@@ -255,28 +255,30 @@
         </div>
     </div>
 
-    <!-- Pay ₹49 Fee QR Code & UPI ID Modal -->
-    <div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
-            <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
-            <p class="text-xs text-stone-300">Scan QR code using your UPI app or enter your UPI ID below to pay for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
-            
-            <!-- QR Code Image -->
-            <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
-                <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
-            </div>
-
-            <div class="space-y-2 text-left">
-                <label class="text-[11px] font-bold text-amber-300 block">Or Enter Your UPI ID (Optional):</label>
-                <input type="text" id="userUpiIdInput" placeholder="Ex: yourname@oksbi" class="w-full p-2.5 rounded-xl bg-stone-950 moving-border text-white text-xs font-mono">
-            </div>
-
-            <p class="text-[10px] text-stone-400">After completing the payment in your own UPI app, click below:</p>
-
-            <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl shadow cursor-pointer moving-border">I have paid ₹49 (Activate Occasion)</button>
-            <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer">Cancel</button>
+  <!-- Pay ₹49 Fee UPI Verification Modal -->
+<div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
+        <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
+        <p class="text-xs text-stone-300">Scan QR to pay for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
+        
+        <!-- QR Code Image -->
+        <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
+            <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
         </div>
+
+        <div class="space-y-3 text-left">
+            <div>
+                <label class="text-[11px] font-bold text-amber-300 block">Enter UPI Transaction ID (Required):</label>
+                <input type="text" id="upiTransactionId" placeholder="Ex: 123456789012" class="w-full p-2.5 rounded-xl bg-stone-950 moving-border text-white text-xs font-mono">
+            </div>
+        </div>
+
+        <p class="text-[10px] text-stone-400">Payment verify చేయడానికి మీ UPI Transaction ID ని తప్పనిసరిగా ఎంటర్ చేయండి.</p>
+
+        <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl shadow cursor-pointer moving-border">Submit Payment Details</button>
+        <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer block mx-auto">Cancel</button>
     </div>
+</div>
 
     <!-- Accounts Control Panel Modal -->
     <div id="accountsModal" class="fixed inset-0 bg-black/85 hidden z-50 flex items-center justify-center p-4">

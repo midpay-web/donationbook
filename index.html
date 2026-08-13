@@ -207,7 +207,7 @@
         </div>
     </div>
 
-    <!-- Add Occasion Modal (Cleaned up: No Estimation on creation) -->
+    <!-- Add Occasion Modal -->
     <div id="addOccasionModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
             <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
@@ -263,22 +263,17 @@
             </div>
 
             <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
-                <!-- User Input Cost Estimation Section inside Control Panel -->
+                <!-- Dynamic Cost Estimation Section -->
                 <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2.5">
                     <h4 class="font-bold text-amber-400 border-b border-stone-800 pb-1 flex justify-between items-center">
-                        <span>📊 Detailed Cost Estimation</span>
-                        <button onclick="toggleEditEstimation()" class="text-[10px] bg-amber-600 text-stone-950 font-bold px-2 py-0.5 rounded cursor-pointer">Edit/Update</button>
+                        <span>📊 Dynamic Cost Estimation</span>
+                        <button onclick="toggleEditEstimation()" id="estToggleBtn" class="text-[10px] bg-amber-600 text-stone-950 font-bold px-2 py-0.5 rounded cursor-pointer">Add/Edit</button>
                     </h4>
                     
                     <!-- View Mode for Estimation -->
                     <div id="estViewMode" class="space-y-1.5 text-stone-300">
-                        <div class="grid grid-cols-2 gap-1 text-[11px]">
-                            <div>Lighting: <span id="dtlLighting" class="text-amber-300">₹0</span></div>
-                            <div>Decoration: <span id="dtlDecoration" class="text-amber-300">₹0</span></div>
-                            <div>Sound System: <span id="dtlSound" class="text-amber-300">₹0</span></div>
-                            <div>Food/Prasadam: <span id="dtlFood" class="text-amber-300">₹0</span></div>
-                            <div>Venue/Tent: <span id="dtlVenue" class="text-amber-300">₹0</span></div>
-                            <div>Others: <span id="dtlOthers" class="text-amber-300">₹0</span></div>
+                        <div id="estimationItemsList" class="space-y-1 max-h-28 overflow-y-auto pr-1">
+                            <p class="text-stone-500 text-center py-1">No estimations added yet</p>
                         </div>
                         <div class="border-t border-stone-800 pt-2 space-y-1">
                             <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span id="estCostDisplay" class="text-amber-400">₹0</span></div>
@@ -290,17 +285,13 @@
                         </div>
                     </div>
 
-                    <!-- Edit Mode for Estimation (Hidden by default) -->
+                    <!-- Edit Mode for Adding/Removing Estimations (Hidden by default) -->
                     <div id="estEditMode" class="hidden space-y-2 pt-1">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div><span class="text-[10px] text-stone-400">Lighting</span><input type="number" id="editLighting" placeholder="₹0" class="w-full p-1.5 border rounded bg-stone-900 text-white"></div>
-                            <div><span class="text-[10px] text-stone-400">Decoration</span><input type="number" id="editDecoration" placeholder="₹0" class="w-full p-1.5 border rounded bg-stone-900 text-white"></div>
-                            <div><span class="text-[10px] text-stone-400">Sound</span><input type="number" id="editSound" placeholder="₹0" class="w-full p-1.5 border rounded bg-stone-900 text-white"></div>
-                            <div><span class="text-[10px] text-stone-400">Food</span><input type="number" id="editFood" placeholder="₹0" class="w-full p-1.5 border rounded bg-stone-900 text-white"></div>
-                            <div><span class="text-[10px] text-stone-400">Venue</span><input type="number" id="editVenue" placeholder="₹0" class="w-full p-1.5 border rounded bg-stone-900 text-white"></div>
-                            <div><span class="text-[10px] text-stone-400">Others</span><input type="number" id="editOthers" placeholder="₹0" class="w-full p-1.5 border rounded bg-stone-900 text-white"></div>
+                        <div id="dynamicEstimationInputs" class="space-y-2 max-h-36 overflow-y-auto pr-1">
+                            <!-- Dynamic rows injected here -->
                         </div>
-                        <button onclick="saveEstimationUpdates()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded shadow cursor-pointer">Save Estimation</button>
+                        <button onclick="addEstimationRow('', '')" class="w-full bg-stone-800 text-amber-300 font-bold py-1 rounded text-[11px] border border-amber-500/30 cursor-pointer">+ Add Particular</button>
+                        <button onclick="saveEstimationUpdates()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded shadow cursor-pointer mt-2">Save Estimations</button>
                     </div>
                 </div>
 
@@ -465,7 +456,7 @@
             },
             pa: {
                 title: "ਦਾਨ, ਖਰਚੇ ਅਤੇ ਵਿੱਤੀ ਰਿਕਾਰਡ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
-                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ ਅਤੇ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
+                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ සහ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
                 registerBtn: "REGISTER HERE",
                 donation: "ਦਾਨ",
                 expense: "ਖਰਚਾ",
@@ -666,20 +657,15 @@
                                 let bal = inc - exp;
                                 let estCost = Number(occ.estimatedCost || 0);
                                 let gap = estCost - inc;
-                                let b = occ.breakdown || {};
+                                let parts = occ.estimations || [];
 
                                 container.innerHTML = `
                                     <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
                                         <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
                                         <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
-                                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimation Breakdown</h5>
-                                            <div class="grid grid-cols-2 gap-1 text-[11px] text-stone-300">
-                                                <div>Lighting: <span class="text-amber-300">₹${b.lighting || 0}</span></div>
-                                                <div>Decoration: <span class="text-amber-300">₹${b.decoration || 0}</span></div>
-                                                <div>Sound: <span class="text-amber-300">₹${b.sound || 0}</span></div>
-                                                <div>Food: <span class="text-amber-300">₹${b.food || 0}</span></div>
-                                                <div>Venue: <span class="text-amber-300">₹${b.venue || 0}</span></div>
-                                                <div>Others: <span class="text-amber-300">₹${b.others || 0}</span></div>
+                                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimations</h5>
+                                            <div class="space-y-1 max-h-24 overflow-y-auto">
+                                                ${parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300"><span>${p.name}:</span><span class="text-amber-300">₹${p.cost}</span></div>`).join('') || '<span class="text-stone-500">No estimations added</span>'}
                                             </div>
                                             <div class="border-t border-stone-800 pt-1.5 space-y-1">
                                                 <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
@@ -717,19 +703,14 @@
                                 let bal = inc - exp;
                                 let estCost = Number(occ.estimatedCost || 0);
                                 let gap = estCost - inc;
-                                let b = occ.breakdown || {};
+                                let parts = occ.estimations || [];
                                 return `
                                     <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
                                         <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
                                         <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
-                                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimation Breakdown</h5>
-                                            <div class="grid grid-cols-2 gap-1 text-[11px] text-stone-300">
-                                                <div>Lighting: <span class="text-amber-300">₹${b.lighting || 0}</span></div>
-                                                <div>Decoration: <span class="text-amber-300">₹${b.decoration || 0}</span></div>
-                                                <div>Sound: <span class="text-amber-300">₹${b.sound || 0}</span></div>
-                                                <div>Food: <span class="text-amber-300">₹${b.food || 0}</span></div>
-                                                <div>Venue: <span class="text-amber-300">₹${b.venue || 0}</span></div>
-                                                <div>Others: <span class="text-amber-300">₹${b.others || 0}</span></div>
+                                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimations</h5>
+                                            <div class="space-y-1 max-h-24 overflow-y-auto">
+                                                ${parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300"><span>${p.name}:</span><span class="text-amber-300">₹${p.cost}</span></div>`).join('') || '<span class="text-stone-500">No estimations added</span>'}
                                             </div>
                                             <div class="border-t border-stone-800 pt-1.5 space-y-1">
                                                 <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
@@ -880,7 +861,7 @@
                 id: 'occ_' + now, 
                 name, 
                 estimatedCost: 0,
-                breakdown: { lighting: 0, decoration: 0, sound: 0, food: 0, venue: 0, others: 0 },
+                estimations: [],
                 date: date || "", 
                 createdAt: now,
                 assignedMembers: selectedMembers,
@@ -921,7 +902,7 @@
                 let bal = inc - exp;
                 let estCost = Number(occ.estimatedCost || 0);
                 let gap = estCost - inc;
-                let b = occ.breakdown || {};
+                let parts = occ.estimations || [];
 
                 let actionButtonHtml = `
                     <div class="flex gap-2">
@@ -944,14 +925,9 @@
                             ${currentUser.isMainAdmin ? `<button onclick="deleteOccasion('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
                         </div>
                         <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
-                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimation Breakdown</h5>
-                            <div class="grid grid-cols-2 gap-1 text-[11px] text-stone-300">
-                                <div>Lighting: <span class="text-amber-300">₹${b.lighting || 0}</span></div>
-                                <div>Decoration: <span class="text-amber-300">₹${b.decoration || 0}</span></div>
-                                <div>Sound: <span class="text-amber-300">₹${b.sound || 0}</span></div>
-                                <div>Food: <span class="text-amber-300">₹${b.food || 0}</span></div>
-                                <div>Venue: <span class="text-amber-300">₹${b.venue || 0}</span></div>
-                                <div>Others: <span class="text-amber-300">₹${b.others || 0}</span></div>
+                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimations</h5>
+                            <div class="space-y-1 max-h-24 overflow-y-auto">
+                                ${parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300"><span>${p.name}:</span><span class="text-amber-300">₹${p.cost}</span></div>`).join('') || '<span class="text-stone-500">No estimations added</span>'}
                             </div>
                             <div class="border-t border-stone-800 pt-1.5 space-y-1">
                                 <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
@@ -995,21 +971,23 @@
             document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
             document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
 
-            let b = occ.breakdown || {};
-            document.getElementById('dtlLighting').innerText = `₹${b.lighting || 0}`;
-            document.getElementById('dtlDecoration').innerText = `₹${b.decoration || 0}`;
-            document.getElementById('dtlSound').innerText = `₹${b.sound || 0}`;
-            document.getElementById('dtlFood').innerText = `₹${b.food || 0}`;
-            document.getElementById('dtlVenue').innerText = `₹${b.venue || 0}`;
-            document.getElementById('dtlOthers').innerText = `₹${b.others || 0}`;
+            // Render view mode items list
+            let parts = occ.estimations || [];
+            let listDiv = document.getElementById('estimationItemsList');
+            if(parts.length === 0) {
+                listDiv.innerHTML = `<p class="text-stone-500 text-center py-1">No estimations added yet</p>`;
+            } else {
+                listDiv.innerHTML = parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300 border-b border-stone-800/50 pb-0.5"><span>${p.name}:</span><span class="text-amber-300 font-bold">₹${p.cost}</span></div>`).join('');
+            }
 
-            // Populate edit inputs with current values
-            document.getElementById('editLighting').value = b.lighting || '';
-            document.getElementById('editDecoration').value = b.decoration || '';
-            document.getElementById('editSound').value = b.sound || '';
-            document.getElementById('editFood').value = b.food || '';
-            document.getElementById('editVenue').value = b.venue || '';
-            document.getElementById('editOthers').value = b.others || '';
+            // Populate edit inputs container
+            let editInputsContainer = document.getElementById('dynamicEstimationInputs');
+            editInputsContainer.innerHTML = '';
+            if(parts.length === 0) {
+                addEstimationRow('', '');
+            } else {
+                parts.forEach(p => addEstimationRow(p.name, p.cost));
+            }
 
             // Ensure view mode is active
             document.getElementById('estViewMode').classList.remove('hidden');
@@ -1035,6 +1013,19 @@
             openModal('accountsModal');
         }
 
+        function addEstimationRow(name, cost) {
+            let container = document.getElementById('dynamicEstimationInputs');
+            let rowId = 'row_' + Date.now() + Math.random().toString(36.substring(2, 5));
+            let rowDiv = document.createElement('div');
+            rowDiv.className = "flex gap-1 items-center est-row";
+            rowDiv.innerHTML = `
+                <input type="text" placeholder="Particular (e.g. Lighting)" value="${name}" class="est-name flex-1 p-1.5 border rounded bg-stone-900 text-white text-xs">
+                <input type="number" placeholder="Cost (₹)" value="${cost !== '' ? cost : ''}" class="est-cost w-24 p-1.5 border rounded bg-stone-900 text-white text-xs">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold px-1.5 text-sm cursor-pointer" title="Remove">×</button>
+            `;
+            container.appendChild(rowDiv);
+        }
+
         function toggleEditEstimation() {
             let view = document.getElementById('estViewMode');
             let edit = document.getElementById('estEditMode');
@@ -1051,36 +1042,40 @@
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(!occ) return;
 
-            let lighting = Number(document.getElementById('editLighting').value || 0);
-            let decoration = Number(document.getElementById('editDecoration').value || 0);
-            let sound = Number(document.getElementById('editSound').value || 0);
-            let food = Number(document.getElementById('editFood').value || 0);
-            let venue = Number(document.getElementById('editVenue').value || 0);
-            let others = Number(document.getElementById('editOthers').value || 0);
-            
-            let estimatedCost = lighting + decoration + sound + food + venue + others;
+            let rows = document.querySelectorAll('.est-row');
+            let newEstimations = [];
+            let totalCost = 0;
 
-            occ.estimatedCost = estimatedCost;
-            occ.breakdown = { lighting, decoration, sound, food, venue, others };
+            rows.forEach(row => {
+                let name = row.querySelector('.est-name').value.trim();
+                let cost = Number(row.querySelector('.est-cost').value || 0);
+                if(name) {
+                    newEstimations.push({ name, cost });
+                    totalCost += cost;
+                }
+            });
+
+            occ.estimatedCost = totalCost;
+            occ.estimations = newEstimations;
 
             syncUserDataWithSheet();
 
-            // Update UI display
-            document.getElementById('dtlLighting').innerText = `₹${lighting}`;
-            document.getElementById('dtlDecoration').innerText = `₹${decoration}`;
-            document.getElementById('dtlSound').innerText = `₹${sound}`;
-            document.getElementById('dtlFood').innerText = `₹${food}`;
-            document.getElementById('dtlVenue').innerText = `₹${venue}`;
-            document.getElementById('dtlOthers').innerText = `₹${others}`;
+            // Update View Mode List UI
+            let listDiv = document.getElementById('estimationItemsList');
+            if(newEstimations.length === 0) {
+                listDiv.innerHTML = `<p class="text-stone-500 text-center py-1">No estimations added yet</p>`;
+            } else {
+                listDiv.innerHTML = newEstimations.map(p => `<div class="flex justify-between text-[11px] text-stone-300 border-b border-stone-800/50 pb-0.5"><span>${p.name}:</span><span class="text-amber-300 font-bold">₹${p.cost}</span></div>`).join('');
+            }
 
-            document.getElementById('estCostDisplay').innerText = `₹${estimatedCost}`;
+            document.getElementById('estCostDisplay').innerText = `₹${totalCost}`;
             let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
-            let gap = estimatedCost - inc;
+            let gap = totalCost - inc;
             document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
 
             toggleEditEstimation();
             renderOccasions();
-            alert("Cost estimation updated successfully!");
+            alert("Cost estimations updated successfully!");
         }
 
         function downloadOccasionReport() {
@@ -1092,22 +1087,23 @@
             let bal = inc - exp;
             let estCost = Number(occ.estimatedCost || 0);
             let gap = estCost - inc;
+            let parts = occ.estimations || [];
 
             let reportText = `========================================\n`;
             reportText += ` ORGANIZATION: ${currentUser.orgName}\n`;
             reportText += ` OCCASION REPORT: ${occ.name}\n`;
             reportText += ` DATE: ${new Date().toLocaleString()}\n`;
             reportText += `========================================\n\n`;
-            reportText += `FUNDING & ESTIMATION BREAKDOWN:\n`;
+            reportText += `COST ESTIMATIONS BREAKDOWN:\n`;
             reportText += `----------------------------------------\n`;
-            if(occ.breakdown) {
-                reportText += ` Lighting: ₹${occ.breakdown.lighting || 0}\n`;
-                reportText += ` Decoration: ₹${occ.breakdown.decoration || 0}\n`;
-                reportText += ` Sound System: ₹${occ.breakdown.sound || 0}\n`;
-                reportText += ` Food/Prasadam: ₹${occ.breakdown.food || 0}\n`;
-                reportText += ` Venue/Tent: ₹${occ.breakdown.venue || 0}\n`;
-                reportText += ` Others: ₹${occ.breakdown.others || 0}\n`;
+            if(parts.length > 0) {
+                parts.forEach(p => {
+                    reportText += ` ${p.name}: ₹${p.cost}\n`;
+                });
+            } else {
+                reportText += ` No estimations recorded.\n`;
             }
+            reportText += `----------------------------------------\n`;
             reportText += ` Total Estimated Cost: ₹${estCost}\n`;
             reportText += ` Total Collected: ₹${inc}\n`;
             reportText += ` Funding Gap/Deficit: ₹${gap > 0 ? gap : 0}\n\n`;

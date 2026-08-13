@@ -463,7 +463,7 @@
             },
             pa: {
                 title: "ਦਾਨ, ਖਰਚੇ ਅਤੇ ਵਿੱਤੀ ਰਿਕਾਰਡ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
-                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ ਅਤੇ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
+                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ සහ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
                 registerBtn: "REGISTER HERE",
                 donation: "ਦਾਨ",
                 expense: "ਖਰਚਾ",
@@ -665,13 +665,25 @@
                                 let estCost = Number(occ.estimatedCost || 0);
                                 let gap = estCost - inc;
 
+                                let b = occ.breakdown || {};
                                 container.innerHTML = `
                                     <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
                                         <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
-                                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-1 text-xs">
-                                            <div class="flex justify-between font-bold"><span class="text-stone-400">Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
-                                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
-                                            <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
+                                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimation Breakdown</h5>
+                                            <div class="grid grid-cols-2 gap-1 text-[11px] text-stone-300">
+                                                <div>Lighting: <span class="text-amber-300">₹${b.lighting || 0}</span></div>
+                                                <div>Decoration: <span class="text-amber-300">₹${b.decoration || 0}</span></div>
+                                                <div>Sound: <span class="text-amber-300">₹${b.sound || 0}</span></div>
+                                                <div>Food: <span class="text-amber-300">₹${b.food || 0}</span></div>
+                                                <div>Venue: <span class="text-amber-300">₹${b.venue || 0}</span></div>
+                                                <div>Others: <span class="text-amber-300">₹${b.others || 0}</span></div>
+                                            </div>
+                                            <div class="border-t border-stone-800 pt-1.5 space-y-1">
+                                                <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
+                                                <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                                                <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                                            </div>
                                         </div>
                                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2.5 rounded-xl moving-border">
                                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
@@ -703,13 +715,25 @@
                                 let bal = inc - exp;
                                 let estCost = Number(occ.estimatedCost || 0);
                                 let gap = estCost - inc;
+                                let b = occ.breakdown || {};
                                 return `
                                     <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
                                         <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
-                                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-1 text-xs">
-                                            <div class="flex justify-between font-bold"><span class="text-stone-400">Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
-                                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
-                                            <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
+                                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimation Breakdown</h5>
+                                            <div class="grid grid-cols-2 gap-1 text-[11px] text-stone-300">
+                                                <div>Lighting: <span class="text-amber-300">₹${b.lighting || 0}</span></div>
+                                                <div>Decoration: <span class="text-amber-300">₹${b.decoration || 0}</span></div>
+                                                <div>Sound: <span class="text-amber-300">₹${b.sound || 0}</span></div>
+                                                <div>Food: <span class="text-amber-300">₹${b.food || 0}</span></div>
+                                                <div>Venue: <span class="text-amber-300">₹${b.venue || 0}</span></div>
+                                                <div>Others: <span class="text-amber-300">₹${b.others || 0}</span></div>
+                                            </div>
+                                            <div class="border-t border-stone-800 pt-1.5 space-y-1">
+                                                <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
+                                                <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                                                <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                                            </div>
                                         </div>
                                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2 rounded-xl moving-border">
                                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
@@ -920,6 +944,7 @@
                 let bal = inc - exp;
                 let estCost = Number(occ.estimatedCost || 0);
                 let gap = estCost - inc;
+                let b = occ.breakdown || {};
 
                 let actionButtonHtml = `
                     <div class="flex gap-2">
@@ -941,10 +966,21 @@
                             </div>
                             ${currentUser.isMainAdmin ? `<button onclick="deleteOccasion('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
                         </div>
-                        <div class="bg-stone-950 p-2.5 rounded-xl moving-border space-y-1 text-xs">
-                            <div class="flex justify-between font-bold"><span class="text-stone-400">Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
-                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
-                            <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
+                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimation Breakdown</h5>
+                            <div class="grid grid-cols-2 gap-1 text-[11px] text-stone-300">
+                                <div>Lighting: <span class="text-amber-300">₹${b.lighting || 0}</span></div>
+                                <div>Decoration: <span class="text-amber-300">₹${b.decoration || 0}</span></div>
+                                <div>Sound: <span class="text-amber-300">₹${b.sound || 0}</span></div>
+                                <div>Food: <span class="text-amber-300">₹${b.food || 0}</span></div>
+                                <div>Venue: <span class="text-amber-300">₹${b.venue || 0}</span></div>
+                                <div>Others: <span class="text-amber-300">₹${b.others || 0}</span></div>
+                            </div>
+                            <div class="border-t border-stone-800 pt-1.5 space-y-1">
+                                <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
+                                <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                                <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                            </div>
                         </div>
                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950/50 p-2 rounded-xl moving-border">
                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>

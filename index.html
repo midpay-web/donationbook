@@ -697,21 +697,38 @@
             }
         }
 
-        async function syncUserDataWithSheet() {
-            if(!currentUser) return;
-            let targetMobile = currentUser.parentMobile || currentUser.mobile;
-            let payload = { action: "update", mobile: targetMobile, userData: currentUser };
-            try {
-                await fetch(_URL, { 
-                    method: "POST", 
-                    body: JSON.stringify(payload),
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    mode: "cors"
-                });
-                localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-            } catch(e) { console.error("Sync error", e); }
-        }
+     async function syncUserDataWithSheet() {
+    if(!currentUser) return;
+    let targetMobile = currentUser.parentMobile || currentUser.mobile;
+    
+    // బ్యాక్‌ఎండ్‌కి పంపే డేటాను సరిగ్గా స్ట్రక్చర్ చేయడం
+    let payload = { 
+        action: "update", 
+        mobile: targetMobile, 
+        userData: currentUser 
+    };
 
+    try {
+        let res = await fetch(_URL, { 
+            method: "POST", 
+            body: JSON.stringify(payload),
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            mode: "cors"
+        });
+        
+        let result = await res.json();
+        if(result.status === "success") {
+            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+            console.log("Data synced successfully to Google Sheet!");
+        } else {
+            console.error("Server sync failed:", result);
+            alert("Sync warning: Data updated locally, but server response was not successful.");
+        }
+    } catch(e) { 
+        console.error("Network or Fetch error during sync:", e); 
+        alert("Network error while syncing data to server. Please check your connection.");
+    }
+}
         function logoutUser() {
             currentUser = null;
             localStorage.removeItem(DB_CURRENT);

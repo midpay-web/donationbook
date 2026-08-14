@@ -944,21 +944,34 @@
             openModal('pay49Modal');
         }
 
-        function confirmPaymentDone() {
-            let transactionId = document.getElementById('upiTransactionId').value.trim();
-            if(!transactionId) { alert("దయచేసి మీ UPI Transaction ID ని ఎంటర్ చేయండి!"); return; }
+        async function confirmPaymentDone() {
+    let transactionId = document.getElementById('upiTransactionId').value.trim();
+    if(!transactionId) { alert("దయచేసి మీ UPI Transaction ID ని ఎంటర్ చేయండి!"); return; }
 
-            if(pendingOccasionData) {
-                pendingOccasionData.transactionId = transactionId;
-                currentUser.occasions.push(pendingOccasionData);
-                syncUserDataWithSheet();
-                
-                pendingOccasionData = null;
-                closeModal('pay49Modal');
-                show3DSuccessModal("Submitted Successfully!", "Occasion created and pending admin approval.");
-                renderOccasions();
-            }
+    if(pendingOccasionData) {
+        pendingOccasionData.transactionId = transactionId;
+        pendingOccasionData.status = "pending";     // పెండింగ్ స్టేటస్ సెట్ చేయడం
+        pendingOccasionData.attemptCount = 1;       // ఇనిషియల్ అటెంప్ట్ కౌంట్
+        
+        // యూజర్ అకేషన్స్ జాబితాలో దీన్ని చేర్చడం
+        if(!currentUser.occasions) {
+            currentUser.occasions = [];
         }
+        currentUser.occasions.push(pendingOccasionData);
+        
+        showLoader("Submitting transaction and syncing data...");
+        
+        // గూగుల్ షీట్ (JSON కాలమ్) కి డేటాను సింక్ చేయడం
+        await syncUserDataWithSheet();
+        
+        hideLoader();
+        pendingOccasionData = null;
+        closeModal('pay49Modal');
+        
+        show3DSuccessModal("Submitted Successfully!", "Occasion created and pending admin approval.");
+        renderOccasions();
+    }
+}
 
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');

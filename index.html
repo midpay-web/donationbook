@@ -700,9 +700,6 @@
      async function syncUserDataWithSheet() {
     if(!currentUser) return;
     let targetMobile = currentUser.parentMobile || currentUser.mobile;
-         async function syncUserDataWithSheet() {
-    if(!currentUser) return;
-    let targetMobile = currentUser.parentMobile || currentUser.mobile;
     
     // బ్యాక్‌ఎండ్‌కి పంపే డేటాను సరిగ్గా స్ట్రక్చర్ చేయడం
     let payload = { 
@@ -711,7 +708,7 @@
         userData: currentUser 
     };
 
-    // ఈ లైన్ కింద మనం ఫెచ్ రిక్వెస్ట్ పెడుతున్నాం
+    // ఈ లైన్ కింద ఉన్న కోడ్‌ని ఇలా అప్‌డేట్ చేయండి
     try {
         let res = await fetch(_URL, { 
             method: "POST", 
@@ -722,6 +719,15 @@
         
         let result = await res.json();
         if(result.status === "success") {
+            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+            console.log("Data synced successfully to Google Sheet!");
+        } else {
+            console.error("Server sync failed:", result);
+        }
+    } catch(e) { 
+        console.error("Network or Fetch error during sync:", e); 
+    }
+}
             // సర్వర్ అప్‌డేట్ అయ్యాక, లోకల్ స్టోరేజ్ అప్‌డేట్ చేయాలి
             localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
             console.log("Data synced successfully to Google Sheet!");

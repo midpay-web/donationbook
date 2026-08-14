@@ -82,7 +82,7 @@
                 </div>
 
                 <div id="authHeaderButtons">
-                    <button onclick="handleLoginButtonClick()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg shadow cursor-pointer">Login</button>
+                    <button onclick="switchView('loginView')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-lg shadow cursor-pointer">Login</button>
                 </div>
                 
                 <div id="userProfileHeader" class="hidden flex items-center gap-1">
@@ -110,40 +110,86 @@
         </div>
 
         <!-- Guest / Public Home View -->
-        <div id="publicHomeView" class="space-y-4 text-center py-6">
+        <div id="publicHomeView" class="page-view space-y-4 text-center py-6">
             <div class="bg-amber-900/40 p-6 rounded-2xl moving-border shadow-xl space-y-3">
                 <img src="https://cdn.corenexis.com/f/dTZDtXDBbnM.png" alt="Landscape Banner" class="w-full h-auto rounded-xl object-cover shadow-md mb-3 moving-border">
                 <h2 id="homeTitleText" class="title-font text-2xl font-black text-yellow-400">విరాళాలు, ఖర్చులు మరియు ఆర్థిక వివరాలను సులభంగా నిర్వహించండి.</h2>
                 <p id="homeSubText" class="text-xs text-stone-200 leading-relaxed">వినాయక చవితి, సంక్రాంతి మరియు ఇతర వేడుకలకు సంబంధించిన అన్ని విరాళాలు, ఖర్చుల వివరాలను పారదర్శకంగా నమోదు చేయండి.</p>
                 <div class="pt-2 flex gap-3 justify-center">
-                    <button onclick="openModal('registerModal')" id="homeRegBtn" class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-sm px-5 py-2.5 rounded-xl shadow cursor-pointer waterdrop-btn moving-border">REGISTER HERE</button>
+                    <button onclick="switchView('registerView')" id="homeRegBtn" class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-sm px-5 py-2.5 rounded-xl shadow cursor-pointer waterdrop-btn moving-border">REGISTER HERE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login View Page -->
+        <div id="loginView" class="page-view space-y-4 py-4" style="display: none;">
+            <div class="bg-stone-900 p-6 rounded-2xl moving-border shadow-xl space-y-4">
+                <h2 class="title-font text-xl font-bold text-yellow-400 text-center">🔐 Login to Organization</h2>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="font-bold block mb-1 text-stone-300">Mobile Number (User ID):</label>
+                        <input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+                    </div>
+                    <div>
+                        <label class="font-bold block mb-1 text-stone-300">Password:</label>
+                        <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+                    </div>
+                    <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
+                    <div class="text-center pt-1 space-y-2">
+                        <button onclick="openForgotModal()" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
+                        <button onclick="switchView('publicHomeView')" class="text-xs text-stone-400 underline cursor-pointer block mx-auto">← Back to Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register View Page -->
+        <div id="registerView" class="page-view space-y-4 py-4" style="display: none;">
+            <div class="bg-stone-900 p-6 rounded-2xl moving-border shadow-xl space-y-4">
+                <h2 class="title-font text-xl font-bold text-yellow-400 text-center">📝 Organization Registration</h2>
+                <div class="space-y-3 text-xs text-stone-900">
+                    <div><label class="font-bold block mb-1 text-stone-300">Organization Name:</label><input type="text" id="regOrgName" placeholder="Ex: Ganapati Youth Wing" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                    <div><label class="font-bold block mb-1 text-stone-300">Your Name (Admin Name):</label><input type="text" id="regAdminName" placeholder="Full Name" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                    <div><label class="font-bold block mb-1 text-stone-300">Mobile Number (User ID):</label><input type="tel" id="regMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                    <div><label class="font-bold block mb-1 text-stone-300">Create Password:</label><input type="password" id="regPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                    <div><label class="font-bold block mb-1 text-amber-300">4-Digit M-PIN (For Recovery & Deletion):</label><input type="password" id="regMpin" placeholder="Ex: 1234" maxlength="4" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white tracking-widest font-bold"></div>
+                    
+                    <div class="flex items-start gap-2 pt-1">
+                        <input type="checkbox" id="privacyPolicyCheck" class="w-4 h-4 mt-0.5 text-amber-600 rounded cursor-pointer">
+                        <label for="privacyPolicyCheck" class="text-[11px] text-stone-300 leading-tight cursor-pointer">
+                            I agree to the <span onclick="openModal('privacyModal'); event.stopPropagation();" class="text-amber-400 underline font-bold">Privacy Policy</span> regarding data security & transparency.
+                        </label>
+                    </div>
+
+                    <button onclick="registerOrganization()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Register</button>
+                    <button onclick="switchView('publicHomeView')" class="text-xs text-stone-400 underline cursor-pointer block mx-auto pt-2">← Back to Home</button>
                 </div>
             </div>
         </div>
 
         <!-- Logged-in User Dashboard View -->
-        <div id="userDashboardView" class="space-y-5 hidden">
+        <div id="userDashboardView" class="page-view space-y-5 hidden" style="display: none;">
             <div class="bg-stone-900 text-amber-300 px-3 py-2 rounded-xl moving-border text-center text-xs font-bold flex justify-between items-center shadow">
-                <span id="lblLiveClock">🕒 Live Clock:</span>
+                <span>🕒 Live Clock:</span>
                 <span id="realtimeClock" class="text-yellow-400 font-mono">--</span>
             </div>
 
             <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-stone-950 p-4 rounded-2xl shadow-xl text-center moving-border">
-                <span id="lblOrgNameHeading" class="text-[10px] font-black uppercase tracking-wider block opacity-80">Organization Name</span>
+                <span class="text-[10px] font-black uppercase tracking-wider block opacity-80">Organization Name</span>
                 <h2 id="displayOrgName" class="title-font text-xl font-black text-red-950 truncate">--</h2>
                 <div class="flex justify-center gap-2 mt-2">
-                    <button onclick="shareOrgLinkDirectly()" id="btnShareOrg" class="bg-stone-950 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full shadow inline-flex items-center gap-1 moving-border cursor-pointer">
+                    <button onclick="shareOrgLinkDirectly()" class="bg-stone-950 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full shadow inline-flex items-center gap-1 moving-border cursor-pointer">
                         <span>🔗 Share Org Link</span>
                     </button>
                     <button onclick="openModal('membersModal')" id="adminMembersBtn" class="bg-stone-950 text-amber-300 text-xs font-bold px-3 py-1 rounded-full shadow inline-flex items-center gap-1 moving-border cursor-pointer hidden">
-                        <span id="lblMembersDesig">👥 Members & Designation</span>
+                        <span>👥 Members & Designation</span>
                     </button>
                 </div>
             </div>
 
             <div class="flex justify-between items-center bg-stone-900/80 p-3 rounded-xl moving-border">
-                <h3 id="lblOccasionsHeader" class="font-bold text-sm text-yellow-400 flex items-center gap-1.5"><span>📅</span> Occasions</h3>
-                <button onclick="openAddOccasionModal()" id="btnAddOccasion" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-lg shadow cursor-pointer flex items-center gap-1 waterdrop-btn moving-border">
+                <h3 class="font-bold text-sm text-yellow-400 flex items-center gap-1.5"><span>📅</span> Occasions</h3>
+                <button onclick="openAddOccasionModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-lg shadow cursor-pointer flex items-center gap-1 waterdrop-btn moving-border">
                     <span>+ Add Occasion</span>
                 </button>
             </div>
@@ -153,7 +199,7 @@
     </main>
 
     <!-- Global Loader -->
-    <div id="globalLoader" class="fixed inset-0 bg-black/85 z-50 hidden flex flex-col items-center justify-center space-y-3">
+    <div id="globalLoader" class="fixed inset-0 bg-black/85 z-[99999] hidden flex flex-col items-center justify-center space-y-3">
         <div class="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full spinner"></div>
         <p id="loaderText" class="text-amber-300 font-bold text-xs tracking-wider">Loading, please wait...</p>
     </div>
@@ -165,32 +211,6 @@
             <h3 id="successModalTitle" class="font-black text-xl text-yellow-400">Success!</h3>
             <p id="successModalDesc" class="text-xs text-stone-300 leading-relaxed">Operation completed successfully.</p>
             <button onclick="closeModal('success3DModal')" class="w-full bg-amber-500 text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer">Continue</button>
-        </div>
-    </div>
-
-    <!-- MODALS SECTION -->
-    <div id="registerModal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col moving-border relative">
-            <div class="p-4 bg-amber-700 text-white flex justify-between items-center">
-                <h3 id="lblRegModalTitle" class="font-bold text-base">📝 Organization Registration</h3>
-                <button onclick="closeModal('registerModal')" class="text-xl font-bold cursor-pointer">&times;</button>
-            </div>
-            <div class="p-4 space-y-3 text-xs">
-                <div><label id="lblRegOrgName" class="font-bold block mb-1">Organization Name:</label><input type="text" id="regOrgName" placeholder="Ex: Ganapati Youth Wing" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label id="lblRegAdminName" class="font-bold block mb-1">Your Name (Admin Name):</label><input type="text" id="regAdminName" placeholder="Full Name" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label id="lblRegMobile" class="font-bold block mb-1">Mobile Number (User ID):</label><input type="tel" id="regMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label id="lblRegPassword" class="font-bold block mb-1">Create Password:</label><input type="password" id="regPassword" placeholder="Password" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label class="font-bold block mb-1 text-amber-900">4-Digit M-PIN (For Recovery & Deletion):</label><input type="password" id="regMpin" placeholder="Ex: 1234" maxlength="4" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50 tracking-widest font-bold"></div>
-                
-                <div class="flex items-start gap-2 pt-1">
-                    <input type="checkbox" id="privacyPolicyCheck" class="w-4 h-4 mt-0.5 text-amber-600 rounded cursor-pointer">
-                    <label for="privacyPolicyCheck" class="text-[11px] text-stone-700 leading-tight cursor-pointer">
-                        I agree to the <span onclick="openModal('privacyModal'); event.stopPropagation();" class="text-amber-700 underline font-bold">Privacy Policy</span> regarding data security & transparency.
-                    </label>
-                </div>
-
-                <button onclick="registerOrganization()" id="btnRegisterSubmit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Register</button>
-            </div>
         </div>
     </div>
 
@@ -206,28 +226,6 @@
                 <p><strong>2. Financial & Occasion Data:</strong> All financial entries, donations, expenses, and transaction IDs are safely recorded to provide transparent accounting.</p>
                 <p><strong>3. Security & Deletion:</strong> M-PIN acts as a primary secure key to recover passwords and authorize occasion record deletions.</p>
                 <button onclick="closeModal('privacyModal')" class="w-full bg-stone-900 text-amber-300 font-bold py-2 rounded-lg mt-2 cursor-pointer">Got It / Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Login & Forgot Password Modal -->
-  <div id="loginView" class="page-view" style="display: block;">
-    <div class="max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold mb-4">Login</h2>
-        <!-- మీ లాగిన్ ఫారమ్ ఇన్‌పుట్స్ & బటన్స్ ఇక్కడ ఉంటాయి -->
-        <input type="text" id="loginMobile" placeholder="Mobile Number" class="w-full p-2 border mb-3 rounded">
-        <input type="password" id="loginPass" placeholder="Password" class="w-full p-2 border mb-3 rounded">
-        <button onclick="handleLogin()" class="w-full bg-blue-600 text-white p-2 rounded">Login</button>
-        <p class="mt-4 text-center">New here? <button onclick="switchView('registerView')" class="text-blue-500 underline">Register</button></p>
-    </div>
-</div>
-            <div class="p-4 space-y-3 text-xs">
-                <div><label class="font-bold block mb-1">Mobile Number (User ID):</label><input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <div><label class="font-bold block mb-1">Password:</label><input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 border rounded-lg moving-border bg-stone-50"></div>
-                <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
-                <div class="text-center pt-1">
-                    <button onclick="openForgotModal()" class="text-xs text-blue-600 font-bold underline cursor-pointer">Forgot Password? (Recover via M-PIN)</button>
-                </div>
             </div>
         </div>
     </div>
@@ -349,10 +347,9 @@
                         </select>
                         <input type="number" id="entryAmount" placeholder="Amount (₹)" class="p-2 rounded bg-stone-900 moving-border text-white">
                     </div>
-                    <input type="text" id="entryDesc" placeholder="Deion (Ex: Donor Name / Details)" class="w-full p-2 rounded bg-stone-900 moving-border text-white">
+                    <input type="text" id="entryDesc" placeholder="Description (Ex: Donor Name / Details)" class="w-full p-2 rounded bg-stone-900 moving-border text-white">
                     <button onclick="addFinancialEntry()" id="btnSaveEntry" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded shadow cursor-pointer moving-border">Save Entry</button>
                 </div>
-                <div id="unauthorizedMsg" class="hidden text-center text-red-400 text-xs py-2">⚠️ You don't have permission to add entries in this occasion.</div>
 
                 <div class="space-y-2">
                     <h4 id="lblTransList" class="font-bold text-amber-300">📋 Transactions List</h4>
@@ -526,12 +523,20 @@
             document.getElementById('success3DModal').classList.remove('hidden');
         }
 
-        function handleLoginButtonClick() {
-            openModal('loginModal');
+        function switchView(viewId) {
+            let views = document.querySelectorAll('.page-view');
+            views.forEach(v => {
+                v.style.display = 'none';
+                v.classList.add('hidden');
+            });
+            let target = document.getElementById(viewId);
+            if(target) {
+                target.style.display = 'block';
+                target.classList.remove('hidden');
+            }
         }
 
         function openForgotModal() {
-            closeModal('loginModal');
             document.getElementById('forgotMobile').value = '';
             document.getElementById('forgotOrgName').value = '';
             document.getElementById('forgotMpin').value = '';
@@ -632,9 +637,8 @@
                 let result = await res.json();
                 hideLoader();
                 if(result.status === "success") {
-                    closeModal('registerModal');
                     show3DSuccessModal("Registered Successfully!", "Your organization has been registered. Please login now.");
-                    openModal('loginModal');
+                    switchView('loginView');
                 } else if(result.status === "exists") {
                     alert("This mobile number is already registered!");
                 }
@@ -663,7 +667,6 @@
                 if(result.status === "success") {
                     currentUser = result.user;
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-                    closeModal('loginModal');
                     initDashboard();
                 } else {
                     alert("Incorrect mobile number or password!");
@@ -701,76 +704,58 @@
             }
         }
 
-     async function syncUserDataWithSheet() {
-    if(!currentUser) return;
-    let targetMobile = currentUser.parentMobile || currentUser.mobile;
-    
-    // బ్యాక్‌ఎండ్‌కి పంపే డేటాను సరిగ్గా స్ట్రక్చర్ చేయడం
-    let payload = { 
-        action: "update", 
-        mobile: targetMobile, 
-        userData: currentUser 
-    };
+        async function syncUserDataWithSheet() {
+            if(!currentUser) return;
+            let targetMobile = currentUser.parentMobile || currentUser.mobile;
+            
+            let payload = { 
+                action: "update", 
+                mobile: targetMobile, 
+                userData: currentUser 
+            };
 
-    // ఈ లైన్ కింద ఉన్న కోడ్‌ని ఇలా అప్‌డేట్ చేయండి
-    try {
-        let res = await fetch(_URL, { 
-            method: "POST", 
-            body: JSON.stringify(payload),
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            mode: "cors"
-        });
-        
-        let result = await res.json();
-        if(result.status === "success") {
-            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-            console.log("Data synced successfully to Google Sheet!");
-        } else {
-            console.error("Server sync failed:", result);
+            try {
+                let res = await fetch(_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
+                
+                let result = await res.json();
+                if(result.status === "success") {
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    console.log("Data synced successfully to Google Sheet!");
+                } else {
+                    console.error("Server sync failed:", result);
+                }
+            } catch(e) { 
+                console.error("Network or Fetch error during sync:", e); 
+            }
         }
-    } catch(e) { 
-        console.error("Network or Fetch error during sync:", e); 
-    }
-}
-            // సర్వర్ అప్‌డేట్ అయ్యాక, లోకల్ స్టోరేజ్ అప్‌డేట్ చేయాలి
-            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-            console.log("Data synced successfully to Google Sheet!");
-        } else {
-            console.error("Server sync failed:", result);
-        }
-    } catch(e) { 
-        console.error("Network or Fetch error during sync:", e); 
-    }
-}
-    
-    // బ్యాక్‌ఎండ్‌కి పంపే డేటాను సరిగ్గా స్ట్రక్చర్ చేయడం
-    let payload = { 
-        action: "update", 
-        mobile: targetMobile, 
-        userData: currentUser 
-    };
 
-    try {
-        let res = await fetch(_URL, { 
-            method: "POST", 
-            body: JSON.stringify(payload),
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            mode: "cors"
-        });
-        
-        let result = await res.json();
-        if(result.status === "success") {
-            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-            console.log("Data synced successfully to Google Sheet!");
-        } else {
-            console.error("Server sync failed:", result);
-            alert("Sync warning: Data updated locally, but server response was not successful.");
+        async function refreshUserDataFromServer() {
+            if (!currentUser || !currentUser.mobile) return;
+            
+            let url = _URL + "?action=getOrg&mobile=" + currentUser.mobile;
+            try {
+                let res = await fetch(url);
+                let data = await res.json();
+                
+                if(data.status === "success" && data.user) {
+                    currentUser = data.user; 
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    
+                    if (typeof renderOccasions === "function") {
+                        renderOccasions();
+                    }
+                    console.log("Status updated from server successfully!");
+                }
+            } catch(err) {
+                console.error("Failed to refresh user data:", err);
+            }
         }
-    } catch(e) { 
-        console.error("Network or Fetch error during sync:", e); 
-        alert("Network error while syncing data to server. Please check your connection.");
-    }
-}
+
         function logoutUser() {
             currentUser = null;
             localStorage.removeItem(DB_CURRENT);
@@ -785,8 +770,7 @@
             if(viewMobile) {
                 document.getElementById('authHeaderButtons').classList.add('hidden');
                 document.getElementById('languageDropdownContainer').classList.add('hidden');
-                document.getElementById('publicHomeView').classList.add('hidden');
-                document.getElementById('publicViewContainer').classList.remove('hidden');
+                switchView('publicViewContainer');
 
                 showLoader("Loading public view...");
                 try {
@@ -877,8 +861,6 @@
 
             let authHeaderButtons = document.getElementById('authHeaderButtons');
             let userProfileHeader = document.getElementById('userProfileHeader');
-            let publicHomeView = document.getElementById('publicHomeView');
-            let userDashboardView = document.getElementById('userDashboardView');
             let adminMembersBtn = document.getElementById('adminMembersBtn');
             let languageDropdownContainer = document.getElementById('languageDropdownContainer');
 
@@ -886,8 +868,7 @@
                 if(authHeaderButtons) authHeaderButtons.classList.add('hidden');
                 if(languageDropdownContainer) languageDropdownContainer.classList.add('hidden');
                 if(userProfileHeader) userProfileHeader.classList.remove('hidden');
-                if(publicHomeView) publicHomeView.classList.add('hidden');
-                if(userDashboardView) userDashboardView.classList.remove('hidden');
+                switchView('userDashboardView');
 
                 let userNameElem = document.getElementById('loggedUserName');
                 let orgNameElem = document.getElementById('displayOrgName');
@@ -901,13 +882,13 @@
                     if(adminMembersBtn) adminMembersBtn.classList.add('hidden');
                 }
 
+                await refreshUserDataFromServer();
                 renderOccasions();
             } else {
                 if(authHeaderButtons) authHeaderButtons.classList.remove('hidden');
                 if(languageDropdownContainer) languageDropdownContainer.classList.remove('hidden');
                 if(userProfileHeader) userProfileHeader.classList.add('hidden');
-                if(publicHomeView) publicHomeView.classList.remove('hidden');
-                if(userDashboardView) userDashboardView.classList.add('hidden');
+                switchView('publicHomeView');
             }
         }
 
@@ -1003,28 +984,27 @@
             openModal('pay49Modal');
         }
 
-async function confirmPaymentDone() {
-    let transactionId = document.getElementById('upiTransactionId').value.trim();
-    if(!transactionId) { alert("Please enter Transaction ID!"); return; }
+        async function confirmPaymentDone() {
+            let transactionId = document.getElementById('upiTransactionId').value.trim();
+            if(!transactionId) { alert("Please enter Transaction ID!"); return; }
 
-    if(pendingOccasionData) {
-        pendingOccasionData.transactionId = transactionId;
-        pendingOccasionData.status = "pending";
-        pendingOccasionData.attemptCount = 1;
-        
-        currentUser.occasions.push(pendingOccasionData);
-        
-        showLoader("Syncing to server...");
-        // కచ్చితంగా ఇక్కడ await ఉండాలి
-        await syncUserDataWithSheet(); 
-        hideLoader();
-        
-        pendingOccasionData = null;
-        closeModal('pay49Modal');
-        alert("Submitted!");
-        renderOccasions();
-    }
-}
+            if(pendingOccasionData) {
+                pendingOccasionData.transactionId = transactionId;
+                pendingOccasionData.status = "pending";
+                pendingOccasionData.attemptCount = 1;
+                
+                currentUser.occasions.push(pendingOccasionData);
+                
+                showLoader("Syncing to server...");
+                await syncUserDataWithSheet(); 
+                hideLoader();
+                
+                pendingOccasionData = null;
+                closeModal('pay49Modal');
+                alert("Submitted!");
+                renderOccasions();
+            }
+        }
 
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');
@@ -1039,10 +1019,6 @@ async function confirmPaymentDone() {
             container.innerHTML = currentUser.occasions.map(occ => {
                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
-                let bal = inc - exp;
-                let estCost = Number(occ.estimatedCost || 0);
-                let gap = estCost - inc;
-                let parts = occ.estimations || [];
 
                 let statusHtml = `<span class="font-semibold text-yellow-400">Status: Pending Approval</span>`;
                 let actionBtnHtml = `<span class="text-xs text-amber-300 italic">Waiting for admin approval</span>`;
@@ -1374,37 +1350,6 @@ async function confirmPaymentDone() {
             } else {
                 alert("Sharing not supported.");
             }
-            async function refreshUserDataFromServer() {
-    if (!currentUser || !currentUser.mobile) return;
-    
-    let url = _URL + "?action=getOrg&mobile=" + currentUser.mobile;
-    try {
-        let res = await fetch(url);
-        let data = await res.json();
-        
-        if(data.status === "success" && data.user) {
-            currentUser = data.user; 
-            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-            
-            if (typeof renderOccasions === "function") {
-                renderOccasions();
-            }
-            console.log("Status updated from server successfully!");
-        }
-    } catch(err) {
-        console.error("Failed to refresh user data:", err);
-    }
-}function switchView(viewId) {
-    // అన్ని వ్యూస్‌ని హైడ్ చేయడం
-    let views = document.querySelectorAll('.page-view');
-    views.forEach(v => v.style.display = 'none');
-    
-    // కావలసిన వ్యూ మాత్రమే చూపించడం
-    let target = document.getElementById(viewId);
-    if(target) {
-        target.style.display = 'block';
-    }
-}
         }
     </script>
 </body>

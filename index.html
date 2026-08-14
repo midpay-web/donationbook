@@ -1364,6 +1364,27 @@ async function confirmPaymentDone() {
             } else {
                 alert("Sharing not supported.");
             }
+            async function refreshUserDataFromServer() {
+    if (!currentUser || !currentUser.mobile) return;
+    
+    let url = _URL + "?action=getOrg&mobile=" + currentUser.mobile;
+    try {
+        let res = await fetch(url);
+        let data = await res.json();
+        
+        if(data.status === "success" && data.user) {
+            currentUser = data.user; 
+            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+            
+            if (typeof renderOccasions === "function") {
+                renderOccasions();
+            }
+            console.log("Status updated from server successfully!");
+        }
+    } catch(err) {
+        console.error("Failed to refresh user data:", err);
+    }
+}
         }
     </script>
 </body>

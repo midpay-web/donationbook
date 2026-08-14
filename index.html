@@ -114,7 +114,7 @@
                     </div>
                     <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
                     <div class="text-center pt-1 space-y-2">
-                        <button onclick="openForgotModal()" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
+                        <button onclick="openModal('forgotModal')" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
                         <button onclick="switchView('publicHomeView')" class="text-xs text-stone-400 underline cursor-pointer block mx-auto">← Back to Home</button>
                     </div>
                 </div>
@@ -176,7 +176,7 @@
         </div>
     </main>
 
-    <!-- Global Loader (Z-Index highest to stay above modals) -->
+    <!-- Global Loader -->
     <div id="globalLoader" class="fixed inset-0 bg-black/85 z-[99999] hidden flex flex-col items-center justify-center space-y-3">
         <div class="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full spinner"></div>
         <p id="loaderText" class="text-amber-300 font-bold text-xs tracking-wider">Loading, please wait...</p>
@@ -189,6 +189,32 @@
             <h3 id="successModalTitle" class="font-black text-xl text-yellow-400">Success!</h3>
             <p id="successModalDesc" class="text-xs text-stone-300 leading-relaxed">Operation completed successfully.</p>
             <button onclick="closeModal('success3DModal')" class="w-full bg-amber-500 text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer">Continue</button>
+        </div>
+    </div>
+
+    <!-- Professional Alert Popup Modal -->
+    <div id="customAlertModal" class="fixed inset-0 bg-black/85 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-xs p-5 text-center space-y-3 moving-border shadow-2xl">
+            <div id="alertIcon" class="text-3xl">⚠️</div>
+            <h3 id="alertTitle" class="font-bold text-base text-yellow-400">Notice</h3>
+            <p id="alertMessage" class="text-xs text-stone-300 leading-relaxed"></p>
+            <button onclick="closeModal('customAlertModal')" class="w-full bg-amber-500 text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer">OK</button>
+        </div>
+    </div>
+
+    <!-- Professional Confirm Modal -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-black/85 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-xs p-5 text-center space-y-3 moving-border shadow-2xl">
+            <div class="text-3xl">🔒</div>
+            <h3 id="confirmTitle" class="font-bold text-base text-amber-400">Confirmation Required</h3>
+            <p id="confirmMessage" class="text-xs text-stone-300 leading-relaxed"></p>
+            <div id="confirmInputContainer" class="hidden pt-1">
+                <input type="password" id="confirmInputVal" placeholder="Enter M-PIN" class="w-full p-2 rounded bg-stone-950 moving-border text-white text-center font-bold tracking-widest text-sm">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button id="confirmYesBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow cursor-pointer">Confirm</button>
+                <button onclick="closeModal('customConfirmModal')" class="flex-1 bg-stone-800 text-stone-300 font-bold py-2 rounded-xl shadow cursor-pointer">Cancel</button>
+            </div>
         </div>
     </div>
 
@@ -362,7 +388,7 @@
 
     <!-- JavaScript Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbxvvj2MkET_aC3m1bMtdVXzRYN7WPNgUlWD0ntf7r_KnVMI504aK1cvVo3yT2FioHmf/exec"; 
+        const _URL = "https://script.google.com/macros/s/AKfycbxiRMVPpfe2RnYlAAlwmg5NGV4CKpMMIdupqUkNsHko9rPgAADuKIwnrbWj38OfN7my/exec"; 
         const DB_CURRENT = 'youth_current_user';
 
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
@@ -494,6 +520,43 @@
             if(loader) loader.classList.add('hidden');
         }
 
+        function showCustomAlert(title, message, icon = "⚠️") {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('alertIcon').innerText = icon;
+            openModal('customAlertModal');
+        }
+
+        function showCustomConfirm(title, message, callback, requireInput = false) {
+            document.getElementById('confirmTitle').innerText = title;
+            document.getElementById('confirmMessage').innerText = message;
+            
+            let inputContainer = document.getElementById('confirmInputContainer');
+            let inputField = document.getElementById('confirmInputVal');
+            
+            if (requireInput) {
+                inputContainer.classList.remove('hidden');
+                inputField.value = '';
+            } else {
+                inputContainer.classList.add('hidden');
+            }
+
+            let yesBtn = document.getElementById('confirmYesBtn');
+            let newYesBtn = yesBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+
+            newYesBtn.addEventListener('click', () => {
+                closeModal('customConfirmModal');
+                if (requireInput) {
+                    callback(inputField.value.trim());
+                } else {
+                    callback(true);
+                }
+            });
+
+            openModal('customConfirmModal');
+        }
+
         function show3DSuccessModal(title, desc) {
             document.getElementById('successModalTitle').innerText = title;
             document.getElementById('successModalDesc').innerText = desc;
@@ -511,14 +574,6 @@
                 target.style.display = 'block';
                 target.classList.remove('hidden');
             }
-        }
-
-        function openForgotModal() {
-            document.getElementById('forgotMobile').value = '';
-            document.getElementById('forgotOrgName').value = '';
-            document.getElementById('forgotMpin').value = '';
-            document.getElementById('recoveredPasswordDisplay').innerText = '';
-            openModal('forgotModal');
         }
 
         function changeLanguage(lang) {
@@ -585,10 +640,10 @@
             let mpin = document.getElementById('regMpin').value.trim();
             let privacyChecked = document.getElementById('privacyPolicyCheck').checked;
 
-            if(!orgName || !mobile || !pass || !mpin) { alert("Please fill all required fields including M-PIN!"); return; }
-            if(!privacyChecked) { alert("Please agree to the Privacy Policy before registering."); return; }
-            if(mobile.length !== 10 || isNaN(mobile)) { alert("Please enter a valid 10-digit mobile number!"); return; }
-            if(mpin.length !== 4 || isNaN(mpin)) { alert("M-PIN must be exactly 4 digits!"); return; }
+            if(!orgName || !mobile || !pass || !mpin) { showCustomAlert("Missing Fields", "Please fill all required fields including M-PIN!"); return; }
+            if(!privacyChecked) { showCustomAlert("Privacy Policy", "Please agree to the Privacy Policy before registering."); return; }
+            if(mobile.length !== 10 || isNaN(mobile)) { showCustomAlert("Invalid Number", "Please enter a valid 10-digit mobile number!"); return; }
+            if(mpin.length !== 4 || isNaN(mpin)) { showCustomAlert("Invalid M-PIN", "M-PIN must be exactly 4 digits!"); return; }
 
             showLoader("Registering organization...");
 
@@ -617,11 +672,11 @@
                     show3DSuccessModal("Registered Successfully!", "Your organization has been registered. Please login now.");
                     switchView('loginView');
                 } else if(result.status === "exists") {
-                    alert("This mobile number is already registered!");
+                    showCustomAlert("Already Exists", "This mobile number is already registered!");
                 }
             } catch(e) {
                 hideLoader();
-                alert("Server connection error!");
+                showCustomAlert("Connection Error", "Server connection failed!");
             }
         }
 
@@ -629,7 +684,7 @@
             let mobile = document.getElementById('loginMobile').value.trim();
             let pass = document.getElementById('loginPassword').value.trim();
 
-            if(!mobile || !pass) { alert("Please enter mobile number and password!"); return; }
+            if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile number and password!"); return; }
 
             showLoader("Logging in & syncing data...");
 
@@ -646,11 +701,11 @@
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
                     initDashboard();
                 } else {
-                    alert("Incorrect mobile number or password!");
+                    showCustomAlert("Login Failed", "Incorrect mobile number or password!");
                 }
             } catch(e) {
                 hideLoader();
-                alert("Login error! Please check connection.");
+                showCustomAlert("Connection Error", "Login error! Please check connection.");
             }
         }
 
@@ -659,7 +714,7 @@
             let orgName = document.getElementById('forgotOrgName').value.trim();
             let mpin = document.getElementById('forgotMpin').value.trim();
 
-            if(!mobile || !orgName || !mpin) { alert("Please fill all fields!"); return; }
+            if(!mobile || !orgName || !mpin) { showCustomAlert("Missing Fields", "Please fill all fields!"); return; }
 
             showLoader("Verifying M-PIN...");
             try {
@@ -673,23 +728,18 @@
                 if(result.status === "success") {
                     document.getElementById('recoveredPasswordDisplay').innerText = `Your Password: ${result.password}`;
                 } else {
-                    alert("Invalid details or M-PIN!");
+                    showCustomAlert("Verification Failed", "Invalid details or M-PIN!");
                 }
             } catch(e) {
                 hideLoader();
-                alert("Recovery failed due to connection error.");
+                showCustomAlert("Connection Error", "Recovery failed due to connection error.");
             }
         }
 
         async function syncUserDataWithSheet() {
             if(!currentUser) return;
             let targetMobile = currentUser.parentMobile || currentUser.mobile;
-            
-            let payload = { 
-                action: "update", 
-                mobile: targetMobile, 
-                userData: currentUser 
-            };
+            let payload = { action: "update", mobile: targetMobile, userData: currentUser };
 
             try {
                 let res = await fetch(_URL, { 
@@ -698,7 +748,6 @@
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
                     mode: "cors"
                 });
-                
                 let result = await res.json();
                 if(result.status === "success") {
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
@@ -710,18 +759,14 @@
 
         async function refreshUserDataFromServer() {
             if (!currentUser || !currentUser.mobile) return;
-            
             let url = _URL + "?action=getOrg&mobile=" + currentUser.mobile;
             try {
                 let res = await fetch(url);
                 let data = await res.json();
-                
                 if(data.status === "success" && data.user) {
                     currentUser = data.user; 
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-                    if (typeof renderOccasions === "function") {
-                        renderOccasions();
-                    }
+                    if (typeof renderOccasions === "function") renderOccasions();
                 }
             } catch(err) {
                 console.error("Refresh failed:", err);
@@ -747,16 +792,13 @@
                 showLoader("Loading public view...");
                 try {
                     let res = await fetch(`${_URL}?action=getOrg&mobile=${viewMobile}`, {
-                        method: "GET",
-                        headers: { "Accept": "application/json" },
-                        mode: "cors"
+                        method: "GET", headers: { "Accept": "application/json" }, mode: "cors"
                     });
                     let result = await res.json();
                     hideLoader();
                     if(result.status === "success") {
                         let publicOrgData = result.user;
                         document.getElementById('pubOrgName').innerText = publicOrgData.orgName;
-
                         let container = document.getElementById('pubContentArea');
                         let currentLang = localStorage.getItem('portal_lang') || 'te';
                         let donText = translations[currentLang] ? translations[currentLang].donation : "Donation";
@@ -870,7 +912,7 @@
             let mobile = document.getElementById('memberMobile').value.trim();
             let pass = document.getElementById('memberPassword').value.trim();
 
-            if(!name || !mobile || !pass) { alert("Please fill name, mobile, and password!"); return; }
+            if(!name || !mobile || !pass) { showCustomAlert("Missing Fields", "Please fill name, mobile, and password!"); return; }
 
             if(!currentUser.members) currentUser.members = [];
             currentUser.members.push({ name, designation, mobile, pass, parentMobile: currentUser.mobile });
@@ -881,7 +923,7 @@
             document.getElementById('memberDesignation').value = '';
             document.getElementById('memberMobile').value = '';
             document.getElementById('memberPassword').value = '';
-            alert("Member added successfully!");
+            show3DSuccessModal("Success!", "Member added successfully.");
         }
 
         function renderControlMembers() {
@@ -905,11 +947,14 @@
         }
 
         function removeControlMember(idx) {
-            if(confirm("Are you sure you want to remove this member?")) {
-                currentUser.members.splice(idx, 1);
-                syncUserDataWithSheet();
-                renderControlMembers();
-            }
+            showCustomConfirm("Delete Member", "Are you sure you want to remove this member?", (confirmed) => {
+                if (confirmed) {
+                    currentUser.members.splice(idx, 1);
+                    syncUserDataWithSheet();
+                    renderControlMembers();
+                    show3DSuccessModal("Deleted", "Member removed successfully.");
+                }
+            });
         }
 
         function openAddOccasionModal() {
@@ -930,7 +975,7 @@
 
         function createOccasionAndPay() {
             let name = document.getElementById('occName').value.trim();
-            if(!name) { alert("Please enter occasion name!"); return; }
+            if(!name) { showCustomAlert("Missing Name", "Please enter occasion name!"); return; }
 
             let selectedMembers = [];
             document.querySelectorAll('.occ-member-chk:checked').forEach(chk => {
@@ -958,7 +1003,7 @@
 
         async function confirmPaymentDone() {
             let transactionId = document.getElementById('upiTransactionId').value.trim();
-            if(!transactionId) { alert("Please enter Transaction ID!"); return; }
+            if(!transactionId) { showCustomAlert("Transaction ID", "Please enter Transaction ID!"); return; }
 
             if(pendingOccasionData) {
                 pendingOccasionData.transactionId = transactionId;
@@ -973,7 +1018,7 @@
                 
                 pendingOccasionData = null;
                 closeModal('pay49Modal');
-                alert("Submitted!");
+                show3DSuccessModal("Submitted Successfully!", "Occasion created and pending admin approval.");
                 renderOccasions();
             }
         }
@@ -1041,13 +1086,13 @@
 
         async function updateTransactionId(occId) {
             let newId = document.getElementById(`newTx_${occId}`).value.trim();
-            if(!newId) { alert("Please enter new transaction ID!"); return; }
+            if(!newId) { showCustomAlert("Transaction ID", "Please enter new transaction ID!"); return; }
 
             let occ = currentUser.occasions.find(o => o.id === occId);
             if(!occ) return;
 
             let currentAttempt = occ.attemptCount || 1;
-            if(currentAttempt >= 2) { alert("Limit exceeded!"); return; }
+            if(currentAttempt >= 2) { showCustomAlert("Limit Exceeded", "Limit exceeded!"); return; }
 
             occ.transactionId = newId;
             occ.status = "pending";
@@ -1055,18 +1100,20 @@
 
             syncUserDataWithSheet();
             renderOccasions();
-            alert("Transaction ID updated successfully and sent for review!");
+            show3DSuccessModal("Updated!", "Transaction ID updated successfully and sent for review!");
         }
 
         function deleteOccasionPrompt(id) {
-            let mpin = prompt("Enter 4-digit M-PIN to delete this occasion:");
-            if(!mpin) return;
-            if(mpin !== currentUser.mpin) { alert("Incorrect M-PIN!"); return; }
-
-            currentUser.occasions = currentUser.occasions.filter(o => o.id !== id);
-            syncUserDataWithSheet();
-            renderOccasions();
-            alert("Occasion deleted successfully.");
+            showCustomConfirm("Delete Occasion", "Enter 4-digit M-PIN to delete this occasion:", (mpin) => {
+                if(mpin !== currentUser.mpin) {
+                    showCustomAlert("Incorrect M-PIN", "Incorrect M-PIN! Deletion failed.");
+                    return;
+                }
+                currentUser.occasions = currentUser.occasions.filter(o => o.id !== id);
+                syncUserDataWithSheet();
+                renderOccasions();
+                show3DSuccessModal("Deleted", "Occasion deleted successfully.");
+            }, true);
         }
 
         function openAccountsControl(occId) {
@@ -1143,7 +1190,7 @@
 
             toggleEditEstimation();
             openAccountsControl(selectedOccasionId);
-            alert("Estimations updated successfully!");
+            show3DSuccessModal("Saved!", "Estimations updated successfully!");
         }
 
         function downloadOccasionReportPDF() {
@@ -1242,7 +1289,7 @@
             let amount = document.getElementById('entryAmount').value.trim();
             let desc = document.getElementById('entryDesc').value.trim();
 
-            if(!amount || !desc) { alert("Please enter amount and description!"); return; }
+            if(!amount || !desc) { showCustomAlert("Missing Fields", "Please enter amount and description!"); return; }
 
             occ.entries.push({ id: 'ent_' + Date.now(), type, amount: Number(amount), desc, date: new Date().toLocaleDateString() });
             syncUserDataWithSheet();
@@ -1251,6 +1298,7 @@
             
             openAccountsControl(selectedOccasionId);
             renderOccasions();
+            show3DSuccessModal("Saved!", "Entry added successfully.");
         }
 
         function renderFinancialEntries() {
@@ -1286,10 +1334,15 @@
         function deleteFinancialEntry(entId) {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(occ) {
-                occ.entries = occ.entries.filter(e => e.id !== entId);
-                syncUserDataWithSheet();
-                openAccountsControl(selectedOccasionId);
-                renderOccasions();
+                showCustomConfirm("Delete Entry", "Are you sure you want to delete this entry?", (confirmed) => {
+                    if (confirmed) {
+                        occ.entries = occ.entries.filter(e => e.id !== entId);
+                        syncUserDataWithSheet();
+                        openAccountsControl(selectedOccasionId);
+                        renderOccasions();
+                        show3DSuccessModal("Deleted", "Entry removed successfully.");
+                    }
+                });
             }
         }
 
@@ -1299,7 +1352,7 @@
             if (navigator.share) {
                 navigator.share({ title: 'DONATION BOOK', text: `Check out our organization accounts:`, url: shareLink }).catch(() => {});
             } else {
-                alert("Sharing not supported.");
+                showCustomAlert("Share", "Sharing not supported on this browser.");
             }
         }
 
@@ -1309,7 +1362,7 @@
             if (navigator.share) {
                 navigator.share({ title: occName, text: `Check accounts for ${occName}:`, url: shareLink }).catch(() => {});
             } else {
-                alert("Sharing not supported.");
+                showCustomAlert("Share", "Sharing not supported on this browser.");
             }
         }
     </script>

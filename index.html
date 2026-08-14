@@ -345,7 +345,7 @@
                         </select>
                         <input type="number" id="entryAmount" placeholder="Amount (₹)" class="p-2 rounded bg-stone-900 moving-border text-white">
                     </div>
-                    <input type="text" id="entryDesc" placeholder="Description (Ex: Donor Name / Details)" class="w-full p-2 rounded bg-stone-900 moving-border text-white">
+                    <input type="text" id="entryDesc" placeholder="Deion (Ex: Donor Name / Details)" class="w-full p-2 rounded bg-stone-900 moving-border text-white">
                     <button onclick="addFinancialEntry()" id="btnSaveEntry" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded shadow cursor-pointer moving-border">Save Entry</button>
                 </div>
                 <div id="unauthorizedMsg" class="hidden text-center text-red-400 text-xs py-2">⚠️ You don't have permission to add entries in this occasion.</div>
@@ -382,9 +382,9 @@
         </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <!-- Java Application Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbw18aGyXsrkIOGCZdqnwmGQgNx9IoIbp966UhEf5vsfT1gF_CpuLxkB3e5E9Lha6w/exec"; 
+        const _URL = "https://script.google.com/macros/s/AKfycbwG-AGeFW9Dw7ofRuz9_b6jsXz5N7WRnQtApgPrpDUTvgEEuWd0U_9dqzoq5LDo8-DT/exec"; 
         const DB_CURRENT = 'youth_current_user';
 
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;

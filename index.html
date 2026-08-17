@@ -307,6 +307,33 @@
         </div>
     </div>
 
+    <!-- 👉 Separate View Modals for Donations & Expenses -->
+    <div id="donationsListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-3 bg-emerald-950 flex justify-between items-center border-b border-emerald-800">
+                <h3 class="font-bold text-sm text-emerald-300">💰 All Donations (Donors List)</h3>
+                <button onclick="closeModal('donationsListModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-3 overflow-y-auto flex-grow space-y-2 text-xs" id="modalDonationsContainer"></div>
+            <div class="p-3 border-t border-stone-800">
+                <button onclick="closeModal('donationsListModal')" class="w-full bg-stone-700 py-2 rounded-lg font-bold text-xs">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="expensesListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-3 bg-red-950 flex justify-between items-center border-b border-red-800">
+                <h3 class="font-bold text-sm text-red-300">📊 All Expenses (Cost Details)</h3>
+                <button onclick="closeModal('expensesListModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-3 overflow-y-auto flex-grow space-y-2 text-xs" id="modalExpensesContainer"></div>
+            <div class="p-3 border-t border-stone-800">
+                <button onclick="closeModal('expensesListModal')" class="w-full bg-stone-700 py-2 rounded-lg font-bold text-xs">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Accounts Control Panel Modal -->
     <div id="accountsModal" class="fixed inset-0 bg-black/85 hidden z-[90000] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
@@ -319,6 +346,16 @@
             </div>
 
             <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
+                <!-- 👉 Donations & Expenses Separate View Buttons -->
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="openDonationsListModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow cursor-pointer moving-border flex items-center justify-center gap-1">
+                        <span>💰 View Donations</span>
+                    </button>
+                    <button onclick="openExpensesListModal()" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow cursor-pointer moving-border flex items-center justify-center gap-1">
+                        <span>📊 View Expenses</span>
+                    </button>
+                </div>
+
                 <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2.5">
                     <h4 class="font-bold text-amber-400 border-b border-stone-800 pb-1 flex justify-between items-center">
                         <span>📊 Dynamic Cost Estimation</span>
@@ -411,6 +448,7 @@
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
         let selectedOccasionId = null;
         let pendingOccasionData = null;
+        let publicActiveOccasionData = null; // 👉 పబ్లిక్ వ్యూ డేటా కోసం
 
         const translations = {
             te: {
@@ -831,6 +869,7 @@
                         if(viewOccId) {
                             let occ = publicOrgData.occasions.find(o => o.id === viewOccId);
                             if(occ) {
+                                window.publicOrgOccasion = occ; // 👉 పబ్లిక్ వ్యూ మోడ్ కోసం డేటా సేవ్ చేయడం
                                 document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (View Mode)`;
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
@@ -838,7 +877,6 @@
                                 let estCost = Number(occ.estimatedCost || 0);
                                 let gap = estCost - inc;
                                 let parts = occ.estimations || [];
-                                let entries = occ.entries || [];
 
                                 container.innerHTML = `
                                     <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-4">
@@ -864,21 +902,14 @@
                                             <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
                                         </div>
 
-                                        <!-- Individual Transactions List -->
-                                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
-                                            <h5 class="font-bold text-amber-300 border-b border-stone-800 pb-1">📋 Individual Transactions</h5>
-                                            <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                                                ${entries.map((ent, idx) => `
-                                                    <div class="flex justify-between items-center bg-stone-900 p-2 rounded-lg border border-stone-800 text-xs">
-                                                        <div>
-                                                            <span class="px-1 py-0.5 rounded text-[8px] font-bold ${ent.type === 'income' ? 'bg-emerald-900 text-emerald-200' : 'bg-red-900 text-red-200'}">${ent.type.toUpperCase()}</span>
-                                                            <strong class="ml-1 text-stone-200">${ent.desc}</strong>
-                                                            <span class="text-[8px] text-stone-400 block">${ent.date}</span>
-                                                        </div>
-                                                        <span class="font-bold ${ent.type === 'income' ? 'text-emerald-400' : 'text-red-400'}">₹${ent.amount}</span>
-                                                    </div>
-                                                `).join('') || '<span class="text-stone-500 text-center block py-2">No transactions recorded yet</span>'}
-                                            </div>
+                                        <!-- 👉 పబ్లిక్ వ్యూ కోసం సపరేట్ డొనేషన్స్ & ఎక్స్‌పెన్సెస్ బటన్స్ -->
+                                        <div class="grid grid-cols-2 gap-2 pt-1">
+                                            <button onclick="openPublicListModal('income', '${occ.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer moving-border flex items-center justify-center gap-1">
+                                                <span>💰 View Donations</span>
+                                            </button>
+                                            <button onclick="openPublicListModal('expense', '${occ.id}')" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer moving-border flex items-center justify-center gap-1">
+                                                <span>📊 View Expenses</span>
+                                            </button>
                                         </div>
                                     </div>
                                 `;
@@ -1076,91 +1107,89 @@
         }
 
         // అకేషన్స్ రెండర్ చేసేటప్పుడు 24 గంటలు చెక్ చేయడం
-       function renderOccasions() {
-    let container = document.getElementById('occasionsContainer');
-    if(!currentUser.occasions || currentUser.occasions.length === 0) {
-        container.innerHTML = `<div class="bg-stone-900/60 p-5 rounded-xl moving-border text-center text-stone-400 text-xs">No occasions added yet.</div>`;
-        return;
-    }
-
-    let now = Date.now();
-    let twentyFourHours = 24 * 60 * 60 * 1000;
-
-    container.innerHTML = currentUser.occasions.map(occ => {
-        let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
-        let createdAt = occ.createdAt || now;
-        let isExpired = (now - createdAt) > twentyFourHours;
-
-        let statusHtml = "";
-        let actionBtnHtml = "";
-
-        if (occ.status === "approved") {
-            statusHtml = `<span class="font-semibold text-emerald-400">Status: Approved</span>`;
-            actionBtnHtml = `
-                <div class="flex gap-2">
-                    <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
-                    <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Link">🔗</button>
-                </div>
-            `;
-        } else if (occ.status === "pending") {
-            statusHtml = `<span class="font-semibold text-yellow-400">Status: Pending Approval (Paid ₹49)</span>`;
-            actionBtnHtml = `<span class="text-xs text-amber-300 italic">Waiting for admin approval</span>`;
-        } else if (occ.status === "free_trial") {
-            if (isExpired) {
-                // 24 గంటలు దాటిపోతే ఫ్రీ ట్రయల్ ఎక్స్‌పైర్డ్ అని చూపిస్తుంది
-                statusHtml = `<span class="font-semibold text-orange-400">Status: Free Limit Expired (Pay ₹49)</span>`;
-                actionBtnHtml = `
-                    <button onclick="openPay49Modal('${occ.id}', '${occ.name}')" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-2.5 rounded-xl text-xs shadow cursor-pointer moving-border animate-pulse">
-                        ⚠️ Free Limit Expired! Please Pay ₹49
-                    </button>
-                `;
-            } else {
-                // 24 గంటల లోపు ఎటువంటి రెస్ట్రిక్షన్ లేదు, అన్నీ చేసుకోవచ్చు
-                statusHtml = `<span class="font-semibold text-cyan-400">Status: Free Trial Active (24h)</span>`;
-                actionBtnHtml = `
-                    <div class="flex gap-2">
-                        <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts (Free)</button>
-                        <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Link">🔗</button>
-                    </div>
-                `;
+        function renderOccasions() {
+            let container = document.getElementById('occasionsContainer');
+            if(!currentUser.occasions || currentUser.occasions.length === 0) {
+                container.innerHTML = `<div class="bg-stone-900/60 p-5 rounded-xl moving-border text-center text-stone-400 text-xs">No occasions added yet.</div>`;
+                return;
             }
-        } else if(occ.status === "Incorrect ID") {
-            let attempt = occ.attemptCount || 1;
-            if(attempt >= 2) {
-                statusHtml = `<span class="text-red-500 font-bold text-xs">Limit exceeded. Occasion Closed.</span>`;
-                actionBtnHtml = `<span class="text-xs text-red-400">Occasion Closed</span>`;
-            } else {
-                statusHtml = `
-                    <div class="space-y-1">
-                        <span class="text-orange-400 font-bold">Incorrect Transaction ID. Please edit once:</span>
+
+            let now = Date.now();
+            let twentyFourHours = 24 * 60 * 60 * 1000;
+
+            container.innerHTML = currentUser.occasions.map(occ => {
+                let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+                let createdAt = occ.createdAt || now;
+                let isExpired = (now - createdAt) > twentyFourHours;
+
+                let statusHtml = "";
+                let actionBtnHtml = "";
+
+                if (occ.status === "approved") {
+                    statusHtml = `<span class="font-semibold text-emerald-400">Status: Approved</span>`;
+                    actionBtnHtml = `
                         <div class="flex gap-2">
-                            <input type="text" id="newTx_${occ.id}" placeholder="Enter Correct UPI ID" class="p-1.5 rounded bg-stone-950 text-white text-xs border border-orange-500 flex-1">
-                            <button onclick="updateTransactionId('${occ.id}')" class="bg-orange-600 text-white px-3 py-1 rounded text-xs font-bold">Update ID</button>
+                            <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
+                            <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Link">🔗</button>
+                        </div>
+                    `;
+                } else if (occ.status === "pending") {
+                    statusHtml = `<span class="font-semibold text-yellow-400">Status: Pending Approval (Paid ₹49)</span>`;
+                    actionBtnHtml = `<span class="text-xs text-amber-300 italic">Waiting for admin approval</span>`;
+                } else if (occ.status === "free_trial") {
+                    if (isExpired) {
+                        statusHtml = `<span class="font-semibold text-orange-400">Status: Free Limit Expired (Pay ₹49)</span>`;
+                        actionBtnHtml = `
+                            <button onclick="openPay49Modal('${occ.id}', '${occ.name}')" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-2.5 rounded-xl text-xs shadow cursor-pointer moving-border animate-pulse">
+                                ⚠️ Free Limit Expired! Please Pay ₹49
+                            </button>
+                        `;
+                    } else {
+                        statusHtml = `<span class="font-semibold text-cyan-400">Status: Free Trial Active (24h)</span>`;
+                        actionBtnHtml = `
+                            <div class="flex gap-2">
+                                <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts (Free)</button>
+                                <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Link">🔗</button>
+                            </div>
+                        `;
+                    }
+                } else if(occ.status === "Incorrect ID") {
+                    let attempt = occ.attemptCount || 1;
+                    if(attempt >= 2) {
+                        statusHtml = `<span class="text-red-500 font-bold text-xs">Limit exceeded. Occasion Closed.</span>`;
+                        actionBtnHtml = `<span class="text-xs text-red-400">Occasion Closed</span>`;
+                    } else {
+                        statusHtml = `
+                            <div class="space-y-1">
+                                <span class="text-orange-400 font-bold">Incorrect Transaction ID. Please edit once:</span>
+                                <div class="flex gap-2">
+                                    <input type="text" id="newTx_${occ.id}" placeholder="Enter Correct UPI ID" class="p-1.5 rounded bg-stone-950 text-white text-xs border border-orange-500 flex-1">
+                                    <button onclick="updateTransactionId('${occ.id}')" class="bg-orange-600 text-white px-3 py-1 rounded text-xs font-bold">Update ID</button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
+                return `
+                    <div class="bg-stone-900 rounded-2xl p-4 moving-border shadow-xl space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
+                                <div class="text-xs pt-1">${statusHtml}</div>
+                            </div>
+                            ${currentUser.isMainAdmin ? `<button onclick="deleteOccasionPrompt('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
+                        </div>
+                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
+                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                        </div>
+                        <div class="pt-1">
+                            ${actionBtnHtml}
                         </div>
                     </div>
                 `;
-            }
+            }).join('');
         }
-
-        return `
-            <div class="bg-stone-900 rounded-2xl p-4 moving-border shadow-xl space-y-3">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
-                        <div class="text-xs pt-1">${statusHtml}</div>
-                    </div>
-                    ${currentUser.isMainAdmin ? `<button onclick="deleteOccasionPrompt('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
-                </div>
-                <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
-                    <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
-                </div>
-                <div class="pt-1">
-                    ${actionBtnHtml}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
 
         function openPay49Modal(occId, occName) {
             selectedOccasionId = occId;
@@ -1201,27 +1230,112 @@
             }, true);
         }
 
-       function openAccountsControl(occId) {
-    let occ = currentUser.occasions.find(o => o.id === occId);
-    if(!occ) return;
+        function openAccountsControl(occId) {
+            let occ = currentUser.occasions.find(o => o.id === occId);
+            if(!occ) return;
 
-    // 24 గంటలు దాటాయా లేదా అని చెక్ చేయడం
-    let now = Date.now();
-    let twentyFourHours = 24 * 60 * 60 * 1000;
-    let createdAt = occ.createdAt || now;
-    
-    if (occ.status === "free_trial" && (now - createdAt) > twentyFourHours) {
-        showCustomAlert("Free Limit Expired", "Your 24-hour free trial has expired. Please pay ₹49 to continue.");
-        openPay49Modal(occ.id, occ.name);
-        return;
-    }
+            let now = Date.now();
+            let twentyFourHours = 24 * 60 * 60 * 1000;
+            let createdAt = occ.createdAt || now;
+            
+            if (occ.status === "free_trial" && (now - createdAt) > twentyFourHours) {
+                showCustomAlert("Free Limit Expired", "Your 24-hour free trial has expired. Please pay ₹49 to continue.");
+                openPay49Modal(occ.id, occ.name);
+                return;
+            }
 
-    selectedOccasionId = occId;
-    // ... మిగిలిన కోడ్ యథావిధిగా ఉంటుంది
-    document.getElementById('modalOccasionTitle').innerText = occ.name;
-    // ...
-    openModal('accountsModal');
-}
+            selectedOccasionId = occId;
+            document.getElementById('modalOccasionTitle').innerText = occ.name;
+            
+            let estCost = Number(occ.estimatedCost || 0);
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let gap = estCost - inc;
+
+            document.getElementById('estCostDisplay').innerText = `₹${estCost}`;
+            document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
+            document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
+
+            let parts = occ.estimations || [];
+            let listDiv = document.getElementById('estimationItemsList');
+            listDiv.innerHTML = parts.length === 0 ? `<p class="text-stone-500 text-center py-1">No estimations added yet</p>` : parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300 border-b border-stone-800/50 pb-0.5"><span>${p.name}:</span><span class="text-amber-300 font-bold">₹${p.cost}</span></div>`).join('');
+
+            let editInputsContainer = document.getElementById('dynamicEstimationInputs');
+            editInputsContainer.innerHTML = '';
+            if(parts.length === 0) { addEstimationRow('', ''); } else { parts.forEach(p => addEstimationRow(p.name, p.cost)); }
+
+            document.getElementById('estViewMode').classList.remove('hidden');
+            document.getElementById('estEditMode').classList.add('hidden');
+
+            renderFinancialEntries();
+            openModal('accountsModal');
+        }
+
+        // 👉 Donations & Expenses Separate List Modals Logic
+        function openDonationsListModal() {
+            let occ = currentUser ? currentUser.occasions.find(o => o.id === selectedOccasionId) : window.publicOrgOccasion;
+            if(!occ) return;
+            let donations = occ.entries.filter(e => e.type === 'income');
+            let container = document.getElementById('modalDonationsContainer');
+            
+            if(donations.length === 0) {
+                container.innerHTML = `<p class="text-stone-500 text-center py-4 text-xs">No donations recorded yet.</p>`;
+            } else {
+                container.innerHTML = donations.map((ent, idx) => `
+                    <div class="flex justify-between items-center bg-stone-950 p-2.5 rounded-xl border border-emerald-900/50">
+                        <div>
+                            <span class="text-[10px] text-emerald-400 font-bold">#${idx + 1} - ${ent.date}</span>
+                            <strong class="block text-stone-200 text-xs">${ent.desc}</strong>
+                        </div>
+                        <span class="font-black text-emerald-400 text-sm">₹${ent.amount}</span>
+                    </div>
+                `).join('');
+            }
+            openModal('donationsListModal');
+        }
+
+        function openExpensesListModal() {
+            let occ = currentUser ? currentUser.occasions.find(o => o.id === selectedOccasionId) : window.publicOrgOccasion;
+            if(!occ) return;
+            let expenses = occ.entries.filter(e => e.type === 'expense');
+            let container = document.getElementById('modalExpensesContainer');
+            
+            if(expenses.length === 0) {
+                container.innerHTML = `<p class="text-stone-500 text-center py-4 text-xs">No expenses recorded yet.</p>`;
+            } else {
+                container.innerHTML = expenses.map((ent, idx) => `
+                    <div class="flex justify-between items-center bg-stone-950 p-2.5 rounded-xl border border-red-900/50">
+                        <div>
+                            <span class="text-[10px] text-red-400 font-bold">#${idx + 1} - ${ent.date}</span>
+                            <strong class="block text-stone-200 text-xs">${ent.desc}</strong>
+                        </div>
+                        <span class="font-black text-red-400 text-sm">₹${ent.amount}</span>
+                    </div>
+                `).join('');
+            }
+            openModal('expensesListModal');
+        }
+
+        async function openPublicListModal(type, occId) {
+            selectedOccasionId = occId;
+            let occ = null;
+            if(currentUser) {
+                occ = currentUser.occasions.find(o => o.id === occId);
+            } else {
+                let urlParams = new URLSearchParams(window.location.search);
+                let viewMobile = urlParams.get('org');
+                try {
+                    let res = await fetch(`${_URL}?action=getOrg&mobile=${viewMobile}`);
+                    let result = await res.json();
+                    if(result.status === "success") {
+                        occ = result.user.occasions.find(o => o.id === occId);
+                        window.publicOrgOccasion = occ;
+                    }
+                } catch(e) { console.error(e); }
+            }
+
+            if(type === 'income') openDonationsListModal();
+            else openExpensesListModal();
+        }
 
         function addEstimationRow(name, cost) {
             let container = document.getElementById('dynamicEstimationInputs');

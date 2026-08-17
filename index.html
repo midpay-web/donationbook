@@ -127,18 +127,6 @@
                 <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
             </div>
             <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
-            
-            <!-- 👉 లాగిన్ పేజీలో హెల్ప్ కోసం వాట్సాప్ బటన్ -->
-            <div class="pt-2 border-t border-stone-800 text-center">
-                <p class="text-[11px] text-stone-400 mb-2">Need Login Help?</p>
-                <a href="https://wa.me/911169296787?text=Hello%20Donation%20Book%20Team,%20I%20need%20help%20with%20Login." 
-                   target="_blank" 
-                   class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
-                    <span>💬</span>
-                    <span>Chat on WhatsApp (+91 11692 96787)</span>
-                </a>
-            </div>
-
             <div class="text-center pt-1 space-y-2">
                 <button onclick="openModal('forgotModal')" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
                 <button onclick="switchView('publicHomeView')" class="text-xs text-stone-400 underline cursor-pointer block mx-auto">← Back to Home</button>
@@ -190,7 +178,16 @@
                     </button>
                 </div>
             </div>
-
+  <!-- 👉 లాగిన్ పేజీలో హెల్ప్ కోసం వాట్సాప్ బటన్ -->
+            <div class="pt-2 border-t border-stone-800 text-center">
+                <p class="text-[11px] text-stone-400 mb-2">Need Login Help?</p>
+                <a href="https://wa.me/911169296787?text=Hello%20Donation%20Book%20Team,%20I%20need%20help%20with%20Login." 
+                   target="_blank" 
+                   class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
+                    <span>💬</span>
+                    <span>Chat on WhatsApp (+91 11692 96787)</span>
+                </a>
+            </div>
             <div class="flex justify-between items-center bg-stone-900/80 p-3 rounded-xl moving-border">
                 <h3 class="font-bold text-sm text-yellow-400 flex items-center gap-1.5"><span>📅</span> Occasions</h3>
                 <button onclick="openAddOccasionModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-lg shadow cursor-pointer flex items-center gap-1 waterdrop-btn moving-border">

@@ -180,12 +180,14 @@
             </div>
   <!-- 👉 లాగిన్ పేజీలో హెల్ప్ కోసం వాట్సాప్ బటన్ -->
             <div class="pt-2 border-t border-stone-800 text-center">
-                <p class="text-[11px] text-stone-400 mb-2">Need Login Help?</p>
+                <p class="text-[11px] text-stone-400 mb-2">Need Help?</p>
                 <a href="https://wa.me/911169296787?text=Hello%20Donation%20Book%20Team,%20I%20need%20help%20with%20Login." 
                    target="_blank" 
                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
-                    <span>💬</span>
-                    <span>Chat on WhatsApp (+91 11692 96787)</span>
+                   <button onclick="openWhatsAppSupport()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
+    <span>💬</span>
+    <span>Chat on WhatsApp</span>
+</button>
                 </a>
             </div>
             <div class="flex justify-between items-center bg-stone-900/80 p-3 rounded-xl moving-border">
@@ -1388,6 +1390,10 @@
                 showCustomAlert("Share", "Sharing not supported on this browser.");
             }
         }
+        <button onclick="openWhatsAppSupport()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
+    <span>💬</span>
+    <span>Chat on WhatsApp (+91 11692 96787)</span>
+</button>
     </script>
 </body>
 </html>

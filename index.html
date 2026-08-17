@@ -11,6 +11,11 @@
     <!-- jsPDF & AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
+    <!-- 👉 PWA / Home Screen Integration -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#451a03">
+
     <style>
         body { font-family: 'Ramabhadra', sans-serif; background-color: #451a03; }
         .title-font { font-family: 'Suranna', serif; }
@@ -448,7 +453,7 @@
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
         let selectedOccasionId = null;
         let pendingOccasionData = null;
-        let publicActiveOccasionData = null; // 👉 పబ్లిక్ వ్యూ డేటా కోసం
+        let publicActiveOccasionData = null;
 
         const translations = {
             te: {
@@ -869,7 +874,7 @@
                         if(viewOccId) {
                             let occ = publicOrgData.occasions.find(o => o.id === viewOccId);
                             if(occ) {
-                                window.publicOrgOccasion = occ; // 👉 పబ్లిక్ వ్యూ మోడ్ కోసం డేటా సేవ్ చేయడం
+                                window.publicOrgOccasion = occ; 
                                 document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (View Mode)`;
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
@@ -1050,7 +1055,6 @@
             openModal('addOccasionModal');
         }
 
-        // ఉచితంగా అకేషన్ క్రియేట్ చేయడం (24 గంటల ట్రయల్)
         async function createFreeOccasion() {
             let name = document.getElementById('occName').value.trim();
             if(!name) { showCustomAlert("Missing Name", "Please enter occasion name!"); return; }
@@ -1084,7 +1088,6 @@
             renderOccasions();
         }
 
-        // 24 గంటలు దాటిన తర్వాత పేమెంట్ వెరిఫై చేయడం
         async function confirmPaymentDone() {
             let transactionId = document.getElementById('upiTransactionId').value.trim();
             if(!transactionId) { showCustomAlert("Transaction ID", "Please enter Transaction ID!"); return; }
@@ -1106,7 +1109,6 @@
             }
         }
 
-        // అకేషన్స్ రెండర్ చేసేటప్పుడు 24 గంటలు చెక్ చేయడం
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');
             if(!currentUser.occasions || currentUser.occasions.length === 0) {
@@ -1557,6 +1559,14 @@
                 showCustomAlert("Share", "Sharing not supported on this browser.");
             }            
         }
+
+        // 👉 PWA Prompt Event Listener
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            console.log("App can be installed on home screen.");
+        });
     </script>
 </body>
 </html>

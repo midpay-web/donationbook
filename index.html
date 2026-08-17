@@ -113,27 +113,39 @@
 </div>
         </div>
 
-        <!-- Login Page View -->
-        <div id="loginView" class="page-view space-y-4 py-4 hidden">
-            <div class="bg-stone-900 p-6 rounded-2xl moving-border shadow-xl space-y-4">
-                <h2 class="title-font text-xl font-bold text-yellow-400 text-center">🔐 Login to Organization</h2>
-                <div class="space-y-3 text-xs">
-                    <div>
-                        <label class="font-bold block mb-1 text-stone-300">Mobile Number (User ID):</label>
-                        <input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
-                    </div>
-                    <div>
-                        <label class="font-bold block mb-1 text-stone-300">Password:</label>
-                        <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
-                    </div>
-                    <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
-                    <div class="text-center pt-1 space-y-2">
-                        <button onclick="openModal('forgotModal')" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
-                        <button onclick="switchView('publicHomeView')" class="text-xs text-stone-400 underline cursor-pointer block mx-auto">← Back to Home</button>
-                    </div>
-                </div>
+       <!-- Login Page View -->
+<div id="loginView" class="page-view space-y-4 py-4 hidden">
+    <div class="bg-stone-900 p-6 rounded-2xl moving-border shadow-xl space-y-4">
+        <h2 class="title-font text-xl font-bold text-yellow-400 text-center">🔐 Login to Organization</h2>
+        <div class="space-y-3 text-xs">
+            <div>
+                <label class="font-bold block mb-1 text-stone-300">Mobile Number (User ID):</label>
+                <input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+            </div>
+            <div>
+                <label class="font-bold block mb-1 text-stone-300">Password:</label>
+                <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+            </div>
+            <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
+            
+            <!-- 👉 లాగిన్ పేజీలో హెల్ప్ కోసం వాట్సాప్ బటన్ -->
+            <div class="pt-2 border-t border-stone-800 text-center">
+                <p class="text-[11px] text-stone-400 mb-2">Need Login Help?</p>
+                <a href="https://wa.me/911169296787?text=Hello%20Donation%20Book%20Team,%20I%20need%20help%20with%20Login." 
+                   target="_blank" 
+                   class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
+                    <span>💬</span>
+                    <span>Chat on WhatsApp (+91 11692 96787)</span>
+                </a>
+            </div>
+
+            <div class="text-center pt-1 space-y-2">
+                <button onclick="openModal('forgotModal')" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
+                <button onclick="switchView('publicHomeView')" class="text-xs text-stone-400 underline cursor-pointer block mx-auto">← Back to Home</button>
             </div>
         </div>
+    </div>
+</div>
 
         <!-- Register Page View -->
         <div id="registerView" class="page-view space-y-4 py-4 hidden">

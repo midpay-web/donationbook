@@ -36,41 +36,41 @@
 <body class="text-white min-h-screen flex flex-col items-center antialiased">
 
     <!-- Header Section -->
-<header class="w-full max-w-md bg-stone-950 py-5.5 px-5.5 sticky top-0 z-45 shadow-xl moving-border">
-    <div class="flex items-center justify-between gap-0">
-        <div class="flex items-center gap-2 shrink-0">
-            <img src="https://cdn.corenexis.com/f/GoZcxpTtYHf.png" alt="Logo" class="w-15 h-15 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-amber-800 waterdrop-logo">
-            <span class="font-bold text-xs sm:text-sm text-amber-500 tracking-tight">DONATION BOOK</span>
-        </div>
-
-        <div class="flex items-center gap-2 shrink-0">
-            <!-- Language Selection Dropdown -->
-            <div id="languageDropdownContainer">
-                <select id="languageSelect" onchange="changeLanguage(this.value)" class="bg-stone-900 text-amber-300 text-[11px] font-bold py-1.5 px-2 rounded moving-border outline-none cursor-pointer">
-                    <option value="te">తెలుగు</option>
-                    <option value="en" selected>English</option>
-                    <option value="hi">हिन्दी</option>
-                    <option value="ta">தமிழ்</option>
-                    <option value="kn">ಕನ್ನಡ</option>
-                    <option value="ml">മലയാളം</option>
-                    <option value="gu">ગુજરાતી</option>
-                    <option value="bn">বাংলা</option>
-                    <option value="mr">मराठी</option>
-                    <option value="pa">ਪੰਜਾਬੀ</option>
-                </select>
+    <header class="w-full max-w-md bg-stone-950 py-5.5 px-5.5 sticky top-0 z-45 shadow-xl moving-border">
+        <div class="flex items-center justify-between gap-0">
+            <div class="flex items-center gap-2 shrink-0">
+                <img src="https://cdn.corenexis.com/f/GoZcxpTtYHf.png" alt="Logo" class="w-15 h-15 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-amber-800 waterdrop-logo">
+                <span class="font-bold text-xs sm:text-sm text-amber-500 tracking-tight">DONATION BOOK</span>
             </div>
 
-            <div id="authHeaderButtons">
-                <button onclick="switchView('loginView')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow cursor-pointer">Login</button>
-            </div>
-            
-            <div id="userProfileHeader" class="hidden flex items-center gap-1.5">
-                <span id="loggedUserName" class="text-xs font-bold text-yellow-300 truncate max-w-[70px]"></span>
-                <button onclick="logoutUser()" class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold px-2 py-1 rounded shadow cursor-pointer">Logout</button>
+            <div class="flex items-center gap-2 shrink-0">
+                <!-- Language Selection Dropdown -->
+                <div id="languageDropdownContainer">
+                    <select id="languageSelect" onchange="changeLanguage(this.value)" class="bg-stone-900 text-amber-300 text-[11px] font-bold py-1.5 px-2 rounded moving-border outline-none cursor-pointer">
+                        <option value="te">తెలుగు</option>
+                        <option value="en" selected>English</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="ta">தமிழ்</option>
+                        <option value="kn">ಕನ್ನಡ</option>
+                        <option value="ml">മലയാളം</option>
+                        <option value="gu">ગુજરાતી</option>
+                        <option value="bn">বাংলা</option>
+                        <option value="mr">मराठी</option>
+                        <option value="pa">ਪੰਜਾਬੀ</option>
+                    </select>
+                </div>
+
+                <div id="authHeaderButtons">
+                    <button onclick="switchView('loginView')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow cursor-pointer">Login</button>
+                </div>
+                
+                <div id="userProfileHeader" class="hidden flex items-center gap-1.5">
+                    <span id="loggedUserName" class="text-xs font-bold text-yellow-300 truncate max-w-[70px]"></span>
+                    <button onclick="logoutUser()" class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold px-2 py-1 rounded shadow cursor-pointer">Logout</button>
+                </div>
             </div>
         </div>
-    </div>
-</header>
+    </header>
 
     <!-- Main Content Container -->
     <main class="w-full max-w-md px-4 py-4 space-y-6 flex-grow pb-16">
@@ -88,52 +88,44 @@
             </div>
         </div>
 
-       <!-- Guest / Public Home View -->
-<div id="publicHomeView" class="page-view space-y-6 text-center py-6">
-    
-    <!-- 1. Banner Image Section (విడివిడిగా పైభాగంలో ఇమేజ్) -->
-    <div class="w-full px-2">
-        <img src="https://cdn.corenexis.com/f/g3nHr5gXwjv.png" alt="Landscape Banner" class="w-full h-auto rounded-2xl object-cover shadow-2xl moving-border">
-    </div>
-
-    <!-- 2. Text Content Section (మధ్యలో టైటిల్ మరియు సబ్-టైటిల్) -->
-    <div class="bg-stone-900/60 p-5 rounded-2xl moving-border shadow-xl space-y-3 mx-2">
-        <h2 id="homeTitleText" class="title-font text-xl sm:text-2xl font-black text-yellow-400 leading-snug">విరాళాలు, ఖర్చులు మరియు ఆర్థిక వివరాలను సులభంగా నిర్వహించండి.</h2>
-        <p id="homeSubText" class="text-xs text-stone-300 leading-relaxed">వినాయక చవితి, సంక్రాంతి మరియు ఇతర వేడుకలకు సంబంధించిన అన్ని విరాళాలు, ఖర్చుల వివరాలను పారదర్శకంగా నమోదు చేయండి.</p>
-    <div class="pt-1 px-4">
-        <button onclick="switchView('registerView')" id="homeRegBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-base py-3.5 rounded-2xl shadow-2xl cursor-pointer waterdrop-btn moving-border tracking-wider">
-            REGISTER HERE 🚀
-        </button>
-    </div>
-    </div>
-
-    <!-- 3. Register Button Section (అందరికీ స్పష్టంగా కనిపించేలా కింద ప్రత్యేకమైన బటన్) -->
-   
-
-</div>
-        </div>
-
-       <!-- Login Page View -->
-<div id="loginView" class="page-view space-y-4 py-4 hidden">
-    <div class="bg-stone-900 p-6 rounded-2xl moving-border shadow-xl space-y-4">
-        <h2 class="title-font text-xl font-bold text-yellow-400 text-center">🔐 Login to Organization</h2>
-        <div class="space-y-3 text-xs">
-            <div>
-                <label class="font-bold block mb-1 text-stone-300">Mobile Number (User ID):</label>
-                <input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+        <!-- Guest / Public Home View -->
+        <div id="publicHomeView" class="page-view space-y-6 text-center py-6">
+            <div class="w-full px-2">
+                <img src="https://cdn.corenexis.com/f/g3nHr5gXwjv.png" alt="Landscape Banner" class="w-full h-auto rounded-2xl object-cover shadow-2xl moving-border">
             </div>
-            <div>
-                <label class="font-bold block mb-1 text-stone-300">Password:</label>
-                <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
-            </div>
-            <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
-            <div class="text-center pt-1 space-y-2">
-                <button onclick="openModal('forgotModal')" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
-                <button onclick="switchView('publicHomeView')" class="text-xs text-stone-400 underline cursor-pointer block mx-auto">← Back to Home</button>
+
+            <div class="bg-stone-900/60 p-5 rounded-2xl moving-border shadow-xl space-y-3 mx-2">
+                <h2 id="homeTitleText" class="title-font text-xl sm:text-2xl font-black text-yellow-400 leading-snug">విరాళాలు, ఖర్చులు మరియు ఆర్థిక వివరాలను సులభంగా నిర్వహించండి.</h2>
+                <p id="homeSubText" class="text-xs text-stone-300 leading-relaxed">వినాయక చవితి, సంక్రాంతి మరియు ఇతర వేడుకలకు సంబంధించిన అన్ని విరాళాలు, ఖర్చుల వివరాలను పారదర్శకంగా నమోదు చేయండి.</p>
+                <div class="pt-1 px-4">
+                    <button onclick="switchView('registerView')" id="homeRegBtn" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-base py-3.5 rounded-2xl shadow-2xl cursor-pointer waterdrop-btn moving-border tracking-wider">
+                        REGISTER HERE 🚀
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+
+        <!-- Login Page View -->
+        <div id="loginView" class="page-view space-y-4 py-4 hidden">
+            <div class="bg-stone-900 p-6 rounded-2xl moving-border shadow-xl space-y-4">
+                <h2 class="title-font text-xl font-bold text-yellow-400 text-center">🔐 Login to Organization</h2>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="font-bold block mb-1 text-stone-300">Mobile Number (User ID):</label>
+                        <input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+                    </div>
+                    <div>
+                        <label class="font-bold block mb-1 text-stone-300">Password:</label>
+                        <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+                    </div>
+                    <button onclick="loginUser()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
+                    <div class="text-center pt-1 space-y-2">
+                        <button onclick="openModal('forgotModal')" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
+                        <button onclick="switchView('publicHomeView')" class="text-xs text-stone-400 underline cursor-pointer block mx-auto">← Back to Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Register Page View -->
         <div id="registerView" class="page-view space-y-4 py-4 hidden">
@@ -178,18 +170,15 @@
                     </button>
                 </div>
             </div>
-  <!-- 👉 లాగిన్ పేజీలో హెల్ప్ కోసం వాట్సాప్ బటన్ -->
+
             <div class="pt-2 border-t border-stone-800 text-center">
                 <p class="text-[11px] text-stone-400 mb-2">Need Help?</p>
-                <a href="https://wa.me/911169296787?text=Hello%20Donation%20Book%20Team,%20I%20need%20help%20with%20Login." 
-                   target="_blank" 
-                   class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
-                   <button onclick="openWhatsAppSupport()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
-    <span>💬</span>
-    <span>Chat on WhatsApp</span>
-</button>
-                </a>
+                <button onclick="openWhatsAppSupport()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
+                    <span>💬</span>
+                    <span>Chat on WhatsApp</span>
+                </button>
             </div>
+
             <div class="flex justify-between items-center bg-stone-900/80 p-3 rounded-xl moving-border">
                 <h3 class="font-bold text-sm text-yellow-400 flex items-center gap-1.5"><span>📅</span> Occasions</h3>
                 <button onclick="openAddOccasionModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-lg shadow cursor-pointer flex items-center gap-1 waterdrop-btn moving-border">
@@ -275,7 +264,7 @@
         </div>
     </div>
 
-    <!-- Add Occasion Modal -->
+    <!-- Add Occasion Modal (With 24 Hours Free Notice) -->
     <div id="addOccasionModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
         <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
             <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
@@ -283,21 +272,24 @@
                 <button onclick="closeModal('addOccasionModal')" class="text-xl font-bold cursor-pointer">&times;</button>
             </div>
             <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
+                <div class="bg-amber-100 border border-amber-400 text-amber-900 p-2.5 rounded-lg font-semibold leading-relaxed">
+                    ⚠️ <strong>Note:</strong> You can create this occasion now for free! After 24 hours, you have to pay 49 rupees to continue management & get approval.
+                </div>
                 <div><label class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2.5 border rounded-lg bg-stone-50"></div>
                 <div>
                     <label class="font-bold block mb-1 text-amber-900">👥 Assign Members for this Occasion:</label>
                     <div id="occMembersCheckboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg bg-stone-50"></div>
                 </div>
-                <button onclick="createOccasionAndPay()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer">Proceed to Pay ₹49 & Create</button>
+                <button onclick="createFreeOccasion()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow cursor-pointer">Create Occasion Free (24 Hours Trial)</button>
             </div>
         </div>
     </div>
 
-    <!-- Pay ₹49 Fee UPI Verification Modal -->
+    <!-- Pay ₹49 Fee UPI Verification Modal (After 24 Hours) -->
     <div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-[90000] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
             <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
-            <p class="text-xs text-stone-300">Scan QR to pay (nageshyadav4u@oksbi) for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>:</p>
+            <p class="text-xs text-stone-300">Your 24-hour free trial has ended for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>. Scan QR to pay ₹49 (nageshyadav4u@oksbi):</p>
             
             <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
                 <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
@@ -522,7 +514,7 @@
             },
             pa: {
                 title: "ਦਾਨ, ਖਰਚੇ ਅਤੇ ਵਿੱਤੀ ਰਿਕਾਰਡ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
-                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ અને ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
+                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ ਅਤੇ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
                 registerBtn: "REGISTER HERE",
                 donation: "ਦਾਨ",
                 expense: "ਖਰਚਾ",
@@ -532,6 +524,13 @@
                 limitExceededMsg: "You have entered incorrect transaction ID two times. So we are not approving your occasion. Create new occasion."
             }
         };
+
+        function openWhatsAppSupport(customMessage = "Hello Donation Book Team, I need help with...") {
+            let phoneNumber = "911169296787";
+            let message = encodeURIComponent(customMessage);
+            let whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`;
+            window.open(whatsappURL, '_blank');
+        }
 
         function showLoader(text = "Loading, please wait...") {
             let loader = document.getElementById('globalLoader');
@@ -839,25 +838,47 @@
                                 let estCost = Number(occ.estimatedCost || 0);
                                 let gap = estCost - inc;
                                 let parts = occ.estimations || [];
+                                let entries = occ.entries || [];
 
                                 container.innerHTML = `
-                                    <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-3">
-                                        <h4 class="font-black text-base text-yellow-300">${occ.name}</h4>
+                                    <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-4">
+                                        <h4 class="font-black text-base text-yellow-300 text-center">${occ.name}</h4>
+                                        
+                                        <!-- Cost Estimations Breakdown -->
                                         <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
-                                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimations</h5>
-                                            <div class="space-y-1 max-h-24 overflow-y-auto">
-                                                ${parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300"><span>${p.name}:</span><span class="text-amber-300">₹${p.cost}</span></div>`).join('') || '<span class="text-stone-500">No estimations added</span>'}
+                                            <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimations Breakdown</h5>
+                                            <div class="space-y-1 max-h-32 overflow-y-auto pr-1">
+                                                ${parts.map((p, idx) => `<div class="flex justify-between text-[11px] text-stone-300 border-b border-stone-900 pb-0.5"><span>${idx + 1}. ${p.name}:</span><span class="text-amber-300 font-bold">₹${p.cost}</span></div>`).join('') || '<span class="text-stone-500 text-center block py-1">No estimations added</span>'}
                                             </div>
-                                            <div class="border-t border-stone-800 pt-1.5 space-y-1">
-                                                <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
-                                                <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
-                                                <div class="flex justify-between font-bold border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
+                                            <div class="border-t border-stone-800 pt-1.5 space-y-1 font-bold">
+                                                <div class="flex justify-between"><span class="text-stone-400">Total Estimated Cost:</span><span class="text-amber-400">₹${estCost}</span></div>
+                                                <div class="flex justify-between"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                                                <div class="flex justify-between border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
                                             </div>
                                         </div>
+
+                                        <!-- Financial Summary Cards -->
                                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2.5 rounded-xl moving-border">
                                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
                                             <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
                                             <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
+                                        </div>
+
+                                        <!-- Individual Transactions List -->
+                                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
+                                            <h5 class="font-bold text-amber-300 border-b border-stone-800 pb-1">📋 Individual Transactions</h5>
+                                            <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                                                ${entries.map((ent, idx) => `
+                                                    <div class="flex justify-between items-center bg-stone-900 p-2 rounded-lg border border-stone-800 text-xs">
+                                                        <div>
+                                                            <span class="px-1 py-0.5 rounded text-[8px] font-bold ${ent.type === 'income' ? 'bg-emerald-900 text-emerald-200' : 'bg-red-900 text-red-200'}">${ent.type.toUpperCase()}</span>
+                                                            <strong class="ml-1 text-stone-200">${ent.desc}</strong>
+                                                            <span class="text-[8px] text-stone-400 block">${ent.date}</span>
+                                                        </div>
+                                                        <span class="font-bold ${ent.type === 'income' ? 'text-emerald-400' : 'text-red-400'}">₹${ent.amount}</span>
+                                                    </div>
+                                                `).join('') || '<span class="text-stone-500 text-center block py-2">No transactions recorded yet</span>'}
+                                            </div>
                                         </div>
                                     </div>
                                 `;
@@ -998,7 +1019,8 @@
             openModal('addOccasionModal');
         }
 
-        function createOccasionAndPay() {
+        // ఉచితంగా అకేషన్ క్రియేట్ చేయడం (24 గంటల ట్రయల్)
+        async function createFreeOccasion() {
             let name = document.getElementById('occName').value.trim();
             if(!name) { showCustomAlert("Missing Name", "Please enter occasion name!"); return; }
 
@@ -1008,7 +1030,7 @@
             });
 
             let now = Date.now();
-            pendingOccasionData = { 
+            let newOcc = { 
                 id: 'occ_' + now, 
                 name, 
                 estimatedCost: 0,
@@ -1016,38 +1038,44 @@
                 createdAt: now,
                 assignedMembers: selectedMembers,
                 entries: [],
-                status: "pending",
+                status: "free_trial", 
                 attemptCount: 1
             };
 
+            currentUser.occasions.push(newOcc);
+            
+            showLoader("Creating occasion...");
+            await syncUserDataWithSheet(); 
+            hideLoader();
+            
             closeModal('addOccasionModal');
-            document.getElementById('pay49OccName').innerText = name;
-            document.getElementById('upiTransactionId').value = '';
-            openModal('pay49Modal');
+            show3DSuccessModal("Occasion Created!", "Created free for 24 hours. After 24 hours, ₹49 payment is required.");
+            renderOccasions();
         }
 
+        // 24 గంటలు దాటిన తర్వాత పేమెంట్ వెరిఫై చేయడం
         async function confirmPaymentDone() {
             let transactionId = document.getElementById('upiTransactionId').value.trim();
             if(!transactionId) { showCustomAlert("Transaction ID", "Please enter Transaction ID!"); return; }
 
-            if(pendingOccasionData) {
-                pendingOccasionData.transactionId = transactionId;
-                pendingOccasionData.status = "pending";
-                pendingOccasionData.attemptCount = 1;
-                
-                currentUser.occasions.push(pendingOccasionData);
-                
-                showLoader("Syncing to server...");
-                await syncUserDataWithSheet(); 
-                hideLoader();
-                
-                pendingOccasionData = null;
-                closeModal('pay49Modal');
-                show3DSuccessModal("Submitted Successfully!", "Occasion created and pending admin approval.");
-                renderOccasions();
+            if(selectedOccasionId) {
+                let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+                if(occ) {
+                    occ.transactionId = transactionId;
+                    occ.status = "pending"; 
+                    
+                    showLoader("Syncing to server...");
+                    await syncUserDataWithSheet(); 
+                    hideLoader();
+                    
+                    closeModal('pay49Modal');
+                    show3DSuccessModal("Submitted Successfully!", "Payment submitted. Waiting for admin approval.");
+                    renderOccasions();
+                }
             }
         }
 
+        // అకేషన్స్ రెండర్ చేసేటప్పుడు 24 గంటలు చెక్ చేయడం
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');
             if(!currentUser.occasions || currentUser.occasions.length === 0) {
@@ -1055,21 +1083,34 @@
                 return;
             }
 
-            let currentLang = localStorage.getItem('portal_lang') || 'te';
-            let t = translations[currentLang] || translations['en'];
+            let now = Date.now();
+            let twentyFourHours = 24 * 60 * 60 * 1000;
 
             container.innerHTML = currentUser.occasions.map(occ => {
                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
-                let statusHtml = `<span class="font-semibold text-yellow-400">Status: Pending Approval</span>`;
-                let actionBtnHtml = `<span class="text-xs text-amber-300 italic">Waiting for admin approval</span>`;
+                let createdAt = occ.createdAt || now;
+                let isExpired = (now - createdAt) > twentyFourHours;
 
-                if(occ.status === "approved") {
+                let statusHtml = "";
+                let actionBtnHtml = "";
+
+                if (occ.status === "approved") {
                     statusHtml = `<span class="font-semibold text-emerald-400">Status: Approved</span>`;
                     actionBtnHtml = `
                         <div class="flex gap-2">
                             <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
                             <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Link">🔗</button>
                         </div>
+                    `;
+                } else if (occ.status === "pending") {
+                    statusHtml = `<span class="font-semibold text-yellow-400">Status: Pending Approval (Paid ₹49)</span>`;
+                    actionBtnHtml = `<span class="text-xs text-amber-300 italic">Waiting for admin approval</span>`;
+                } else if (isExpired || occ.status === "free_trial") {
+                    statusHtml = `<span class="font-semibold text-orange-400">Status: Free Trial Expired (Pay ₹49)</span>`;
+                    actionBtnHtml = `
+                        <button onclick="openPay49Modal('${occ.id}', '${occ.name}')" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">
+                            💳 Pay ₹49 to Continue & Approve
+                        </button>
                     `;
                 } else if(occ.status === "Incorrect ID") {
                     let attempt = occ.attemptCount || 1;
@@ -1107,6 +1148,13 @@
                     </div>
                 `;
             }).join('');
+        }
+
+        function openPay49Modal(occId, occName) {
+            selectedOccasionId = occId;
+            document.getElementById('pay49OccName').innerText = occName;
+            document.getElementById('upiTransactionId').value = '';
+            openModal('pay49Modal');
         }
 
         async function updateTransactionId(occId) {
@@ -1388,9 +1436,8 @@
                 navigator.share({ title: occName, text: `Check accounts for ${occName}:`, url: shareLink }).catch(() => {});
             } else {
                 showCustomAlert("Share", "Sharing not supported on this browser.");
-            }           
+            }            
         }
-       
     </script>
 </body>
 </html>

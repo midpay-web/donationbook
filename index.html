@@ -11,11 +11,6 @@
     <!-- jsPDF & AutoTable -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    
-    <!-- 👉 PWA / Home Screen Integration -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#451a03">
-
     <style>
         body { font-family: 'Ramabhadra', sans-serif; background-color: #451a03; }
         .title-font { font-family: 'Suranna', serif; }
@@ -41,7 +36,7 @@
 <body class="text-white min-h-screen flex flex-col items-center antialiased">
 
     <!-- Header Section -->
-    <header class="w-full max-w-md bg-stone-950 py-5.5 px-5.5 sticky top-0 z-45 shadow-xl moving-border">
+    <header class="w-full max-w-md bg-stone-950 py-2.5 px-5.5 sticky top-0 z-45 shadow-xl moving-border">
         <div class="flex items-center justify-between gap-0">
             <div class="flex items-center gap-2 shrink-0">
                 <img src="https://cdn.corenexis.com/f/GoZcxpTtYHf.png" alt="Logo" class="w-15 h-15 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-amber-800 waterdrop-logo">
@@ -92,9 +87,15 @@
                 <button onclick="window.location.href = window.location.pathname" class="bg-stone-800 text-amber-400 text-xs font-bold px-4 py-2 rounded-xl moving-border cursor-pointer">🏠 Go to Home</button>
             </div>
         </div>
-
+<!-- 👇 Register బటన్ కింద ఇక్కడ ఈ డౌన్‌లోడ్ బటన్ యాడ్ చేయండి -->
+            <div class="text-center mt-4 pt-4 border-t border-stone-800">
+                <a href="https://github.com/midpay-web/donationbook/releases/download/v1.0.0/app-debug.apk" download class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2.5 px-4 rounded-xl shadow-xl inline-flex items-center justify-center gap-2 moving-border cursor-pointer text-xs">
+                    <span>📥</span>
+                    <span>Download Android App (APK)</span>
+                </a>
+            </div>
         <!-- Guest / Public Home View -->
-        <div id="publicHomeView" class="page-view space-y-6 text-center py-6">
+        <div id="publicHomeView" class="page-view space-y-1 text-center py-1">
             <div class="w-full px-2">
                 <img src="https://cdn.corenexis.com/f/g3nHr5gXwjv.png" alt="Landscape Banner" class="w-full h-auto rounded-2xl object-cover shadow-2xl moving-border">
             </div>
@@ -453,7 +454,7 @@
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
         let selectedOccasionId = null;
         let pendingOccasionData = null;
-        let publicActiveOccasionData = null;
+        let publicActiveOccasionData = null; // 👉 పబ్లిక్ వ్యూ డేటా కోసం
 
         const translations = {
             te: {
@@ -874,7 +875,7 @@
                         if(viewOccId) {
                             let occ = publicOrgData.occasions.find(o => o.id === viewOccId);
                             if(occ) {
-                                window.publicOrgOccasion = occ; 
+                                window.publicOrgOccasion = occ; // 👉 పబ్లిక్ వ్యూ మోడ్ కోసం డేటా సేవ్ చేయడం
                                 document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (View Mode)`;
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
@@ -1055,6 +1056,7 @@
             openModal('addOccasionModal');
         }
 
+        // ఉచితంగా అకేషన్ క్రియేట్ చేయడం (24 గంటల ట్రయల్)
         async function createFreeOccasion() {
             let name = document.getElementById('occName').value.trim();
             if(!name) { showCustomAlert("Missing Name", "Please enter occasion name!"); return; }
@@ -1088,6 +1090,7 @@
             renderOccasions();
         }
 
+        // 24 గంటలు దాటిన తర్వాత పేమెంట్ వెరిఫై చేయడం
         async function confirmPaymentDone() {
             let transactionId = document.getElementById('upiTransactionId').value.trim();
             if(!transactionId) { showCustomAlert("Transaction ID", "Please enter Transaction ID!"); return; }
@@ -1109,6 +1112,7 @@
             }
         }
 
+        // అకేషన్స్ రెండర్ చేసేటప్పుడు 24 గంటలు చెక్ చేయడం
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');
             if(!currentUser.occasions || currentUser.occasions.length === 0) {
@@ -1559,14 +1563,6 @@
                 showCustomAlert("Share", "Sharing not supported on this browser.");
             }            
         }
-
-        // 👉 PWA Prompt Event Listener
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            console.log("App can be installed on home screen.");
-        });
     </script>
 </body>
 </html>

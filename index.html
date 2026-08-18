@@ -448,7 +448,7 @@
 
     <!-- JavaScript Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbzwzJv-UGmklWU-qZWeLQ-DSLZOjrS3h5cHcKgF2axq9rZC_9IANDrOWVchvo3TvRqr/exec"; 
+        const _URL = "https://script.google.com/macros/s/AKfycbwoTBx3dqGU1aj-spjbsLzQ2Itrb1CIrOcf1lgNaiCSFpPFb2jgqIhejItm3oynka_n/exec"; 
         const DB_CURRENT = 'youth_current_user';
 
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
@@ -748,35 +748,60 @@
             }
         }
 
-        async function loginUser() {
-            let mobile = document.getElementById('loginMobile').value.trim();
-            let pass = document.getElementById('loginPassword').value.trim();
+       async function loginUser() {
+    let mobile = document.getElementById('loginMobile').value.trim();
+    let pass = document.getElementById('loginPassword').value.trim();
 
-            if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile number and password!"); return; }
+    if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile number and password!"); return; }
 
-            showLoader("Logging in & syncing data...");
+    showLoader("Logging in & syncing data...");
 
-            try {
-                let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
-                    method: "GET",
-                    headers: { "Accept": "application/json" },
-                    mode: "cors"
-                });
-                let result = await res.json();
-                hideLoader();
-                if(result.status === "success") {
-                    currentUser = result.user;
-                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-                    initDashboard();
-                } else {
-                    showCustomAlert("Login Failed", "Incorrect mobile number or password!");
-                }
-            } catch(e) {
-                hideLoader();
-                showCustomAlert("Connection Error", "Login error! Please check connection.");
+    try {
+        let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
+            method: "GET",
+            headers: { "Accept": "application/json" },
+            mode: "cors"
+        });
+        let result = await res.json();
+        
+        if(result.status === "success") {
+            hideLoader();
+            currentUser = result.user;
+            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+            initDashboard();
+            return;
+        }
+
+        // 👉 ఒకవేళ మెయిన్ అడ్మిన్ కాకుండా, సబ్-మెంబർ (Member) అయితే ఇక్కడ చెక్ అవుతుంది
+        let orgRes = await fetch(`${_URL}?action=getOrg&mobile=${mobile}`);
+        let orgResult = await orgRes.json();
+        
+        hideLoader();
+        if(orgResult.status === "success" && orgResult.user && orgResult.user.members) {
+            let foundMember = orgResult.user.members.find(m => m.mobile === mobile && m.pass === pass);
+            if(foundMember) {
+                // మెంబర్‌ని కూడా currentUser లాగా సెట్ చేయడం, కాకపోతే మెయిన్ అడ్మిన్ పవర్స్ రెస్ట్రిక్ట్ చేయడం
+                currentUser = {
+                    ...orgResult.user,
+                    adminName: foundMember.name,
+                    designation: foundMember.designation,
+                    mobile: foundMember.mobile,
+                    isMainAdmin: false, // మెంబర్ కాబట్టి మెయిన్ అడ్మిన్ కాదు
+                    parentMobile: orgResult.user.mobile
+                };
+                localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                initDashboard();
+                return;
             }
         }
 
+        showCustomAlert("Login Failed", "Incorrect mobile number or password!");
+
+    } catch(e) {
+        hideLoader();
+        showCustomAlert("Connection Error", "Login error! Please check connection.");
+    }
+}
         async function recoverPasswordWithMpin() {
             let mobile = document.getElementById('forgotMobile').value.trim();
             let orgName = document.getElementById('forgotOrgName').value.trim();

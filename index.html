@@ -87,13 +87,15 @@
                 <button onclick="window.location.href = window.location.pathname" class="bg-stone-800 text-amber-400 text-xs font-bold px-4 py-2 rounded-xl moving-border cursor-pointer">🏠 Go to Home</button>
             </div>
         </div>
-<!-- 👇 Register బటన్ కింద ఇక్కడ ఈ డౌన్‌లోడ్ బటన్ యాడ్ చేయండి -->
-            <div class="text-center mt-4 pt-4 border-t border-stone-800">
-                <a href="https://github.com/midpay-web/donationbook/releases/download/v1.0.0/app-debug.apk" download class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2.5 px-4 rounded-xl shadow-xl inline-flex items-center justify-center gap-2 moving-border cursor-pointer text-xs">
-                    <span>📥</span>
-                    <span>Download Android App</span>
-                </a>
-            </div>
+
+        <!-- Download Android App Button -->
+        <div class="text-center mt-4 pt-4 border-t border-stone-800">
+            <a href="https://github.com/midpay-web/donationbook/releases/download/v1.0.0/app-debug.apk" download class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2.5 px-4 rounded-xl shadow-xl inline-flex items-center justify-center gap-2 moving-border cursor-pointer text-xs">
+                <span>📥</span>
+                <span>Download Android App</span>
+            </a>
+        </div>
+
         <!-- Guest / Public Home View -->
         <div id="publicHomeView" class="page-view space-y-1 text-center py-1">
             <div class="w-full px-2">
@@ -253,6 +255,27 @@
         </div>
     </div>
 
+    <!-- 👉 పాత/కొత్త యూజర్ల మల్టీ-అకేషన్ వార్నింగ్ మోడల్ -->
+    <div id="multiOccasionModal" class="fixed inset-0 bg-black/95 hidden z-[99000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl moving-border text-center">
+            <div class="text-4xl animate-pulse">⚠️</div>
+            <h3 class="font-black text-base text-red-500">Strict Policy Notice!</h3>
+            <p class="text-xs text-stone-300 leading-relaxed text-left">
+                మీరు నిబంధనలకు విరుద్ధంగా ఉచితంగా ఒకటి కంటే ఎక్కువ అకేషన్లను క్రియేట్ చేసి ఉన్నారు. మా పాలసీ ప్రకారం మొదటి అకేషన్ మాత్రమే ఉచితం. 
+                <br><br>
+                దయచేసి వెంటనే మీ అదనపు అకేషన్లన్నింటికీ తగిన <strong class="text-amber-400">₹49/- పేమెంట్ పూర్తి చేసి, ట్రాన్సాక్షన్ ఐడీని సబ్మిట్ చేయండి</strong>. అలా చేయనిపక్షంలో, ఇచ్చిన గడువు ముగిసిన తర్వాత ఆ అదనపు అకౌంట్లు మరియు వాటిలోని పూర్తి డేటా శాశ్వతంగా డిలీట్ చేయబడతాయి.
+            </p>
+            
+            <div id="userOccasionsSelectList" class="space-y-2 max-h-36 overflow-y-auto text-left border border-stone-800 p-2 rounded-xl bg-stone-950">
+                <!-- Dynamic list of occasions -->
+            </div>
+
+            <button onclick="closeModal('multiOccasionModal')" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-2.5 rounded-xl shadow cursor-pointer text-xs">
+                I Understand, Proceed to Pay
+            </button>
+        </div>
+    </div>
+
     <!-- Forgot Password Modal -->
     <div id="forgotModal" class="fixed inset-0 bg-black/85 hidden z-[90000] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border">
@@ -270,7 +293,7 @@
         </div>
     </div>
 
-    <!-- Add Occasion Modal (With 24 Hours Free Notice) -->
+    <!-- Add Occasion Modal -->
     <div id="addOccasionModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
         <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
             <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
@@ -279,23 +302,23 @@
             </div>
             <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
                 <div class="bg-amber-100 border border-amber-400 text-amber-900 p-2.5 rounded-lg font-semibold leading-relaxed">
-                    ⚠️ <strong>Note:</strong> You can create this occasion now for free! After 24 hours, you have to pay 49 rupees to continue management & get approval.
+                    ⚠️ <strong>Note:</strong> First occasion is free for 24 hours. Additional occasions require ₹49 payment upfront!
                 </div>
                 <div><label class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2.5 border rounded-lg bg-stone-50"></div>
                 <div>
                     <label class="font-bold block mb-1 text-amber-900">👥 Assign Members for this Occasion:</label>
                     <div id="occMembersCheckboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg bg-stone-50"></div>
                 </div>
-                <button onclick="createFreeOccasion()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow cursor-pointer">Create Occasion Free (24 Hours Trial)</button>
+                <button onclick="createFreeOccasion()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow cursor-pointer">Create Occasion</button>
             </div>
         </div>
     </div>
 
-    <!-- Pay ₹49 Fee UPI Verification Modal (After 24 Hours) -->
+    <!-- Pay ₹49 Fee UPI Verification Modal -->
     <div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-[90000] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
             <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
-            <p class="text-xs text-stone-300">Your 24-hour free trial has ended for <span id="pay49OccName" class="text-amber-300 font-bold">--</span>. Scan QR to pay ₹49 (nageshyadav4u@oksbi):</p>
+            <p class="text-xs text-stone-300">Scan QR to pay ₹49 for <span id="pay49OccName" class="text-amber-300 font-bold">--</span> (nageshyadav4u@oksbi):</p>
             
             <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
                 <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
@@ -313,7 +336,7 @@
         </div>
     </div>
 
-    <!-- 👉 Separate View Modals for Donations & Expenses -->
+    <!-- Separate View Modals for Donations & Expenses -->
     <div id="donationsListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
             <div class="p-3 bg-emerald-950 flex justify-between items-center border-b border-emerald-800">
@@ -352,7 +375,6 @@
             </div>
 
             <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
-                <!-- 👉 Donations & Expenses Separate View Buttons -->
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="openDonationsListModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow cursor-pointer moving-border flex items-center justify-center gap-1">
                         <span>💰 View Donations</span>
@@ -401,17 +423,28 @@
                     </button>
                 </div>
 
+                <!-- 👉 Entry Form (Custom Date & Edit Support) -->
                 <div id="entryFormSection" class="bg-stone-800 p-3 rounded-xl moving-border space-y-2.5">
                     <h4 id="lblAddEntry" class="font-bold text-yellow-400">➕ Add New Entry</h4>
+                    <input type="hidden" id="editingEntryId" value="">
+
                     <div class="grid grid-cols-2 gap-2">
-                        <select id="entryType" class="p-2 rounded bg-stone-900 moving-border text-white">
+                        <select id="entryType" class="p-2 rounded bg-stone-900 moving-border text-white text-xs">
                             <option id="optDonation" value="income">Donation</option>
                             <option id="optExpense" value="expense">Expense</option>
                         </select>
-                        <input type="number" id="entryAmount" placeholder="Amount (₹)" class="p-2 rounded bg-stone-900 moving-border text-white">
+                        <input type="date" id="entryDate" class="p-2 rounded bg-stone-900 moving-border text-white text-xs font-mono">
                     </div>
-                    <input type="text" id="entryDesc" placeholder="Description (Ex: Donor Name / Details)" class="w-full p-2 rounded bg-stone-900 moving-border text-white">
-                    <button onclick="addFinancialEntry()" id="btnSaveEntry" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded shadow cursor-pointer moving-border">Save Entry</button>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="entryAmount" placeholder="Amount (₹)" class="p-2 rounded bg-stone-900 moving-border text-white text-xs">
+                        <input type="text" id="entryDesc" placeholder="Description / Donor Name" class="p-2 rounded bg-stone-900 moving-border text-white text-xs">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="saveFinancialEntry()" id="btnSaveEntry" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded shadow cursor-pointer moving-border text-xs">Save Entry</button>
+                        <button onclick="resetEntryForm()" id="btnCancelEdit" class="hidden bg-stone-700 hover:bg-stone-600 text-stone-300 font-bold py-2 px-3 rounded shadow cursor-pointer text-xs">Cancel</button>
+                    </div>
                 </div>
 
                 <div class="space-y-2">
@@ -448,13 +481,13 @@
 
     <!-- JavaScript Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbwoTBx3dqGU1aj-spjbsLzQ2Itrb1CIrOcf1lgNaiCSFpPFb2jgqIhejItm3oynka_n/exec"; 
+        const _URL = "https://script.google.com/macros/s/AKfycbxukCzWndwide5PsLjaLX6f5J7dFikv0D5HrJtmptENBkzzBAWNDKswPhxXHYWR8N5f/exec"; 
         const DB_CURRENT = 'youth_current_user';
 
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
         let selectedOccasionId = null;
         let pendingOccasionData = null;
-        let publicActiveOccasionData = null; // 👉 పబ్లిక్ వ్యూ డేటా కోసం
+        let publicActiveOccasionData = null;
 
         const translations = {
             te: {
@@ -558,7 +591,7 @@
             },
             pa: {
                 title: "ਦਾਨ, ਖਰਚੇ ਅਤੇ ਵਿੱਤੀ ਰਿਕਾਰਡ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ।",
-                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ ਅਤੇ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
+                subtitle: "ਵਿਨਾਇਕ ਚਤੁਰਥੀ, ਸੰਕ੍ਰਾਂਤੀ ਅਤੇ ਹੋਰ ਤਿਉਹਾਰਾਂ ਲਈ ਸਾਰੇ ਦਾਨ සහ ਖਰਚੇ ਦੇ ਵੇਰਵੇ ਪਾਰਦਰਸ਼ੀ ਢੰਗ ਨਾਲ ਦਰਜ ਕਰੋ।",
                 registerBtn: "REGISTER HERE",
                 donation: "ਦਾਨ",
                 expense: "ਖਰਚਾ",
@@ -700,6 +733,7 @@
             if(modal) modal.classList.add('hidden'); 
         }
 
+        // రిజిస్ట్రేషన్ (క్యాప్చరింగ్ రిజిస్ట్రేషన్ డేట్ & టైమ్)
         async function registerOrganization() {
             let orgName = document.getElementById('regOrgName').value.trim();
             let adminName = document.getElementById('regAdminName').value.trim();
@@ -722,6 +756,7 @@
                     orgName, adminName, mobile, pass, mpin, 
                     isMainAdmin: true,
                     parentMobile: mobile,
+                    registrationDate: new Date().toLocaleString(), // 👉 రిజిస్ట్రేషన్ డేట్ & టైమ్
                     occasions: [], 
                     members: [] 
                 }
@@ -748,60 +783,87 @@
             }
         }
 
-       async function loginUser() {
-    let mobile = document.getElementById('loginMobile').value.trim();
-    let pass = document.getElementById('loginPassword').value.trim();
+        // పాత యూజర్లకు స్ట్రిక్ట్ వార్నింగ్ చెకింగ్ ఫంక్షన్
+        function checkStrictMultiOccasionPolicy() {
+            if(!currentUser || !currentUser.occasions) return;
 
-    if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile number and password!"); return; }
+            let occasions = currentUser.occasions;
+            let unpaidOccasions = occasions.filter((occ, idx) => idx > 0 && occ.status !== "approved" && occ.status !== "pending");
 
-    showLoader("Logging in & syncing data...");
+            if (unpaidOccasions.length > 0 && !sessionStorage.getItem('strict_policy_warned')) {
+                let container = document.getElementById('userOccasionsSelectList');
+                
+                container.innerHTML = occasions.map((occ, idx) => `
+                    <div class="flex justify-between items-center bg-stone-900 p-2 rounded-lg text-xs border border-stone-800">
+                        <div class="truncate max-w-[160px]">
+                            <strong class="text-yellow-300">#${idx + 1} ${occ.name}</strong>
+                            <span class="block text-[9px] text-stone-400">Status: ${occ.status}</span>
+                        </div>
+                        <div>
+                            ${idx === 0 ? '<span class="bg-emerald-800 text-emerald-200 text-[9px] px-1.5 py-0.5 rounded font-bold">Primary</span>' : 
+                            `<button onclick="openPay49Modal('${occ.id}', '${occ.name}'); closeModal('multiOccasionModal');" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-2 py-1 rounded cursor-pointer">Pay ₹49</button>`}
+                        </div>
+                    </div>
+                `).join('');
 
-    try {
-        let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
-            method: "GET",
-            headers: { "Accept": "application/json" },
-            mode: "cors"
-        });
-        let result = await res.json();
-        
-        if(result.status === "success") {
-            hideLoader();
-            currentUser = result.user;
-            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-            initDashboard();
-            return;
-        }
-
-        // 👉 ఒకవేళ మెయిన్ అడ్మిన్ కాకుండా, సబ్-మెంబർ (Member) అయితే ఇక్కడ చెక్ అవుతుంది
-        let orgRes = await fetch(`${_URL}?action=getOrg&mobile=${mobile}`);
-        let orgResult = await orgRes.json();
-        
-        hideLoader();
-        if(orgResult.status === "success" && orgResult.user && orgResult.user.members) {
-            let foundMember = orgResult.user.members.find(m => m.mobile === mobile && m.pass === pass);
-            if(foundMember) {
-                // మెంబర్‌ని కూడా currentUser లాగా సెట్ చేయడం, కాకపోతే మెయిన్ అడ్మిన్ పవర్స్ రెస్ట్రిక్ట్ చేయడం
-                currentUser = {
-                    ...orgResult.user,
-                    adminName: foundMember.name,
-                    designation: foundMember.designation,
-                    mobile: foundMember.mobile,
-                    isMainAdmin: false, // మెంబర్ కాబట్టి మెయిన్ అడ్మిన్ కాదు
-                    parentMobile: orgResult.user.mobile
-                };
-                localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-                initDashboard();
-                return;
+                openModal('multiOccasionModal');
+                sessionStorage.setItem('strict_policy_warned', 'true');
             }
         }
 
-        showCustomAlert("Login Failed", "Incorrect mobile number or password!");
+        async function loginUser() {
+            let mobile = document.getElementById('loginMobile').value.trim();
+            let pass = document.getElementById('loginPassword').value.trim();
 
-    } catch(e) {
-        hideLoader();
-        showCustomAlert("Connection Error", "Login error! Please check connection.");
-    }
-}
+            if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile number and password!"); return; }
+
+            showLoader("Logging in & syncing data...");
+
+            try {
+                let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" },
+                    mode: "cors"
+                });
+                let result = await res.json();
+                
+                if(result.status === "success") {
+                    hideLoader();
+                    currentUser = result.user;
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    initDashboard();
+                    return;
+                }
+
+                let orgRes = await fetch(`${_URL}?action=getOrg&mobile=${mobile}`);
+                let orgResult = await orgRes.json();
+                
+                hideLoader();
+                if(orgResult.status === "success" && orgResult.user && orgResult.user.members) {
+                    let foundMember = orgResult.user.members.find(m => m.mobile === mobile && m.pass === pass);
+                    if(foundMember) {
+                        currentUser = {
+                            ...orgResult.user,
+                            adminName: foundMember.name,
+                            designation: foundMember.designation,
+                            mobile: foundMember.mobile,
+                            isMainAdmin: false,
+                            parentMobile: orgResult.user.mobile
+                        };
+                        localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                        initDashboard();
+                        return;
+                    }
+                }
+
+                showCustomAlert("Login Failed", "Incorrect mobile number or password!");
+
+            } catch(e) {
+                hideLoader();
+                showCustomAlert("Connection Error", "Login error! Please check connection.");
+            }
+        }
+
         async function recoverPasswordWithMpin() {
             let mobile = document.getElementById('forgotMobile').value.trim();
             let orgName = document.getElementById('forgotOrgName').value.trim();
@@ -900,7 +962,7 @@
                         if(viewOccId) {
                             let occ = publicOrgData.occasions.find(o => o.id === viewOccId);
                             if(occ) {
-                                window.publicOrgOccasion = occ; // 👉 పబ్లిక్ వ్యూ మోడ్ కోసం డేటా సేవ్ చేయడం
+                                window.publicOrgOccasion = occ;
                                 document.getElementById('pubSubTitle').innerText = `Occasion: ${occ.name} (View Mode)`;
                                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                                 let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
@@ -912,8 +974,6 @@
                                 container.innerHTML = `
                                     <div class="bg-stone-900 rounded-2xl p-4 moving-border space-y-4">
                                         <h4 class="font-black text-base text-yellow-300 text-center">${occ.name}</h4>
-                                        
-                                        <!-- Cost Estimations Breakdown -->
                                         <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
                                             <h5 class="font-bold text-amber-400 border-b border-stone-800 pb-1">📊 Cost Estimations Breakdown</h5>
                                             <div class="space-y-1 max-h-32 overflow-y-auto pr-1">
@@ -925,15 +985,11 @@
                                                 <div class="flex justify-between border-t border-stone-800 pt-1"><span class="text-yellow-300">Funding Gap / Deficit:</span><span class="text-yellow-400">₹${gap > 0 ? gap : 0}</span></div>
                                             </div>
                                         </div>
-
-                                        <!-- Financial Summary Cards -->
                                         <div class="grid grid-cols-3 gap-1.5 text-center text-xs bg-stone-950 p-2.5 rounded-xl moving-border">
                                             <div><span class="text-[9px] text-emerald-400 block">${donText}</span><strong>₹${inc}</strong></div>
                                             <div><span class="text-[9px] text-red-400 block">${expText}</span><strong>₹${exp}</strong></div>
                                             <div><span class="text-[9px] text-yellow-400 block">Balance</span><strong class="text-yellow-300">₹${bal}</strong></div>
                                         </div>
-
-                                        <!-- 👉 పబ్లిక్ వ్యూ కోసం సపరేట్ డొనేషన్స్ & ఎక్స్‌పెన్సెస్ బటన్స్ -->
                                         <div class="grid grid-cols-2 gap-2 pt-1">
                                             <button onclick="openPublicListModal('income', '${occ.id}')" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer moving-border flex items-center justify-center gap-1">
                                                 <span>💰 View Donations</span>
@@ -1006,6 +1062,7 @@
 
                 await refreshUserDataFromServer();
                 renderOccasions();
+                checkStrictMultiOccasionPolicy();
             } else {
                 if(authHeaderButtons) authHeaderButtons.classList.remove('hidden');
                 if(languageDropdownContainer) languageDropdownContainer.classList.remove('hidden');
@@ -1081,7 +1138,7 @@
             openModal('addOccasionModal');
         }
 
-        // ఉచితంగా అకేషన్ క్రియేట్ చేయడం (24 గంటల ట్రయల్)
+        // అకేషన్ క్రియేట్ చేయడం (మొదటిది ఫ్రీ, రెండోది కంపల్సరీ పేమెంట్ - క్యాప్చరింగ్ టైమ్‌స్టాంప్)
         async function createFreeOccasion() {
             let name = document.getElementById('occName').value.trim();
             if(!name) { showCustomAlert("Missing Name", "Please enter occasion name!"); return; }
@@ -1091,16 +1148,19 @@
                 selectedMembers.push(chk.value);
             });
 
+            let existingOccasions = currentUser.occasions || [];
+            let isFirstOccasion = existingOccasions.length === 0;
+
             let now = Date.now();
             let newOcc = { 
                 id: 'occ_' + now, 
                 name, 
                 estimatedCost: 0,
                 estimations: [],
-                createdAt: now,
+                createdAt: new Date().toLocaleString(), // 👉 అకేషన్ క్రియేట్ అయిన డేట్ & టైమ్
                 assignedMembers: selectedMembers,
                 entries: [],
-                status: "free_trial", 
+                status: isFirstOccasion ? "free_trial" : "free_limit_expired", 
                 attemptCount: 1
             };
 
@@ -1111,11 +1171,17 @@
             hideLoader();
             
             closeModal('addOccasionModal');
-            show3DSuccessModal("Occasion Created!", "Created free for 24 hours. After 24 hours, ₹49 payment is required.");
+
+            if (isFirstOccasion) {
+                show3DSuccessModal("Occasion Created!", "Created free for 24 hours. After 24 hours, ₹49 payment is required.");
+            } else {
+                showCustomAlert("Payment Required", "మొదటి అకేషన్ మాత్రమే ఫ్రీ. అదనపు అకేషన్ల క్రియేషన్ కోసం ₹49 చెల్లించడం తప్పనిసరి!");
+                openPay49Modal(newOcc.id, newOcc.name);
+            }
+
             renderOccasions();
         }
 
-        // 24 గంటలు దాటిన తర్వాత పేమెంట్ వెరిఫై చేయడం
         async function confirmPaymentDone() {
             let transactionId = document.getElementById('upiTransactionId').value.trim();
             if(!transactionId) { showCustomAlert("Transaction ID", "Please enter Transaction ID!"); return; }
@@ -1137,7 +1203,6 @@
             }
         }
 
-        // అకేషన్స్ రెండర్ చేసేటప్పుడు 24 గంటలు చెక్ చేయడం
         function renderOccasions() {
             let container = document.getElementById('occasionsContainer');
             if(!currentUser.occasions || currentUser.occasions.length === 0) {
@@ -1150,8 +1215,8 @@
 
             container.innerHTML = currentUser.occasions.map(occ => {
                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
-                let createdAt = occ.createdAt || now;
-                let isExpired = (now - createdAt) > twentyFourHours;
+                let createdAtMs = typeof occ.createdAt === 'number' ? occ.createdAt : now;
+                let isExpired = (now - createdAtMs) > twentyFourHours;
 
                 let statusHtml = "";
                 let actionBtnHtml = "";
@@ -1184,6 +1249,13 @@
                             </div>
                         `;
                     }
+                } else if (occ.status === "free_limit_expired") {
+                    statusHtml = `<span class="font-semibold text-red-400">Status: Payment Required (₹49)</span>`;
+                    actionBtnHtml = `
+                        <button onclick="openPay49Modal('${occ.id}', '${occ.name}')" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-2.5 rounded-xl text-xs shadow cursor-pointer moving-border animate-pulse">
+                            💳 Pay ₹49 to Unlock Occasion
+                        </button>
+                    `;
                 } else if(occ.status === "Incorrect ID") {
                     let attempt = occ.attemptCount || 1;
                     if(attempt >= 2) {
@@ -1267,10 +1339,16 @@
 
             let now = Date.now();
             let twentyFourHours = 24 * 60 * 60 * 1000;
-            let createdAt = occ.createdAt || now;
+            let createdAtMs = typeof occ.createdAt === 'number' ? occ.createdAt : now;
             
-            if (occ.status === "free_trial" && (now - createdAt) > twentyFourHours) {
+            if (occ.status === "free_trial" && (now - createdAtMs) > twentyFourHours) {
                 showCustomAlert("Free Limit Expired", "Your 24-hour free trial has expired. Please pay ₹49 to continue.");
+                openPay49Modal(occ.id, occ.name);
+                return;
+            }
+
+            if (occ.status === "free_limit_expired") {
+                showCustomAlert("Payment Required", "Please pay ₹49 to manage this occasion.");
                 openPay49Modal(occ.id, occ.name);
                 return;
             }
@@ -1297,11 +1375,11 @@
             document.getElementById('estViewMode').classList.remove('hidden');
             document.getElementById('estEditMode').classList.add('hidden');
 
+            setDefaultEntryDate();
             renderFinancialEntries();
             openModal('accountsModal');
         }
 
-        // 👉 Donations & Expenses Separate List Modals Logic
         function openDonationsListModal() {
             let occ = currentUser ? currentUser.occasions.find(o => o.id === selectedOccasionId) : window.publicOrgOccasion;
             if(!occ) return;
@@ -1504,24 +1582,93 @@
             doc.save(`${occ.name.replace(/\s+/g, '_')}_Financial_Report.pdf`);
         }
 
-        function addFinancialEntry() {
+        // కస్టమ్ డేట్ డిఫాల్ట్ సెట్ చేయడం
+        function setDefaultEntryDate() {
+            let dateInput = document.getElementById('entryDate');
+            if (dateInput && !dateInput.value) {
+                let today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+        }
+
+        // ఎంట్రీ సేవ్ లేదా అప్‌డేట్ చేయడం (కస్టమ్ డేట్ & ఎడిట్ సపోర్ట్)
+        function saveFinancialEntry() {
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(!occ) return;
 
             let type = document.getElementById('entryType').value;
             let amount = document.getElementById('entryAmount').value.trim();
             let desc = document.getElementById('entryDesc').value.trim();
+            let rawDate = document.getElementById('entryDate').value;
+            let editId = document.getElementById('editingEntryId').value;
 
-            if(!amount || !desc) { showCustomAlert("Missing Fields", "Please enter amount and description!"); return; }
+            if(!amount || !desc || !rawDate) { 
+                showCustomAlert("Missing Fields", "Please enter amount, description, and date!"); 
+                return; 
+            }
 
-            occ.entries.push({ id: 'ent_' + Date.now(), type, amount: Number(amount), desc, date: new Date().toLocaleDateString() });
+            let formattedDate = rawDate.split('-').reverse().join('-'); 
+
+            if (editId) {
+                let ent = occ.entries.find(e => e.id === editId);
+                if (ent) {
+                    ent.type = type;
+                    ent.amount = Number(amount);
+                    ent.desc = desc;
+                    ent.date = formattedDate;
+                }
+                show3DSuccessModal("Updated!", "Entry updated successfully.");
+            } else {
+                let newEntry = { 
+                    id: 'ent_' + Date.now(), 
+                    type, 
+                    amount: Number(amount), 
+                    desc, 
+                    date: formattedDate 
+                };
+                occ.entries.push(newEntry);
+                show3DSuccessModal("Saved!", "Entry added successfully.");
+            }
+
             syncUserDataWithSheet();
-            document.getElementById('entryAmount').value = '';
-            document.getElementById('entryDesc').value = '';
-            
+            resetEntryForm();
             openAccountsControl(selectedOccasionId);
             renderOccasions();
-            show3DSuccessModal("Saved!", "Entry added successfully.");
+        }
+
+        // ఎడిట్ చేయడానికి ఫారమ్‌లోకి డేటా లోడ్ చేయడం
+        function editFinancialEntry(entId) {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(!occ) return;
+
+            let ent = occ.entries.find(e => e.id === entId);
+            if(!ent) return;
+
+            document.getElementById('entryType').value = ent.type;
+            document.getElementById('entryAmount').value = ent.amount;
+            document.getElementById('entryDesc').value = ent.desc;
+            
+            if(ent.date) {
+                let parts = ent.date.split('-');
+                if(parts.length === 3) {
+                    document.getElementById('entryDate').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                }
+            }
+
+            document.getElementById('editingEntryId').value = ent.id;
+            document.getElementById('btnSaveEntry').innerText = "Update Entry";
+            document.getElementById('btnSaveEntry').className = "flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded shadow cursor-pointer text-xs";
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+        }
+
+        function resetEntryForm() {
+            document.getElementById('editingEntryId').value = '';
+            document.getElementById('entryAmount').value = '';
+            document.getElementById('entryDesc').value = '';
+            document.getElementById('btnSaveEntry').innerText = "Save Entry";
+            document.getElementById('btnSaveEntry').className = "flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded shadow cursor-pointer text-xs";
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+            setDefaultEntryDate();
         }
 
         function renderFinancialEntries() {
@@ -1537,18 +1684,22 @@
             document.getElementById('accBal').innerText = `₹${bal}`;
 
             let listContainer = document.getElementById('financialEntriesList');
-            if(occ.entries.length === 0) { listContainer.innerHTML = `<p class="text-stone-500 text-center py-2 text-xs">No transactions</p>`; return; }
+            if(occ.entries.length === 0) { 
+                listContainer.innerHTML = `<p class="text-stone-500 text-center py-2 text-xs">No transactions</p>`; 
+                return; 
+            }
 
             listContainer.innerHTML = occ.entries.map((ent) => `
                 <div class="flex justify-between items-center bg-stone-800 p-2 rounded-lg moving-border text-xs">
                     <div>
                         <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${ent.type === 'income' ? 'bg-emerald-800 text-emerald-200' : 'bg-red-800 text-red-200'}">${ent.type}</span>
                         <strong class="ml-1 text-stone-200">${ent.desc}</strong>
-                        <span class="text-[9px] text-stone-400 block">${ent.date}</span>
+                        <span class="text-[9px] text-stone-400 block">📅 ${ent.date}</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="font-bold ${ent.type === 'income' ? 'text-emerald-400' : 'text-red-400'}">₹${ent.amount}</span>
-                        <button onclick="deleteFinancialEntry('${ent.id}')" class="text-red-400 font-bold px-1 cursor-pointer">×</button>
+                        <button onclick="editFinancialEntry('${ent.id}')" class="text-amber-400 font-bold px-1 cursor-pointer" title="Edit">✏️</button>
+                        <button onclick="deleteFinancialEntry('${ent.id}')" class="text-red-400 font-bold px-1 cursor-pointer" title="Delete">×</button>
                     </div>
                 </div>
             `).join('');
